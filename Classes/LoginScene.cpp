@@ -12,7 +12,7 @@ Scene* LoginScene::createScene()
 
 bool LoginScene::init()
 {
-	if (!Scene::init())
+	if (!Scene::init()) // 对父类init方法的判断
 		return false;
 	
 	// 获取屏幕上的特殊点位

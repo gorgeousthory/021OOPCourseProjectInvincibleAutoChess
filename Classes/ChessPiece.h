@@ -1,12 +1,12 @@
 /********************************************
  * 功能：棋子模型
- * 作者：hjh
- * 版本：1.0.0
+ * 作者：VenusHui
+ * 版本：1.1.0
  * 位置：Classes/model(筛选器)
  * 游戏引擎：Cocos2d-x 4.0
  * ******************************************
- * 说明：目前尚处于设计阶段，尽量多设数据成员
- * 及接口。
+ * 更新内容：完善了数据读取模式，同时匹配了棋
+ * 盘类的内容
  ********************************************/
 #pragma once
 #ifndef _CHESSPIECE_H_
@@ -18,81 +18,96 @@ USING_NS_CC;
 #include <string>
 using std::string;
 
-// 由于只有三个星级，采用枚举控制
-enum level { Level1, Level2, Level3 };
-
-struct PieceInfo // 当前棋子数值结构体
+struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 {
-	// 当前血量
-	double healthPoint;
+	double healthPoint; // 生命
+	
+	double magicPoint; // 法力
 
-	// 当前能量
-	double magicPoint;
+	double attack; // 攻击力
+	
+	double defence; // 防御力
+	
+	double attackSpeed; // 攻击速度
 
-	// 当前攻击力
-	double attack;
+	double attackScope; // 攻击距离
 
-	// 当前防御力
-	double defence;
+	double criticalChance; // 暴击几率
 
-	// 当前攻击速度
-	double attackSpeed;
+	double criticalDamage; // 暴击伤害
 };
 
+enum class CoordinateType{ real, logical }; // 坐标类型
+
+class PieceCoordinate // 棋子坐标
+{
+public:
+	// 获取棋子横坐标
+	int getX() const { return _x; }
+
+	// 获取棋子纵坐标
+	int getY() const { return _y; }
+
+	// 设置棋子横坐标
+	void setX(const int x) { _x = x; }
+
+	// 设置棋子纵坐标
+	void setY(const int y) { _y = y; }
+
+private:
+	int _x; // 横坐标
+
+	int _y; // 纵坐标
+
+	CoordinateType _type; // 坐标类型
+};
+
+// 由于只有三个星级，采用枚举控制
+enum class Level { level1, level2, level3 };
+
+template<typename DataType>
 class ChessPiece : public Ref
 {
 public:
+	// 初始化棋子状态
 	virtual bool init();
+
+	// 读取文件相关数据
+	static DataType getDataByID(string id);
+
+	// 更新棋子状态
+	bool updatePieceInfo(const double damage, PieceCoordinate* newRealCoordinate);
+
+	// 获取棋子名称
+	const string getPieceName() { return _pieceName; }
+
+	// 获取当前棋子状态
+	const PieceInfo* getCrtPieceCondition() { return &_pieceCrtCondition; }
+
+	// 获取当前棋子星级
+	const Level getPieceLevel() { return _pieceLevel; }
+
+	// 设置当前棋子星级
+	void setPieceLevel(const Level newLevel) { _pieceLevel = newLevel; }
 
 	CREATE_FUNC(ChessPiece);
 
-	// 初始化棋子状态
-	bool initialPieceInfo();
-
-	// 更新棋子状态
-	bool updatePieceInfo(const double damage);
-
-	// 获取棋子名称
-	const string getPieceName() { return pieceName; }
-
-	// 获取当前棋子状态结构体
-	const PieceInfo* getCrtPieceCondition() { return &pieceCrtCondition; }
-
-	// 获取当前棋子星级
-	const int getPieceLevel() { return pieceLevel; }
-
-	// 设置当前棋子星级
-	void setPieceLevel(const int newLevel) { pieceLevel = newLevel; }
 private:
-	// 名称
-	string pieceName;
+	string _pieceName; // 名称
+	
+	string _piecePicPath; // 模型图片相对路径
+	
+	string _pieceDataPath; // 基础数据相对路径
+	
+	Level _pieceLevel; // 星级
 
-	// 星级
-	int pieceLevel;
+	int _piecePerCost; // 一只一星棋子所需金币
 
-	// 当前棋子数值
-	PieceInfo pieceCrtCondition;
+	PieceInfo _pieceCrtCondition; // 当前棋子数值
+	
+	PieceInfo _buffEffect; // 当前装备(及羁绊？)效果加成
 
-	// 当前装备效果
-	PieceInfo equipEffect;
-
-	// 一只一星棋子所需金币
-	int piecePerCost;
-
-	// 各等级基础血量
-	double pieceBaseHealthPoint[3];
-
-	// 各等级基础能量
-	double pieceBaseMagicPoint[3];
-
-	// 各等级基础攻击力
-	double pieceBaseAttack[3];
-
-	// 各等级基础防御力
-	double pieceBaseDefence[3];
-
-	// 各等级基础攻击速度
-	double pieceBaseAttackSpeed[3];
+	PieceCoordinate _logPosition; // 棋子的逻辑位置
 };
 
 #endif

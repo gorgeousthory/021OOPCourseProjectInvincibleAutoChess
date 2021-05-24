@@ -1,6 +1,13 @@
+#include "cocos2d.h"
+#include "cocos/2d/CCAction.h"
+#include "cocos/2d/CCActionInterval.h"
+USING_NS_CC;
+
+#include "ChessBoard.h"
 #include "ChessPiece.h"
 
-bool ChessPiece::init()
+template<typename DataType>
+bool ChessPiece<DataType>::init()
 {
 	if (!ChessPiece::init())
 		return false;
@@ -8,14 +15,18 @@ bool ChessPiece::init()
 	return true;
 }
 
-bool ChessPiece::initialPieceInfo()
+template<typename DataType>
+DataType ChessPiece<DataType>::getDataByID(string id)
 {
-	
+	// 创建词典类实例，将文件加载到词典中
+	auto dataDictionary = Dictionary::createWithContentsOfFile("");
+	const DataType data = ((DataType*)dataDictionary->objectForKey(id))->getCString();
 
-	return true;
+	return data;
 }
 
-bool ChessPiece::updatePieceInfo(const double damage)
+template<typename DataType>
+bool ChessPiece<DataType>::updatePieceInfo(const double damage, PieceCoordinate* newRealCoordinate)
 {
 	/***********************************************
 	* 更新棋子当前数值时需要考虑当前装备效果的时机有
@@ -23,17 +34,15 @@ bool ChessPiece::updatePieceInfo(const double damage)
 	* 2.为该棋子添加装备后（我认为这部分放在装备那块考虑？）
 	* 注意：每次收到伤害后更新信息不考虑装备效果
 	************************************************/
-	
-	pieceCrtCondition.healthPoint -= damage;
-	
 
-	// 更新完毕
-	if (getCrtPieceCondition()->healthPoint > 0)
+	// 更新生命值
+	_pieceCrtCondition.healthPoint -= (damage - _pieceCrtCondition.defence);
+	if (_pieceCrtCondition.healthPoint < 0)
 	{
-		return true; // 更新成功
+		return false; // 更新失败，棋子阵亡直接退出
 	}
-	else
-	{
-		return false; // 更新失败，棋子阵亡
-	}
+
+	// 更新棋子位置，缺少参数，
+	auto updatePiecePos = MoveBy::create(2.f, Vec2(100.f, 0));
 }
+

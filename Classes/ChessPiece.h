@@ -1,7 +1,7 @@
 /********************************************
  * 功能：棋子模型
  * 作者：VenusHui
- * 版本：1.1.0
+ * 版本：1.1.1
  * 位置：Classes/model(筛选器)
  * 游戏引擎：Cocos2d-x 4.0
  * ******************************************
@@ -65,15 +65,11 @@ private:
 // 由于只有三个星级，采用枚举控制
 enum class Level { level1, level2, level3 };
 
-template<typename DataType>
 class ChessPiece : public Ref
 {
 public:
 	// 初始化棋子状态
 	virtual bool init();
-
-	// 读取文件相关数据
-	static DataType getDataByID(string id);
 
 	// 更新棋子状态
 	bool updatePieceInfo(const double damage, PieceCoordinate* newRealCoordinate);

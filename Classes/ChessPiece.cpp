@@ -5,9 +5,9 @@ USING_NS_CC;
 
 #include "ChessBoard.h"
 #include "ChessPiece.h"
+using std::string;
 
-template<typename DataType>
-bool ChessPiece<DataType>::init()
+bool ChessPiece::init()
 {
 	if (!ChessPiece::init())
 		return false;
@@ -15,18 +15,7 @@ bool ChessPiece<DataType>::init()
 	return true;
 }
 
-template<typename DataType>
-DataType ChessPiece<DataType>::getDataByID(string id)
-{
-	// 创建词典类实例，将文件加载到词典中
-	auto dataDictionary = Dictionary::createWithContentsOfFile("");
-	const DataType data = ((DataType*)dataDictionary->objectForKey(id))->getCString();
-
-	return data;
-}
-
-template<typename DataType>
-bool ChessPiece<DataType>::updatePieceInfo(const double damage, PieceCoordinate* newRealCoordinate)
+bool ChessPiece::updatePieceInfo(const double damage, PieceCoordinate* newRealCoordinate)
 {
 	/***********************************************
 	* 更新棋子当前数值时需要考虑当前装备效果的时机有

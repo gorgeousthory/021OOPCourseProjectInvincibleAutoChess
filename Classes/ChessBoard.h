@@ -1,7 +1,7 @@
 /********************************************
  * 功能：棋盘模型
  * 作者：VenusHui
- * 版本：1.0.0
+ * 版本：1.0.1
  * 位置：Classes/model(筛选器)
  * 游戏引擎：Cocos2d-x 4.0
  * ******************************************
@@ -13,7 +13,6 @@
 
 #include "ChessPiece.h"
 
-template<typename DataType>
 class ChessBoard :public Ref
 {
 public:

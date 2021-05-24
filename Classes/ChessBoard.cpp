@@ -1,16 +1,15 @@
 #include "ChessBoard.h"
 #include "ChessPiece.h"
+#include "ConfigController.h"
 
-template<typename DataType>
-bool ChessBoard<DataType>::init()
+bool ChessBoard::init()
 {
 	return true;
 }
 
-template<typename DataType>
-PieceCoordinate* ChessBoard<DataType>::CoordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos)
+PieceCoordinate* ChessBoard::CoordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos)
 {
-	if (oldType == CoordinateType::logical)
+	if (type == CoordinateType::logical)
 	{
 		return nullptr;
 	}
@@ -20,26 +19,22 @@ PieceCoordinate* ChessBoard<DataType>::CoordinateConvert(CoordinateType type, Pi
 	}
 }
 
-template<typename DataType>
-Vector<ChessPiece<DataType>*>* ChessBoard<DataType>::getPlayerA_WarZone_Pieces()
+Vector<ChessPiece*>* ChessBoard::getPlayerA_WarZone_Pieces()
 {
 	return &_prtPlayerA_WarZone_Pieces;
 }
 
-template<typename DataType>
-Vector<ChessPiece<DataType>*>* ChessBoard<DataType>::getPlayerA_PreZone_Pieces()
+Vector<ChessPiece*>* ChessBoard::getPlayerA_PreZone_Pieces()
 {
 	return &_prtPlayerA_PreZone_Pieces;
 }
 
-template<typename DataType>
-Vector<ChessPiece<DataType>*>* ChessBoard<DataType>::getPlayerB_WarZone_Pieces()
+Vector<ChessPiece*>* ChessBoard::getPlayerB_WarZone_Pieces()
 {
 	return &_prtPlayerB_WarZone_Pieces;
 }
 
-template<typename DataType>
-Vector<ChessPiece<DataType>*>* ChessBoard<DataType>::getPlayerB_PreZone_Pieces()
+Vector<ChessPiece*>* ChessBoard::getPlayerB_PreZone_Pieces()
 {
 	return &_prtPlayerB_PreZone_Pieces;
 }

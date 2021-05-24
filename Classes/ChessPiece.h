@@ -1,7 +1,7 @@
 /********************************************
  * 功能：棋子模型
  * 作者：VenusHui
- * 版本：1.1.1
+ * 版本：1.1.2
  * 位置：Classes/model(筛选器)
  * 游戏引擎：Cocos2d-x 4.0
  * ******************************************
@@ -12,8 +12,13 @@
 #ifndef _CHESSPIECE_H_
 #define _CHESSPIECE_H_
 
-#include <cocos2d.h>
+#include "cocos2d.h"
+#include "cocos/2d/CCAction.h"
+#include "cocos/2d/CCActionInterval.h"
 USING_NS_CC;
+
+#include "ConfigController.h"
+#include "ChessBoard.h"
 
 #include <string>
 using std::string;
@@ -69,7 +74,7 @@ class ChessPiece : public Ref
 {
 public:
 	// 初始化棋子状态
-	virtual bool init();
+	virtual bool init(int id);
 
 	// 更新棋子状态
 	bool updatePieceInfo(const double damage, PieceCoordinate* newRealCoordinate);
@@ -77,11 +82,14 @@ public:
 	// 获取棋子名称
 	const string getPieceName() { return _pieceName; }
 
-	// 获取当前棋子状态
+	// 获取当前棋子数值
 	const PieceInfo* getCrtPieceCondition() { return &_pieceCrtCondition; }
 
 	// 获取当前棋子星级
 	const Level getPieceLevel() { return _pieceLevel; }
+
+	// 获取当前棋子位置
+	const PieceCoordinate* getPrtCoordinateByType(CoordinateType type);
 
 	// 设置当前棋子星级
 	void setPieceLevel(const Level newLevel) { _pieceLevel = newLevel; }
@@ -93,7 +101,7 @@ private:
 	
 	string _piecePicPath; // 模型图片相对路径
 	
-	string _pieceDataPath; // 基础数据相对路径
+	string _pieceDataPath; // 基础数据在库中的key
 	
 	Level _pieceLevel; // 星级
 
@@ -103,7 +111,9 @@ private:
 	
 	PieceInfo _buffEffect; // 当前装备(及羁绊？)效果加成
 
-	PieceCoordinate _logPosition; // 棋子的逻辑位置
+	PieceCoordinate _logCoordinate; // 棋子的逻辑位置
+
+	PieceCoordinate _realCoordinate; // 棋子的实际位置
 };
 
 #endif

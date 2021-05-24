@@ -7,7 +7,7 @@ bool ChessBoard::init()
 	return true;
 }
 
-PieceCoordinate* ChessBoard::CoordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos)
+PieceCoordinate* ChessBoard::coordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos)
 {
 	if (type == CoordinateType::logical)
 	{
@@ -17,6 +17,11 @@ PieceCoordinate* ChessBoard::CoordinateConvert(CoordinateType type, PieceCoordin
 	{
 		return nullptr;
 	}
+}
+
+double ChessBoard::getDistance(PieceCoordinate* start, PieceCoordinate* end)
+{
+	return sqrt(pow((start->getX() - end->getX()), 2) + pow((start->getY() - end->getY()), 2));
 }
 
 Vector<ChessPiece*>* ChessBoard::getPlayerA_WarZone_Pieces()

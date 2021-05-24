@@ -1,7 +1,7 @@
 /**************************************************
  * 功能：配置文件控制器，实现读取和缓存配置文件数据
  * 作者：VenusHui
- * 版本：1.0.0
+ * 版本：1.0.2
  * 位置：Classes/controller(筛选器)
  * 游戏引擎：Cocos2d-x 4.0
  * ************************************************
@@ -27,12 +27,12 @@ public:
 	~ConfigController();
 
 	// 从文件中读取相关数据
-	Value getDataByID(int id);
+	static Value getDataByID(int id);
 
 private:
 	static  ConfigController* instance;
 
 	// 缓存数据
-	map<int, Value> dataMap;
+	static map<int, Value> dataMap;
 };
 

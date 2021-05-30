@@ -1,9 +1,4 @@
 #include "ChessBoard.h"
-<<<<<<< Updated upstream
-#include "ChessPiece.h"
-#include "ConfigController.h"
-=======
->>>>>>> Stashed changes
 
 bool ChessBoard::init()
 {

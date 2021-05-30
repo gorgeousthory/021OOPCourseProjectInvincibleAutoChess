@@ -18,7 +18,10 @@
 USING_NS_CC;
 
 #include "ConfigController.h"
+<<<<<<< Updated upstream
 #include "ChessBoard.h"
+=======
+>>>>>>> Stashed changes
 
 #include <string>
 using std::string;
@@ -73,8 +76,15 @@ enum class Level { level1, level2, level3 };
 class ChessPiece : public Ref
 {
 public:
+<<<<<<< Updated upstream
 	// 初始化棋子状态
 	virtual bool init(int id);
+=======
+	virtual bool init();
+
+	// 初始化棋子状态
+	void initPieceIfo(int id);
+>>>>>>> Stashed changes
 
 	// 更新棋子状态
 	bool updatePieceInfo(const double damage, PieceCoordinate* newRealCoordinate);

@@ -12,6 +12,10 @@
 #define _CHESSBOARD_H_
 
 #include "ChessPiece.h"
+<<<<<<< Updated upstream
+=======
+#include "ConfigController.h"
+>>>>>>> Stashed changes
 
 class ChessBoard :public Ref
 {

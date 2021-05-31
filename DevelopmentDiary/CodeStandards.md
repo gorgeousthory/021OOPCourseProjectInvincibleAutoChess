@@ -53,6 +53,11 @@ bool TestFunction(int a, int b);
 ```
 
 ### Code Tips
-- Cocos prefer to use key word `auto` to identify a variable.
+- Cocos prefer to use key word `auto` to identify a variable
+- Define the origin-point at the left bottom of the screan
+- Use the sizer(`筛选器`) in VS2019 to manage the files
+  - model(数据模型)
+  - controller(游戏逻辑控制)
+  - scene(场景控制)
 
 ### Please Add Other Questions of Coding in this File!

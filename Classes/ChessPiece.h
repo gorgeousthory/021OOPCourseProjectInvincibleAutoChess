@@ -48,6 +48,8 @@ struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 	double criticalChance; // 暴击几率
 
 	double criticalDamage; // 暴击伤害
+
+	Condition myCondition;//当前状态
 };
 
 enum class CoordinateType{ real, logical }; // 坐标类型
@@ -106,7 +108,7 @@ public:
 	// 设置当前棋子星级
 	void setPieceLevel(const Level newLevel) { _pieceLevel = newLevel; }
 
-	CREATE_FUNC(ChessPiece);
+	//CREATE_FUNC(ChessPiece);   这里ChessPiece是抽象类不能create
 
 	//技能函数，继承
 	virtual void skill() = 0;
@@ -131,11 +133,11 @@ public:
 	//攻击：吸血函数
 	int attackBack(int blood);
 
-	//攻击：被攻击函数,根据对方hp和血量扣除自身的hp并且返回伤害
+	//攻击：被攻击函数,根据伤害量扣除自身的hp
 	int beenAttack(int attack);
 
-	//上面攻击函数的package，攻击在这里调用，参数A即为被攻击的对象
-	void attackOne(ChessPiece A);
+	//上面攻击函数的package，攻击在这里调用，参数A即为被攻击的对象(定义为虚函数是因为这里牵扯到了棋子类，现在的棋子类是抽象类没办法当作参数)
+	void attackOne(ChessPiece &A);
 
 	//判断棋子是否死了
 	bool ifDead();

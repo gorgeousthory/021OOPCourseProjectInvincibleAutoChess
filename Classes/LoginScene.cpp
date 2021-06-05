@@ -13,25 +13,55 @@ bool LoginScene::init()
 	if (!Scene::init())
 		return false;
 
-	// 可视化部分开始
+	// ************可视化部分开始***************
 
 	// 获取屏幕上的各项参数
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto origin = Director::getInstance()->getVisibleOrigin();
 	// 自定义一个像素点的大小，适配所有机型，其他场景统一使用
 	static const Vec2 px = Vec2(Director::getInstance()->getVisibleSize().width / HORIZONTAL_PIXEL_NUM, Director::getInstance()->getVisibleSize().height / VERTICAL_PIXEL_NUM);
+	// LoginScene场景层
+	auto loginLayer = Layer::create();
+	loginLayer->setPosition(origin);
+	loginLayer->setContentSize(visibleSize);
+	this->addChild(loginLayer);
+
+	// 创建背景帧动画
+	auto cache = SpriteFrameCache::getInstance();
+	cache->addSpriteFramesWithFile("res/Background/LoginSceneAnimation.plist", "res/Background/LoginSceneAnimation.png"); // 加载图集资源
+	auto sprite = Sprite::createWithSpriteFrameName("image0.png"); // 以第一帧创建动画精灵
+	sprite->setPosition(visibleSize / 2);
+	Vec2 size = sprite->getContentSize();
+	sprite->setScale(visibleSize.width / size.x);
+	loginLayer->addChild(sprite, 1);
+	Vector<SpriteFrame*> images;
+	for (int i = 1; i <= 7; i++)
+	{
+		string str = "image";
+		str.push_back('0' + i);
+		str += ".png";
+		images.pushBack(cache->getSpriteFrameByName(str));
+	}
+	auto animation = Animation::createWithSpriteFrames(images, 1.0f / images.size());
+	auto animate = Animate::create(animation);
+	sprite->runAction(RepeatForever::create(animate)); // 执行动作
+
+	// 添加游戏LOGO
+	auto gameLogo = Sprite::create("res/UI/Logo.PNG");
+	gameLogo->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	loginLayer->addChild(gameLogo);
+	
+	// 添加资源加载进度条
 
 
 
-
-
-
-
-	// 可视化部分结束
+	// ************可视化部分结束***************
 
 	auto endButton = Button::create("CloseNormal.png", "CloseSelected.png", "CloseSelected.png");
 	endButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	endButton->setTitleLabel(Label::createWithTTF("EXIT", "fonts/Marker Felt.ttf", 52));
 	endButton->setPosition(Vec2(10 * px.x, 10 * px.y));
-	this->addChild(endButton, 1);
+	loginLayer->addChild(endButton, 2);
 	endButton->addTouchEventListener(
 		[&](Ref* sender, Widget::TouchEventType type) {
 			if (type == Widget::TouchEventType::ENDED)
@@ -51,7 +81,7 @@ bool LoginScene::init()
 	dataPathList.push_back("CloseSelected.png");
 	dataPathList.push_back("res/Books/AdvancedMathematics.png");
 	dataPathList.push_back("res/Background/BoardPiece.png");
-	dataPathList.push_back("res/Icons/Armor.png");
+	dataPathList.push_back("res/UI/Armor.png");
 
 	// 进行加载
 	this->loadResources();
@@ -126,7 +156,7 @@ MenuItemSprite* LoginScene::createGameButton(string name, string normalPicPath, 
 	auto item = MenuItemSprite::create(normalPic, pressedPic, callback);
 
 	//按钮文字标签
-	auto label = Label::createWithSystemFont(name, "方正姚体", 144);
+	auto label = Label::createWithTTF(name, "fonts/Marker Felt.ttf", 52);
 	label->setPosition(item->getContentSize() / 2);
 	label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	label->setColor(Color3B::WHITE);

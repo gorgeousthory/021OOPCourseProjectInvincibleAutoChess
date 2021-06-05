@@ -19,8 +19,6 @@ class ChessBoard :public Ref
 public:
 	virtual bool init();
 
-	CREATE_FUNC(ChessBoard);
-
 	// 逻辑坐标与实际坐标的转化
 	PieceCoordinate* coordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos);
 

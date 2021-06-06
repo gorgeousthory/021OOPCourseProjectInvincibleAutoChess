@@ -16,3 +16,10 @@
 - YSH、LXY：完成数据库链接Cocos项目相关工作
 - UNdetermined：了解联机相关，搭建socket服务器（都先了解一下，觉得自己能做请联系HJH）
 - ALL：在CodeStandards文档更新后及时阅读
+
+## Week 15
+YSH：结束界面素材相关，音频素材相关，
+YSH、LJC：数据文件创建及提供相关类、棋盘实际坐标与逻辑坐标的转换
+HJH、LXY：联机相关
+HJH、LXY、YSH：完成PlayScene
+`Week15周五晚6：00会再次发布一次任务，届时请关注git/hjh/DevelopmentDiary`

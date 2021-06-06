@@ -1,0 +1,56 @@
+/*Following  block is the Shoppincard,which needs packaging.*/
+	//Fetch the pics and values from the file
+	auto card = Button::create("/res/UI/Shoppingcard.PNG", "/res/UI/Shoppingcard.PNG", "/res/UI/Shoppingcard.PNG");	//the frame of the card
+	auto pic = Sprite::create("/res/Books/AdvancedMathematics.PNG");	//the figure pic of the card
+	//auto name = TextField::create("高等数学", "arial", 250);//Label::createWithTTF("AdvancedMathematics", "fonts/Marker Felt.ttf", 250);	//the name of book
+	auto Healthicon = Sprite::create("/res/Icons/Health.PNG");		//the Health icon（生命）
+	auto Healthvalue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 500);// Text::create("1000", "arial", 500);		//the value of Health icon
+	auto Attackicon = Sprite::create("/res/Icons/Attack.PNG");	//the Attack icon(攻击)
+	auto Attackvalue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 500);	//the value of Attack
+	auto Armoricon = Sprite::create("/res/Icons/Armor.PNG");	//the Armor icon(防御)
+	auto Armorvalue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 500);	//the value of Armor
+	const float CardScale = 0.2 * scaleRatio;
+
+	//adjust the comparing position of icons and texts
+	pic->setScale(0.5);
+	pic->setPosition(Vec2(450, 800));
+	card->addChild(pic);
+
+	/*name->setPosition(Vec2(300,300));
+	name->setColor(Color3B::BLACK);
+	card->addChild(name);*/
+
+	Healthvalue->setPosition(Vec2(1300, 200));
+	Healthvalue->setColor(Color3B::BLACK);
+	Healthicon->addChild(Healthvalue);
+	Healthicon->setScale(0.4);
+	Healthicon->setPosition(Vec2(1200, 1100));
+	card->addChild(Healthicon);
+
+	Attackvalue->setPosition(Vec2(1300, 200));
+	Attackvalue->setColor(Color3B::BLACK);
+	Attackicon->addChild(Attackvalue);
+	Attackicon->setScale(0.4);
+	Attackicon->setPosition(Vec2(1200, 700));
+	card->addChild(Attackicon);
+
+	Armorvalue->setPosition(Vec2(1300, 200));
+	Armorvalue->setColor(Color3B::BLACK);
+	Armoricon->addChild(Armorvalue);
+	Armoricon->setScale(0.4);
+	Armoricon->setPosition(Vec2(1200, 300));
+	card->addChild(Armoricon);
+
+	//you just need to adjust the Button card.
+	card->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);	//The defult ANCHOR is BOTTOM_LEFT
+	card->setPosition(Vec2(100, 0));
+	card->setScale(CardScale);
+	this->addChild(card);
+	card->addTouchEventListener(
+		[&](Ref* sender, Widget::TouchEventType type) {
+			if (type == Widget::TouchEventType::ENDED)
+			{
+				Director::getInstance()->end();
+			}
+		}
+	);

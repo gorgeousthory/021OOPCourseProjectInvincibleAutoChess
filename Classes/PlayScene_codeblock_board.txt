@@ -1,0 +1,48 @@
+/*Following  block is the Board,which needs packaging.*/
+Vector<Sprite*> ChessBoard;	//the vector contains the pieces of board;
+	const int MAX_BoardX = 9, MAX_BoardY = 8;	//the size of Board
+	const float BoardScale = 0.13 * scaleRatio;	//the Scale of Board
+
+	int halfBoardLenth = 384, num = 0;	//half the lenth of image and the number of BoardPiece
+	Vec2 temp = {};
+	for (int iy = 0; iy < MAX_BoardY; iy++)	//draw the board first;
+	{
+		for (int ix = 0; ix < MAX_BoardX; ix++)
+		{
+			ChessBoard.pushBack(Sprite::create("/res/Background/BoardPiece.png"));
+			num = ChessBoard.size() - 1;
+			ChessBoard.at(num)->setAnchorPoint(Vec2(halfBoardLenth * 2 / ChessBoard.at(num)->getContentSize().width, 0));
+			temp.x += halfBoardLenth * 2;
+			if (0 != num)
+			{
+				ChessBoard.at(num)->setPosition(temp);
+				ChessBoard.at(0)->addChild(ChessBoard.at(num));
+			}
+		}
+		temp.x = 0;
+		temp.y += halfBoardLenth * 2;
+	}
+	temp = Vec2(-halfBoardLenth * 2, -halfBoardLenth * 2);
+	for (int iy = -1; iy < MAX_BoardY + 1; iy++)	//then draw the frame of Board
+	{
+		for (int ix = -1; ix < MAX_BoardX + 1; ix++)
+		{
+			temp.x += halfBoardLenth * 2;
+			if (!(ix >= 0 && ix <= MAX_BoardX - 1 && iy >= 0 && iy <= MAX_BoardY - 1))
+			{
+				ChessBoard.pushBack(Sprite::create("/res/Background/ReadyZone.png"));
+				num = ChessBoard.size() - 1;
+				ChessBoard.at(num)->setAnchorPoint(Vec2(halfBoardLenth * 2 / ChessBoard.at(num)->getContentSize().width, 0));
+				ChessBoard.at(num)->setPosition(temp);
+				ChessBoard.at(0)->addChild(ChessBoard.at(num));
+			}
+
+		}
+		temp.x = -halfBoardLenth * 2;
+		temp.y += halfBoardLenth * 2;
+	}
+
+	ChessBoard.at(0)->setScale(BoardScale);	//set the scale
+	ChessBoard.at(0)->setPosition(Size(visibleSize.width * 0.5, visibleSize.height * 0.55 * scaleRatio)
+		- Size(halfBoardLenth * BoardScale * MAX_BoardX, halfBoardLenth * BoardScale * MAX_BoardY));	//set the position 
+	this->addChild(ChessBoard.at(0));

@@ -264,7 +264,7 @@ void ChessPiece::equipCombine()
 //这里的构造函数需要做初始化的兄弟补充
 tank::tank()
 {
-	oRankTank++;
+
 }
 
 void tank::skill()
@@ -276,10 +276,20 @@ void tank::familyBuff()
 {
 
 }
+//注意，该函数的作用仅为检测数量并且升级
+//删去被使用棋子的方式要看其他部分具体编写方式，不固定
+void tank::promoteRank() 
+{
+	if (oRankTank >= 3)
+		setPieceLevel(Level::level2);
+	if(twRankTank>=3)
+		setPieceLevel(Level::level3);
+}
+
 /*mage*/
 mage::mage()
 {
-	oRankMage++;
+
 }
 
 void mage::skill()
@@ -292,10 +302,18 @@ void mage::familyBuff()
 
 }
 
+void mage::promoteRank() 
+{
+	if (oRankMage >= 3)
+		setPieceLevel(Level::level2);
+	if (twRankMage >= 3)
+		setPieceLevel(Level::level3);
+}
+
 /*stalker*/
 stalker::stalker()
 {
-	oRankStalker++;
+
 }
 
 void stalker::skill()
@@ -308,10 +326,18 @@ void stalker::familyBuff()
 
 }
 
+void stalker::promoteRank()
+{
+	if (oRankStalker >= 3)
+		setPieceLevel(Level::level2);
+	if (twRankStalker >= 3)
+		setPieceLevel(Level::level3);
+}
+
 /*therapist*/
 therapist::therapist()
 {
-	oRankTherapist++;
+
 }
 
 void therapist::skill()
@@ -324,10 +350,18 @@ void therapist::familyBuff()
 
 }
 
+void therapist::promoteRank()
+{
+	if (oRankTherapist >= 3)
+		setPieceLevel(Level::level2);
+	if (twRankTherapist >= 3)
+		setPieceLevel(Level::level3);
+}
+
 /*shotter*/
 shotter::shotter()
 {
-	oRankShotter++;
+
 }
 
 void shotter::skill()
@@ -338,4 +372,12 @@ void shotter::skill()
 void shotter::familyBuff()
 {
 
+}
+
+void shotter::promoteRank()
+{
+	if (oRankShotter >= 3)
+		setPieceLevel(Level::level2);
+	if (twRankShotter >= 3)
+		setPieceLevel(Level::level3);
 }

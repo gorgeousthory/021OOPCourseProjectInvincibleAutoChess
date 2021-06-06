@@ -1,13 +1,11 @@
 /********************************************
  * 功能：棋子模型
- * 作者：刘兴源
+ * 作者：刘兴源,刘嘉诚
  * 版本：1.2.0
  * 位置：Classes/model(筛选器)
  * 游戏引擎：Cocos2d-x 4.0
  * ******************************************
- * 更新内容：合并了现有的两份棋子类内容，并在
- * 必要处加以修改，仍有函数的具体实现没有写完，
- * 细化将在此后几天完成。
+ * 更新内容：基本完成了逻辑层面大部分功能的实现
  ********************************************/
 #pragma once
 #ifndef _CHESSPIECE_H_
@@ -119,7 +117,7 @@ public:
 	//羁绊 继承
 	virtual void familyBuff() = 0;
 
-	//提升星级
+	//检测数量并提升星级，但注意不会删除被使用棋子
 	virtual void promoteRank() = 0;
 
 	//提供装备,giveEquip属于package 直接调用即可
@@ -188,10 +186,19 @@ class tank : public ChessPiece
 public:
 	//初始化函数
 	tank();
+	//析构函数
+	~tank();
+	//数量记录，构造函数涉及到的地方较多,不好控制，干脆自己控制加1吧
+	void IncreaseOne() { oRankTank++; }
+	void DecreaseOne() { oRankTank--; }
+	void IncreaseTwo() { twRankTank++; }
+	void DecreaseTwo() { twRankTank--; }
 	//技能函数
 	void skill();
 	//家族buff 空出来了
 	void familyBuff();
+	//升级函数
+	void promoteRank();
 };
 
 /*mage*/
@@ -201,10 +208,18 @@ class mage : public ChessPiece
 	static int twRankMage;//记录二星Mage数量
 public:
 	mage();
+	~mage();
+	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
+	void Increase() { oRankMage++; }
+	void Decrease() { oRankMage--; }
+	void IncreaseTwo() { twRankMage++; }
+	void DecreaseTwo() { twRankMage--; }
 	//技能函数
 	void skill();
 	//家族buff 空出来了
 	void familyBuff();
+	//升级函数
+	void promoteRank();
 };
 
 /*stalker*/
@@ -214,10 +229,18 @@ class stalker : public ChessPiece
 	static int twRankStalker;//记录二星stalker数量
 public:
 	stalker();
+	~stalker();
+	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
+	void Increase() { oRankStalker++; }
+	void Decrease() { oRankStalker--; }
+	void IncreaseTwo() { twRankStalker++; }
+	void DecreaseTwo() { twRankStalker--; }
 	//技能函数
 	void skill();
 	//家族buff 空出来了
 	void familyBuff();
+	//升级函数
+	void promoteRank();
 };
 
 /*therapist*/
@@ -227,10 +250,18 @@ class therapist : public ChessPiece
 	static int twRankTherapist;//记录二星therapist数量
 public:
 	therapist();
+	~therapist();
+	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
+	void Increase() { oRankTherapist++; }
+	void Decrease() { oRankTherapist--; }
+	void IncreaseTwo() { twRankTherapist++; }
+	void DecreaseTwo() { twRankTherapist--; }
 	//技能函数
 	void skill();
 	//家族buff 空出来了
 	void familyBuff();
+	//升级函数
+	void promoteRank();
 };
 
 /*shotter*/
@@ -240,9 +271,17 @@ class shotter : public ChessPiece
 	static int twRankShotter;//记录二星shotter数量
 public:
 	shotter();
+	~shotter();
+	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
+	void Increase() { oRankShotter++; }
+	void Decrease() { oRankShotter--; }
+	void IncreaseTwo() { twRankShotter++; }
+	void DecreaseTwo() { twRankShotter--; }
 	//技能函数
 	void skill();
 	//家族buff 空出来了
 	void familyBuff();
+	//升级函数
+	void promoteRank();
 };
 #endif

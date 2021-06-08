@@ -13,15 +13,35 @@ bool ChessBoard::init()
 	}
 }
 
-PieceCoordinate* ChessBoard::coordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos)
+/*
+* 第一个参数为real时表示从逻辑转换为真实
+* 最后一个参数应当固定传入棋盘战斗区最左
+* 下角一小格
+*/
+PieceCoordinate* coordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos, Sprite* sprite)
 {
+	//获取起始块的逻辑尺寸
+	Size oneP=sprite->getContentSize();
+	int halfBoardWidth = oneP.width/2;
+	int halfBoardHeight = oneP.height/2;
+
+	//获得小格左下角位置(默认修改小格锚点位于右下角)
+	//小格锚点改动，这里简单修改即可
+	Vec2 XY = sprite->getPosition();
+	XY.x = XY.x - 2*halfBoardWidth;
+
 	if (type == CoordinateType::logical)
 	{
-		return nullptr;
+		newPos->setX(int(oldPos->getX()-XY.x) % (halfBoardWidth * 2)+1);
+		newPos->setY(int(oldPos->getY() - XY.y) % (halfBoardHeight * 2) + 1);
+		return newPos;
 	}
 	else
 	{
-		return nullptr;
+		//给予的逻辑尺寸坐标是对应坐标位置小方块的中心
+		newPos->setX(oldPos->getX()*2* halfBoardWidth - halfBoardWidth);
+		newPos->setY(oldPos->getY()*2*halfBoardHeight-halfBoardHeight);
+		return newPos;
 	}
 }
 

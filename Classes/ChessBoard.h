@@ -30,8 +30,8 @@ public:
 
 	CREATE_FUNC(ChessBoard);
 
-	// 逻辑坐标与实际坐标的转化
-	PieceCoordinate* coordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos);
+	// 逻辑坐标与实际坐标的转化,转入的为对战区左下角第一格棋盘对应的精灵
+	PieceCoordinate* coordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos,Sprite* sprite);
 
 	// 计算实际坐标间的距离
 	static double getDistance(PieceCoordinate* start, PieceCoordinate* end);

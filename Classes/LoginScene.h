@@ -27,10 +27,8 @@ using namespace ui;
 #include <string>
 using namespace std;
 
+#include "ConfigController.h"
 #include "PlayScene.h"
-
-#define HORIZONTAL_PIXEL_NUM 160
-#define VERTICAL_PIXEL_NUM 90
 
 class LoginScene : public Scene
 {
@@ -51,6 +49,8 @@ public:
 	MenuItemSprite* createGameButton(string name, string normalPicPath, string pressedPicPath, const ccMenuCallback& callback);
 
 private:
+	ProgressTimer* loadingBar; // 资源加载进度条
+
 	unsigned int resCount; // 当前加载的资源总量
 
 	unsigned int resTotal; // 需要加载的资源总量

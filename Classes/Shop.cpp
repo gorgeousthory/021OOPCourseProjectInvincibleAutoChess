@@ -51,7 +51,7 @@ void Shop::reFresh()
 			pieceList.push_back(new stalker);
 		}
 	}
-
+	//刷新装备对应整数
 	gear = rand() % 5;
 };
 /*
@@ -74,6 +74,9 @@ ClassName Shop::pieceIn(int money,int maxPiece, int pieceNum, ClassName A,typena
 		return ;//如果失败，则返回NULL
 	}
 }
+//输入1至5为购买对应位置的棋子。
+//不输入即为购买装备
+
 
 template<class ClassName>
 int Shop::pieceOut(ClassName piece)
@@ -81,4 +84,19 @@ int Shop::pieceOut(ClassName piece)
 	int price = 0;//棋子的价格
 	price = static_cast<int>(piece.getPieceLevel());
 	return price;
+}
+
+/*piecenum表示已持有装备数量*/
+/*通过player的howMEquip()获得*/
+int Shop::pieceInEquip(int money,int pieceNum, int price, int which)
+{
+	if (money >= price && pieceNum < maxEquip) {//购买成功   
+		judge = 1;
+		gear = 0;//表示无装备了
+		return gear;
+	}
+	else {
+		judge = 0;
+		return;//如果失败，则返回NULL
+	}
 }

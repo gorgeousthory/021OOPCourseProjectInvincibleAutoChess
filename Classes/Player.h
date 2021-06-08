@@ -1,6 +1,6 @@
 /*
 功能：玩家模型
-作者：刘兴源
+作者：刘兴源,刘嘉诚
 位置：Class/model（筛选器）
 游戏引擎：Cocos2d-x 4.0
 */
@@ -33,6 +33,15 @@ public:
 	//afterbattle后失败扣血
 	void hpDecrease();
 
+	//获得一个装备,搭配商店购买装备函数使用
+	void getOneEquip(int equip);
+
+	//给予一个装备,which表示第几个格子的装备
+	void giveOneEquip(int which, ChessPiece* p1);
+
+	//获得人物已持有装备数量
+	int howMEquip() { return gear.size(); };
+	
 private:
 	//人物经验等级（最高为10）
 	int experience;
@@ -52,7 +61,10 @@ private:
 	//人物血量
 	int healthPoint;
 
-	//人物所拥有棋子(每人最多同时持有8枚棋子),初始最大值为5
+	//人物装备,
+	vector<int> gear;
+
+    //人物所拥有棋子(每人最多同时持有8枚棋子),初始最大值为5
 	ChessPiece piecePossesion[8]{};
 
 	//当前上场战斗棋子(每人满级后最多上场7个棋子)，初始最大值为3

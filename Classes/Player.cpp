@@ -55,3 +55,17 @@ void Player::hpDecrease()
 		healthPoint = healthPoint;
 	}
 }
+
+/*依照商店购买装备函数返回的整数获得对应装备*/
+void Player::getOneEquip(int equip)
+{
+	gear.push_back(equip);
+}
+
+/*选择对应装备，给予对应棋子*/
+/*gear中存储int对应装备请参考*/
+/*ChessPiece或shop类*/
+void Player::giveOneEquip(int which,ChessPiece* p1)
+{
+	p1->giveEquip(1,gear[which]);
+}

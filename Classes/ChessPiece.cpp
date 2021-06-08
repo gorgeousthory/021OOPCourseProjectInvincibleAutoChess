@@ -131,7 +131,10 @@ void ChessPiece::chessMoveLogicalJump(Vector<ChessPiece*>* Oc)
 			;
 
 		if (_logCoordinate.getY() !=TargetY)
-			_logCoordinate.setY(_logCoordinate.getY() - 1);
+			if(TargetY==0)
+				_logCoordinate.setY(_logCoordinate.getY() + 1);
+			else 
+				_logCoordinate.setY(_logCoordinate.getY() - 1);
 		else
 			;
 	}
@@ -217,6 +220,9 @@ void ChessPiece::setCondition(double s, int Condition)
 /*对于数值类的,表示数指，每秒回血800，填写800*/
 /*参数2表示某一状态:1,控制 2,易损 3,攻击提升 4,攻速提升 5,防御提升 6,攻击吸血 7,回血状态*/
 //----------------------------------------------------------------------------------------------------------------------------------
+/*整形数字与装备对应关系
+* 1 yataghan,2 gem,3 dagger,4 ammoue,5 bow
+*/
 void ChessPiece::giveEquip(int qua, int e_class)
 {
 	switch (e_class)

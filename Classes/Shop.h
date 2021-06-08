@@ -22,6 +22,7 @@ using std::string;
 #include<stdlib.h>//这个头文件用于生成随机数，刷新商店可用
 #include<time.h>
 #include<vector>
+#define maxEquip 6//预留人物持有装备数装备上限
 using namespace std;
 
 class Shop : public Ref
@@ -34,7 +35,9 @@ public:
 	CREATE_FUNC(Shop);
 
 	template<class ClassName,typename price>
-	ClassName pieceIn(int money,int maxPiece,int pieceNum,ClassName A,typename price,int which);//买棋子/装备
+	ClassName pieceIn(int money,int maxPiece,int pieceNum,ClassName A,typename price,int which);//买棋子
+
+	int pieceInEquip(int money, int pieceNum, int price, int which);//买装备
 
 	template<class ClassName>
 	int pieceOut(ClassName piece);//卖棋子/装备

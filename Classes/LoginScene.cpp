@@ -43,14 +43,6 @@ bool LoginScene::init()
 	auto animation = Animation::createWithSpriteFrames(images, 1.0f / images.size());
 	auto animate = Animate::create(animation);
 	sprite->runAction(RepeatForever::create(animate)); // 执行动作
-
-	// 添加游戏LOGO
-	auto gameLogo = Sprite::create("res/UI/Logo.PNG");
-	gameLogo->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-	originSize = gameLogo->getContentSize();
-	gameLogo->setScale(80 * ConfigController::getInstance()->getPx()->x / originSize.x);
-	gameLogo->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 5 * ConfigController::getInstance()->getPx()->y));
-	loginLayer->addChild(gameLogo, 2);
 	
 	// 添加资源加载进度条
 	auto loadingBarBack = Sprite::create("res/UI/LoginLoadingBarBack.png"); // 进度条的背景
@@ -71,20 +63,6 @@ bool LoginScene::init()
 
 	// ************可视化部分结束***************
 
-	auto endButton = Button::create("CloseNormal.png", "CloseSelected.png", "CloseSelected.png");
-	endButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-	endButton->setTitleLabel(Label::createWithTTF("EXIT", "fonts/Marker Felt.ttf", 52));
-	endButton->setPosition(Vec2(10 * ConfigController::getInstance()->getPx()->x, 10 * ConfigController::getInstance()->getPx()->y));
-	loginLayer->addChild(endButton, 2);
-	endButton->addTouchEventListener(
-		[&](Ref* sender, Widget::TouchEventType type) {
-			if (type == Widget::TouchEventType::ENDED)
-			{
-				Director::getInstance()->end();
-			}
-		}
-	);
-
 	// 初始化所需加载的资源数量及路径表
 	resCount = 0;
 	resTotal = 23;
@@ -98,6 +76,35 @@ bool LoginScene::init()
 
 	// 进行加载
 	this->loadResources();
+
+	// ************可视化部分开始***************
+
+	// 添加游戏LOGO
+	auto gameLogo = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("/res/UI/Logo.PNG"));
+	gameLogo->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	originSize = gameLogo->getContentSize();
+	gameLogo->setScale(80 * ConfigController::getInstance()->getPx()->x / originSize.x);
+	gameLogo->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 5 * ConfigController::getInstance()->getPx()->y));
+	loginLayer->addChild(gameLogo, 2);
+
+	auto startButton = LoginScene::createGameButton("Start!", "/res/UI/PlayNormal.PNG", "/res/UI/PlaySelected.PNG", CC_CALLBACK_1(LoginScene::menuStartCallBack, this));
+	startButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	originSize = startButton->getContentSize();
+	startButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
+	startButton->setPosition(Vec2(0, -25 * ConfigController::getInstance()->getPx()->y));
+
+	auto exitButton = LoginScene::createGameButton("Exit!", "/res/UI/ExitNormal.PNG", "/res/UI/ExitSelected.PNG", CC_CALLBACK_1(LoginScene::menuExitCallBack, this));
+	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	originSize = exitButton->getContentSize();
+	exitButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
+	exitButton->setPosition(Vec2(70 * ConfigController::getInstance()->getPx()->y, -35 * ConfigController::getInstance()->getPx()->y));
+	
+	// LoginScene菜单
+	auto menu = Menu::create(startButton, exitButton, nullptr);
+	loginLayer->addChild(menu, 5);
+
+	// ************可视化部分结束***************
+	
 
 	return true;
 }
@@ -131,13 +138,17 @@ list<string> LoginScene::getFileFromPath(string path)
 
 	// 进入到该文件夹当中
 	_wchdir(wFilePath.c_str());
+
+	int pos = filePath.find("Resources");
+	filePath = filePath.substr(pos + 9, filePath.size());
+
 	// 遍历该文件夹下的所有文件并记录
 	while ((entry = readdir(dp)) != NULL)
 	{
 		stat(entry->d_name, &statbuf);
 		if (!S_ISREG(statbuf.st_mode))
 			continue;
-		files.push_back(path + "/" + entry->d_name);
+		files.push_back(filePath + "/" + entry->d_name);
 	}
 
 	return files;
@@ -155,7 +166,8 @@ void LoginScene::loadResources()
 			// 加载到内存中
 			Director::getInstance()->getTextureCache()->addImage(files.back());
 			resCount++;
-			loadingBar->setPercentage(resCount / resTotal * 100);
+			barAction = ProgressFromTo::create(5.0f, (resCount - 1) * 100 / resTotal, resCount * 100 / resTotal);
+			loadingBar->runAction(RepeatForever::create(barAction));
 			CCLOG("loading %s", files.back().c_str());
 			files.pop_back(); // 从文件列表中清除已加载完毕的文件
 		}
@@ -173,7 +185,7 @@ MenuItemSprite* LoginScene::createGameButton(string name, string normalPicPath, 
 	auto item = MenuItemSprite::create(normalPic, pressedPic, callback);
 
 	//按钮文字标签
-	auto label = Label::createWithTTF(name, "fonts/Marker Felt.ttf", 52);
+	auto label = Label::createWithTTF(name, "fonts/Marker Felt.ttf", 100);
 	label->setPosition(item->getContentSize() / 2);
 	label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	label->setColor(Color3B::WHITE);
@@ -186,6 +198,11 @@ void LoginScene::menuStartCallBack(Ref* sender)
 {
 	auto scene = PlayScene::create();
 	Director::getInstance()->replaceScene(scene);
+}
+
+void LoginScene::menuExitCallBack(Ref* sender)
+{
+	Director::getInstance()->end();
 }
 
 // 常用字节编码转换为宽字节编码

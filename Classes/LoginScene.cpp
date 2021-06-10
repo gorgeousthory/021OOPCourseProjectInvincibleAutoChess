@@ -72,6 +72,7 @@ bool LoginScene::init()
 	dataPathList.push_back("CloseSelected.png");
 	dataPathList.push_back("res/Books/AdvancedMathematics.png");
 	dataPathList.push_back("res/Background/BoardPiece.png");
+	dataPathList.push_back("res/Icons/Armor.PNG");
 	dataPathList.push_back("res/UI/PlayNormal.png");
 
 	// Ω¯––º”‘ÿ

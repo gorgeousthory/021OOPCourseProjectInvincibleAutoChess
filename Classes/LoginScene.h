@@ -25,6 +25,7 @@ using namespace ui;
 
 #include <list>
 #include <string>
+#include <Windows.h>
 using namespace std;
 
 #include "ConfigController.h"
@@ -46,7 +47,7 @@ public:
 	CREATE_FUNC(LoginScene);
 
 	// 创建一个通用按钮
-	MenuItemSprite* createGameButton(string name, string normalPicPath, string pressedPicPath, const ccMenuCallback& callback);
+	static MenuItemSprite* createGameButton(string name, string normalPicPath, string pressedPicPath, const ccMenuCallback& callback);
 
 private:
 	ProgressTimer* loadingBar; // 资源加载进度条

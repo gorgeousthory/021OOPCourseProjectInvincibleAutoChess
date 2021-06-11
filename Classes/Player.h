@@ -10,9 +10,11 @@
 USING_NS_CC;
 
 #include <string>
+#include<vector>
 using std::string;
+using namespace std;
 
-#include"Chesspiece.h"
+#include"ChessPiece.h"
 
 class Player : public Ref
 {
@@ -31,8 +33,10 @@ public:
 	void promote();
 
 	//afterbattle后失败扣血
-	void hpDecrease();
+	void hpDecrease(int damage);
 
+	//获得hp
+	int getHp();
 private:
 	//人物经验等级（最高为10）
 	int experience;
@@ -53,8 +57,8 @@ private:
 	int healthPoint;
 
 	//人物所拥有棋子(每人最多同时持有8枚棋子),初始最大值为5
-	ChessPiece piecePossesion[8]{};
+	ChessPiece * piecePossesion[8];
 
 	//当前上场战斗棋子(每人满级后最多上场7个棋子)，初始最大值为3
-	ChessPiece pieceBattle[7]{};
+	ChessPiece * pieceBattle[7];
 };

@@ -46,12 +46,12 @@ void Player::promote()
 	  1.每次扣除hp的数量
 	  2.扣除hp的条件判断
 */
-void Player::hpDecrease()
+void Player::hpDecrease(int damage)
 {
-	if (true) {
-		healthPoint = healthPoint - 1;
-	}
-	else {
-		healthPoint = healthPoint;
-	}
+	healthPoint -= damage;
+}
+
+int Player::getHp()
+{
+	return healthPoint;
 }

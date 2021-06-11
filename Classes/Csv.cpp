@@ -2,6 +2,25 @@
 
 USING_NS_CC;
 
+
+/*
+//the example to show the use of Csv
+	CsvParser csv;
+	csv.parseWithFile("Data/PiecesData.csv");
+	//test1
+	for (int i = 0; i < csv.getRowCount(); i++) {
+		for (int j = 0; j < csv.getColumnCount(); j++) {
+			log("%s", csv[i][j].c_str());
+		}
+	}
+	//test2	the type Value can be transform to many type
+	Value a = Value(csv[1][0].c_str());
+	auto b = Label::createWithTTF("1000" + a.asString(), "fonts/Marker Felt.ttf", 500);
+	b->setPosition(visibleSize / 2);
+	this->addChild(b, 1);
+*/
+
+
 //×Ö·û´®·Ö¸îº¯Êý
 void split(const std::string& str, const char* reps, std::vector<std::string>& tarVector)
 {

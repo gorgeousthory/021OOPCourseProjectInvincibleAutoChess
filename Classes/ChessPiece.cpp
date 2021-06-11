@@ -6,7 +6,7 @@ bool ChessPiece::init(int id)
 		return false;
 
 	// 初始化各项数据
-	_pieceName = ConfigController::getDataByID(id).asString();
+	//_pieceName = ConfigController::getDataByID(id).asString();
 	_piecePicPath = "Resources/Sprite/";
 	_piecePicPath += _pieceName;
 
@@ -71,11 +71,11 @@ bool ChessPiece::updatePieceInfo(const double damage, PieceCoordinate* newRealCo
 
 	// 更新棋子位置
 	const int MOVESPEED = 3; // 移动速度，单位：秒每单位像素
-	auto distance = ChessBoard::getDistance(&_realCoordinate, newRealCoordinate);
-	auto time = static_cast<float>(distance / MOVESPEED);
+	//auto distance = ChessBoard::getDistance(&_realCoordinate, newRealCoordinate);
+	//auto time = static_cast<float>(distance / MOVESPEED);
 
 	// 动画应该在PlayScene中创建，这里先放在这里（版本1.1.1）
-	auto updatePiecePos = MoveTo::create(time, Vec2(newRealCoordinate->getX(), newRealCoordinate->getY()));
+	//auto updatePiecePos = MoveTo::create(time, Vec2(newRealCoordinate->getX(), newRealCoordinate->getY()));
 }
 
 bool ChessPiece::ifDead()

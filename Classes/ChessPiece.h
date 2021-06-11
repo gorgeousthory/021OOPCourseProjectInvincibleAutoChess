@@ -1,13 +1,11 @@
 /********************************************
  * 功能：棋子模型
- * 作者：刘兴源
- * 版本：1.2.0
+ * 作者：刘兴源,刘嘉诚
+ * 版本：1.2.1
  * 位置：Classes/model(筛选器)
  * 游戏引擎：Cocos2d-x 4.0
  * ******************************************
- * 更新内容：合并了现有的两份棋子类内容，并在
- * 必要处加以修改，仍有函数的具体实现没有写完，
- * 细化将在此后几天完成。
+ * 更新内容：合并了ljc上传的一些内容，增添了storageNum这个变量
  ********************************************/
 #pragma once
 #ifndef _CHESSPIECE_H_
@@ -19,7 +17,6 @@
 USING_NS_CC;
 
 #include "ConfigController.h"
-#include "ChessBoard.h"
 #include "Equipment.h"
 #include "Condition.h"
 
@@ -32,7 +29,7 @@ struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 	double healthPointM;//最大生命值
 	
 	double magicPoint; // 法力
-	double magicPoint; // 最大法力
+	double magicPointM; // 最大法力
 
 	double attack; // 攻击力
 	double equipAttack;//装备+初始
@@ -120,7 +117,7 @@ public:
 	virtual void promoteRank() = 0;
 
 	//提供装备
-	virtual void giveEquip(int equipNum, int equipType);
+	//virtual void giveEquip(int equipNum, int equipType);
 
 	//计算buff并修改自身属性
 	virtual void readCondition();
@@ -142,6 +139,7 @@ public:
 	//判断棋子是否死了
 	bool ifDead();
 
+	int storageNum = 0;//上方棋子为负数，下方棋子为正数
 private:
 	string _pieceName; // 名称
 	
@@ -162,4 +160,113 @@ private:
 	PieceCoordinate _realCoordinate; // 棋子的实际位置
 };
 
+//----------------------------------------------------------------------------------------------------------------------------------
+//分割线，以上是棋子基类的声明，以下是各种具体棋子的声明
+//----------------------------------------------------------------------------------------------------------------------------------
+/*tank*/
+class tank : public ChessPiece
+{
+	static int oRankTank;//记录一星tank的数量
+	static int twRankTank;//记录二星tank数量
+public:
+	//初始化函数
+	tank();
+	//析构函数
+	~tank();
+	//数量记录，构造函数涉及到的地方较多,不好控制，干脆自己控制加1吧
+	void IncreaseOne() { oRankTank++; }
+	void DecreaseOne() { oRankTank--; }
+	void IncreaseTwo() { twRankTank++; }
+	void DecreaseTwo() { twRankTank--; }
+	//技能函数
+	void skill();
+	//家族buff 空出来了
+	void familyBuff();
+	//升级函数
+	void promoteRank();
+};
+
+/*mage*/
+class mage : public ChessPiece
+{
+	static int oRankMage;//记录一星Mage的数量
+	static int twRankMage;//记录二星Mage数量
+public:
+	mage();
+	~mage();
+	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
+	void Increase() { oRankMage++; }
+	void Decrease() { oRankMage--; }
+	void IncreaseTwo() { twRankMage++; }
+	void DecreaseTwo() { twRankMage--; }
+	//技能函数
+	void skill();
+	//家族buff 空出来了
+	void familyBuff();
+	//升级函数
+	void promoteRank();
+};
+
+/*stalker*/
+class stalker : public ChessPiece
+{
+	static int oRankStalker;//记录一星stalker的数量
+	static int twRankStalker;//记录二星stalker数量
+public:
+	stalker();
+	~stalker();
+	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
+	void Increase() { oRankStalker++; }
+	void Decrease() { oRankStalker--; }
+	void IncreaseTwo() { twRankStalker++; }
+	void DecreaseTwo() { twRankStalker--; }
+	//技能函数
+	void skill();
+	//家族buff 空出来了
+	void familyBuff();
+	//升级函数
+	void promoteRank();
+};
+
+/*therapist*/
+class therapist : public ChessPiece
+{
+	static int oRankTherapist;//记录一星therapist的数量
+	static int twRankTherapist;//记录二星therapist数量
+public:
+	therapist();
+	~therapist();
+	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
+	void Increase() { oRankTherapist++; }
+	void Decrease() { oRankTherapist--; }
+	void IncreaseTwo() { twRankTherapist++; }
+	void DecreaseTwo() { twRankTherapist--; }
+	//技能函数
+	void skill();
+	//家族buff 空出来了
+	void familyBuff();
+	//升级函数
+	void promoteRank();
+};
+
+/*shooter*/
+class shooter : public ChessPiece
+{
+	static int oRankShotter;//记录一星shotter的数量
+	static int twRankShotter;//记录二星shotter数量
+public:
+	shooter();
+	~shooter();
+	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
+	void Increase() { oRankShotter++; }
+	void Decrease() { oRankShotter--; }
+	void IncreaseTwo() { twRankShotter++; }
+	void DecreaseTwo() { twRankShotter--; }
+	//技能函数
+	void skill();
+	//家族buff 空出来了
+	void familyBuff();
+	//升级函数
+	void promoteRank();
+}
 #endif

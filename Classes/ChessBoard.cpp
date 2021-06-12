@@ -22,8 +22,8 @@ PieceCoordinate* coordinateConvert(CoordinateType type, PieceCoordinate* oldPos,
 {
 	//获取起始块的逻辑尺寸
 	Size oneP=sprite->getContentSize();
-	int halfBoardWidth = oneP.width/2;
-	int halfBoardHeight = oneP.height/2;
+	int halfBoardWidth = static_cast<int>(oneP.width/2);
+	int halfBoardHeight = static_cast<int>(oneP.height/2);
 
 	//获得小格左下角位置(默认修改小格锚点位于右下角)
 	//小格锚点改动，这里简单修改即可
@@ -55,7 +55,7 @@ vector<ChessPiece*>* ChessBoard::getPlayerA_WarZone_Pieces()
 	return &_prtPlayerA_WarZone_Pieces;
 }
 
-vector<ChessPiece*>* ChessBoard::getPlayerA_PreZone_Pieces()
+vector<ChessPiece*>* ChessBoard::getPlayerA_PreZone_Pieces()v
 {
 	return &_prtPlayerA_PreZone_Pieces;
 }
@@ -70,7 +70,7 @@ vector<ChessPiece*>* ChessBoard::getPlayerB_PreZone_Pieces()
 	return &_prtPlayerB_PreZone_Pieces;
 }
 
-bool ChessBoard::setBoard(ChessPiece piece)
+bool ChessBoard::setBoard(ChessPiece& piece)
 {
 	//检验棋盘对应位置是否为空，是否能换位置
 	if ('.' == board[piece.getPrtCoordinateByType(CoordinateType::real)->getX()][piece.getPrtCoordinateByType(CoordinateType::real)->getY()]) {

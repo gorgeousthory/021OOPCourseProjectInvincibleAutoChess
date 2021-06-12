@@ -42,6 +42,9 @@ public:
 	template<class ClassName>
 	int pieceOut(ClassName piece);//卖棋子/装备
 
+	//返回判断，表示上一次购买行为是否成功
+	int ifGet();
+
 private:
 	vector<ChessPiece*>pieceList;
 	int gear;//一个武器，使用一个整数记录即可

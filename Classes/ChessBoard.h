@@ -15,7 +15,6 @@
 #define BOARD_SIZE 8//定义棋盘大小
 
 #include "ChessPiece.h"
-#include<vector>
 #include "ConfigController.h"
 
 using namespace std;
@@ -28,7 +27,7 @@ class ChessBoard :public Ref
 public:
 	virtual bool init();
 
-	CREATE_FUNC(ChessBoard);
+	//CREATE_FUNC(ChessBoard);
 
 	// 逻辑坐标与实际坐标的转化,转入的为对战区左下角第一格棋盘对应的精灵
 	PieceCoordinate* coordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos,Sprite* sprite);
@@ -49,17 +48,17 @@ public:
 	vector<ChessPiece*>* getPlayerB_PreZone_Pieces();
 
 	//设置棋盘上的棋子表示这里有棋子不能再放置了
-	bool setBoard(ChessPiece piece);
+	bool setBoard(ChessPiece& piece);
 
 private:
 
-	Vector<ChessPiece*> _prtPlayerA_WarZone_Pieces; // 记录玩家A对战区棋子集合
+	vector<ChessPiece*>* _prtPlayerA_WarZone_Pieces; // 记录玩家A对战区棋子集合
 
-	Vector<ChessPiece*> _prtPlayerA_PreZone_Pieces; // 记录玩家A备战区棋子集合
+	vector<ChessPiece*>* _prtPlayerA_PreZone_Pieces; // 记录玩家A备战区棋子集合
 
-	Vector<ChessPiece*> _prtPlayerB_WarZone_Pieces; // 记录玩家B对战区棋子集合
+	vector<ChessPiece*>* _prtPlayerB_WarZone_Pieces; // 记录玩家B对战区棋子集合
 
-	Vector<ChessPiece*> _prtPlayerB_PreZone_Pieces; // 记录玩家B备战区棋子集合
+	vector<ChessPiece*>* _prtPlayerB_PreZone_Pieces; // 记录玩家B备战区棋子集合
 
 	//记录棋盘上哪里为空哪里有棋子
 	//仅用来确定是否可以移动，无法确定具体位置的具体棋子是什么

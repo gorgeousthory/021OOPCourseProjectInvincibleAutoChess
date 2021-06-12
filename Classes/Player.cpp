@@ -69,3 +69,9 @@ void Player::giveOneEquip(int which,ChessPiece* p1)
 {
 	p1->giveEquip(1,gear[which]);
 }
+
+//获得人物已持有装备数量
+int Player::howMEquip() { return gear.size(); };
+
+//返回玩家血量
+int Player::getHp() { return  healthPoint; };

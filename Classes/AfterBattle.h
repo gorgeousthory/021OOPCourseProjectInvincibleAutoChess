@@ -9,12 +9,11 @@
 #pragma once
 
 #include<cocos2d.h>
+#include"ChessPiece.h"
 #include"Player.h"
 #include<ChessBoard.h>
 #include<vector>
-#include"ChessPiece.h"
 USING_NS_CC;
-using namespace std;
 
 #include <string>
 using std::string;

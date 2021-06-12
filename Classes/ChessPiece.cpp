@@ -70,7 +70,7 @@ bool ChessPiece::updatePieceInfo(const double damage, PieceCoordinate* newRealCo
 
 	// 更新棋子位置
 	const int MOVESPEED = 3; // 移动速度，单位：秒每单位像素
-	auto distance = ChessBoard::getDistance(&_realCoordinate, newRealCoordinate);
+	double distance = ChessBoard::getDistance(&_realCoordinate, newRealCoordinate);
 	auto time = static_cast<float>(distance / MOVESPEED);
 
 	// 动画应该在PlayScene中创建，这里先放在这里（版本1.1.1）
@@ -92,7 +92,7 @@ int ChessPiece::attackBack(int blood)
 int ChessPiece::beenAttack(int attack)
 {
 	double d_rate = _pieceCrtCondition.defence / (100.0 + _pieceCrtCondition.defence);//减伤比例
-	int blood = (attack * d_rate) * (_pieceCondition.getFragile() + 1);
+	int blood = static_cast<int>((attack * d_rate) * (_pieceCondition.getFragile() + 1));
 	_pieceCrtCondition.healthPoint = _pieceCrtCondition.healthPoint - blood;
 }
 
@@ -103,17 +103,16 @@ void ChessPiece::attackOne(ChessPiece& who_been_a)
 //----------------------------------------------------------------------------------------------------------------------------------
 bool ChessPiece::ifDead() { return _pieceCrtCondition.healthPoint <= 0 ? true : false; };
 //----------------------------------------------------------------------------------------------------------------------------------
-void ChessPiece::chessMoveLogicalJump(Vector<ChessPiece*>* Oc)
+void ChessPiece::chessMoveLogicalJump(vector<ChessPiece*>* Oc)
 {
 	int Dx = 0;//两者x距离
 	int Dy = 0;//两者y距离
 	int TargetX = 0;
 	int TargetY = 0;
-	PieceCoordinate* XY;//用来储存一个棋子的坐标
 	int MinDistance=9999;//逻辑上，因为是跳跃移动，所以距离应该是横坐标差加纵坐标差
-	for (unsigned i1 = 0; i1 < Oc->size(); i1++)
+	for (auto spObj : *Oc)
 	{
-		XY = (((*Oc)[i1])->getPrtCoordinateByType(1));
+		auto XY = spObj->getPrtCoordinateByType(CoordinateType::logical);
 		Dx = XY->getX()- _logCoordinate.getX();
 		Dy = XY->getY() - _logCoordinate.getY();
 		if (MinDistance <= pow(Dy + Dx,0.5))
@@ -140,17 +139,16 @@ void ChessPiece::chessMoveLogicalJump(Vector<ChessPiece*>* Oc)
 	}
 }
 
-void ChessPiece::chessMoveLogicalOne(Vector<ChessPiece*>* Oc)
+void ChessPiece::chessMoveLogicalOne(vector<ChessPiece*>* Oc)
 {
 	int Dx = 0;//两者x距离
 	int Dy = 0;//两者y距离
 	int TargetX = 0;
 	int TargetY = 0;
-	PieceCoordinate* XY;//用来储存一个棋子的坐标
 	int MinDistance = 9999;//逻辑上，因为是一步移动，所以距离应该是平方和开根
-	for (unsigned i1 = 0; i1 <Oc->size(); i1++)
+	for (auto spObj : *Oc)
 	{
-		XY = (((*Oc)[i1])->getPrtCoordinateByType(1));
+		auto XY = spObj->getPrtCoordinateByType(CoordinateType::logical);
 		Dx = XY->getX() - _logCoordinate.getX();
 		Dy = XY->getY() - _logCoordinate.getY();
 		if (MinDistance <= Dy + Dx)
@@ -262,6 +260,19 @@ void ChessPiece::equipCombine()
 {
 
 }
+//获得名字
+const string ChessPiece::getPieceName() { return _pieceName; }
+
+// 获取当前棋子数值
+const PieceInfo* ChessPiece::getCrtPieceCondition() { return &_pieceCrtCondition; }
+
+// 获取当前棋子星级
+const Level ChessPiece::getPieceLevel() { return _pieceLevel; }
+
+// 设置当前棋子星级
+void ChessPiece::setPieceLevel(const Level newLevel) { _pieceLevel = newLevel; }
+
+
 //----------------------------------------------------------------------------------------------------------------------------------
 //分割线，以上是棋子基类的实现，以下是各种具体棋子的实现
 //----------------------------------------------------------------------------------------------------------------------------------
@@ -291,6 +302,11 @@ void tank::promoteRank()
 	if(twRankTank>=3)
 		setPieceLevel(Level::level3);
 }
+//数量记录，构造函数涉及到的地方较多,不好控制，干脆自己控制加1吧
+void tank::IncreaseOne() { oRankTank++; }
+void tank::DecreaseOne() { oRankTank--; }
+void tank::IncreaseTwo() { twRankTank++; }
+void tank::DecreaseTwo() { twRankTank--; }
 
 /*mage*/
 mage::mage()
@@ -316,6 +332,11 @@ void mage::promoteRank()
 		setPieceLevel(Level::level3);
 }
 
+void mage::Increase() { oRankMage++; }
+void mage::Decrease() { oRankMage--; }
+void mage::IncreaseTwo() { twRankMage++; }
+void mage::DecreaseTwo() { twRankMage--; }
+
 /*stalker*/
 stalker::stalker()
 {
@@ -340,6 +361,10 @@ void stalker::promoteRank()
 		setPieceLevel(Level::level3);
 }
 
+void stalker::Increase() { oRankStalker++; }
+void stalker::Decrease() { oRankStalker--; }
+void stalker::IncreaseTwo() { twRankStalker++; }
+void stalker::DecreaseTwo() { twRankStalker--; }
 /*therapist*/
 therapist::therapist()
 {
@@ -364,6 +389,10 @@ void therapist::promoteRank()
 		setPieceLevel(Level::level3);
 }
 
+void therapist::Increase() { oRankTherapist++; }
+void therapist::Decrease() { oRankTherapist--; }
+void therapist::IncreaseTwo() { twRankTherapist++; }
+void therapist::DecreaseTwo() { twRankTherapist--; }
 /*shotter*/
 shotter::shotter()
 {
@@ -387,3 +416,14 @@ void shotter::promoteRank()
 	if (twRankShotter >= 3)
 		setPieceLevel(Level::level3);
 }
+
+void shotter::Increase() { oRankShotter++; }
+void shotter::Decrease() { oRankShotter--; }
+void shotter::IncreaseTwo() { twRankShotter++; }
+void shotter::DecreaseTwo() { twRankShotter--; }
+//-----------------------------------棋子坐标类的实现-----------------------------------------------------
+int PieceCoordinate::getX() const { return _x; }
+int PieceCoordinate::getY() const { return _y; }
+void PieceCoordinate::setX(const int x) { _x = x; }
+void PieceCoordinate::setY(const int y) { _y = y; }
+//---------------------------------------------------------------------------------------------------------

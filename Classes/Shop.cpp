@@ -97,6 +97,8 @@ int Shop::pieceInEquip(int money,int pieceNum, int price, int which)
 	}
 	else {
 		judge = 0;
-		return;//如果失败，则返回NULL
+		return 0;//如果失败，则返回0，此时judge为0，故不应当给予装备
 	}
 }
+
+int ifGet() { return judge; };

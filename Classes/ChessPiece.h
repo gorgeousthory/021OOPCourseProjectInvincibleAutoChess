@@ -29,17 +29,17 @@ using std::string;
 
 struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 {
-	double healthPoint; // 生命
-	double healthPointM;//最大生命值
+	int healthPoint; // 生命
+	int healthPointM;//最大生命值
 	
-	double magicPoint; // 法力
-	double magicPoint; // 最大法力
+	int magicPoint; // 法力
+	int magicPointM; // 最大法力
 
-	double attack; // 攻击力
-	double equipAttack;//装备+初始
+	int attack; // 攻击力
+	int equipAttack;//装备+初始
 	
-	double defence; // 防御力
-	double equpiDefence;//装备+初始
+	int defence; // 防御力
+	int equpiDefence;//装备+初始
 
 	double attackSpeed; // 攻击速度
 	double equipAttackSpeed; //装备 + 初始
@@ -53,22 +53,20 @@ struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 //装备加初始的含义是初始属性加上装备属性，对应的另一项是战斗时的属性
 //和数据库连接时给予初始数据请给予初始加装备，并且readEquipment一次
 
-enum class CoordinateType{ real, logical }; // 坐标类型
-
 class PieceCoordinate // 棋子坐标
 {
 public:
 	// 获取棋子横坐标
-	int getX() const { return _x; }
+	int getX() const;
 
 	// 获取棋子纵坐标
-	int getY() const { return _y; }
+	int getY() const;
 
 	// 设置棋子横坐标
-	void setX(const int x) { _x = x; }
+	void setX(const int x);
 
 	// 设置棋子纵坐标
-	void setY(const int y) { _y = y; }
+	void setY(const int y);
 
 private:
 	int _x; // 横坐标
@@ -95,21 +93,21 @@ public:
 	bool updatePieceInfo(const double damage, PieceCoordinate* newRealCoordinate);
 
 	// 获取棋子名称
-	const string getPieceName() { return _pieceName; }
+	const string getPieceName();
 
 	// 获取当前棋子数值
-	const PieceInfo* getCrtPieceCondition() { return &_pieceCrtCondition; }
+	const PieceInfo* getCrtPieceCondition();
 
 	// 获取当前棋子星级
-	const Level getPieceLevel() { return _pieceLevel; }
+	const Level getPieceLevel();
 
 	// 获取当前棋子位置
 	const PieceCoordinate* getPrtCoordinateByType(CoordinateType type);
 
 	// 设置当前棋子星级
-	void setPieceLevel(const Level newLevel) { _pieceLevel = newLevel; }
+	void setPieceLevel(const Level newLevel);
 
-	CREATE_FUNC(ChessPiece);
+	//CREATE_FUNC(ChessPiece);
 
 	//技能函数，继承
 	virtual void skill() = 0;
@@ -146,11 +144,11 @@ public:
 	bool ifDead();
 
 	//方用来实现棋子的移动(逻辑上,横一步，竖一步，也可能只单方向走一步)因为是索敌移动，需要传入对方棋子vector的一个指针
-	void chessMoveLogicalOne(Vector<ChessPiece*>* Oc);//指针获取调用棋盘的成员函数即可
+	void chessMoveLogicalOne(vector<ChessPiece*>* Oc);//指针获取调用棋盘的成员函数即可
 	//走到目标九宫格内为目标
 
 	//方法用来实现刺客型棋子的跳跃移动(逻辑上，一跳)因为是索敌移动，需要传入对方棋子vector的一个指针
-	void chessMoveLogicalJump(Vector<ChessPiece*>* Oc);
+	void chessMoveLogicalJump(vector<ChessPiece*>* Oc);
 
 private:
 	string _pieceName; // 名称
@@ -189,10 +187,10 @@ public:
 	//析构函数
 	~tank();
 	//数量记录，构造函数涉及到的地方较多,不好控制，干脆自己控制加1吧
-	void IncreaseOne() { oRankTank++; }
-	void DecreaseOne() { oRankTank--; }
-	void IncreaseTwo() { twRankTank++; }
-	void DecreaseTwo() { twRankTank--; }
+	void IncreaseOne();
+	void DecreaseOne();
+	void IncreaseTwo();
+	void DecreaseTwo();
 	//技能函数
 	void skill();
 	//家族buff 空出来了
@@ -210,10 +208,10 @@ public:
 	mage();
 	~mage();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
-	void Increase() { oRankMage++; }
-	void Decrease() { oRankMage--; }
-	void IncreaseTwo() { twRankMage++; }
-	void DecreaseTwo() { twRankMage--; }
+	void Increase();
+	void Decrease();
+	void IncreaseTwo();
+	void DecreaseTwo();
 	//技能函数
 	void skill();
 	//家族buff 空出来了
@@ -231,10 +229,10 @@ public:
 	stalker();
 	~stalker();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
-	void Increase() { oRankStalker++; }
-	void Decrease() { oRankStalker--; }
-	void IncreaseTwo() { twRankStalker++; }
-	void DecreaseTwo() { twRankStalker--; }
+	void Increase();
+	void Decrease();
+	void IncreaseTwo();
+	void DecreaseTwo();
 	//技能函数
 	void skill();
 	//家族buff 空出来了
@@ -252,10 +250,10 @@ public:
 	therapist();
 	~therapist();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
-	void Increase() { oRankTherapist++; }
-	void Decrease() { oRankTherapist--; }
-	void IncreaseTwo() { twRankTherapist++; }
-	void DecreaseTwo() { twRankTherapist--; }
+	void Increase();
+	void Decrease();
+	void IncreaseTwo();
+	void DecreaseTwo();
 	//技能函数
 	void skill();
 	//家族buff 空出来了
@@ -273,10 +271,10 @@ public:
 	shotter();
 	~shotter();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
-	void Increase() { oRankShotter++; }
-	void Decrease() { oRankShotter--; }
-	void IncreaseTwo() { twRankShotter++; }
-	void DecreaseTwo() { twRankShotter--; }
+	void Increase();
+	void Decrease();
+	void IncreaseTwo();
+	void DecreaseTwo();
 	//技能函数
 	void skill();
 	//家族buff 空出来了

@@ -40,7 +40,10 @@ public:
 	void giveOneEquip(int which, ChessPiece* p1);
 
 	//获得人物已持有装备数量
-	int howMEquip() { return gear.size(); };
+	int howMEquip();
+
+	//返回玩家血量
+	int getHp();
 	
 private:
 	//人物经验等级（最高为10）
@@ -65,8 +68,8 @@ private:
 	vector<int> gear;
 
     //人物所拥有棋子(每人最多同时持有8枚棋子),初始最大值为5
-	ChessPiece piecePossesion[8]{};
+	vector<ChessPiece&> piecePossesion[8]{};
 
 	//当前上场战斗棋子(每人满级后最多上场7个棋子)，初始最大值为3
-	ChessPiece pieceBattle[7]{};
+	vector<ChessPiece&> pieceBattle[7]{};
 };

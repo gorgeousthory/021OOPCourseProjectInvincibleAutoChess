@@ -8,18 +8,12 @@
  * 说明：用于储存购买的棋子，佩有删除和增添的功能
  ********************************************/
 #pragma once
-#ifndef _STORAGE_
-#define _STORAGE
-
-#include<cocos2d.h>
-USING_NS_CC;
+#ifndef _STORAGE_H_
+#define _STORAGE_H_
 
 #include"ChessPiece.h"
 
-#include<vector>
-using namespace std;
-
-class Storage :public Ref
+class Storage : public Ref
 {
 public:
 

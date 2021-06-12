@@ -15,7 +15,6 @@ USING_NS_CC;
 
 #include <LoginScene.h>
 #include <ConfigController.h>
-#include"Clock.h"
 
 class PlayScene : public Scene
 {

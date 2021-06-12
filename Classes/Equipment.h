@@ -5,22 +5,21 @@
 游戏引擎：Cocos2d-x 4.0
 */
 #pragma once
+#ifndef _EQUIPMENT_
+#define _EQUIPMENT_
 
+#include <string>
 #include <cocos2d.h>
 USING_NS_CC;
 
-#include <string>
-using std::string;
 
-#include"Chesspiece.h"
-#include"Player.h"
 
 class Equipment : public Ref
 {
 public:
 
 	//修改装备数值
-	void changeData(int ATK,int DEF,int crit,int hasteScale);
+	void changeData(int ATK, int DEF, int crit, int hasteScale);
 
 	//获取装备数值
 	int getATK();//攻击力
@@ -42,3 +41,6 @@ private:
 	//攻击速度
 	int hasteScale;
 };
+
+#endif // !_EQUIPMENT_
+

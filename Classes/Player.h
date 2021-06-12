@@ -6,22 +6,15 @@
 */
 #pragma once
 
-#include <cocos2d.h>
-USING_NS_CC;
 
-#include <string>
-#include<vector>
-using std::string;
-using namespace std;
-
+#ifndef _PLAYER_H
+#define _PLAYER_H_
 #include"ChessPiece.h"
 
 class Player : public Ref
 {
 public:
 	virtual bool init();
-
-	CREATE_FUNC(Player);
 
 	//调用商店
 	void shop();
@@ -57,8 +50,10 @@ private:
 	int healthPoint;
 
 	//人物所拥有棋子(每人最多同时持有8枚棋子),初始最大值为5
-	ChessPiece * piecePossesion[8];
+	ChessPiece* piecePossesion[8];
 
 	//当前上场战斗棋子(每人满级后最多上场7个棋子)，初始最大值为3
-	ChessPiece * pieceBattle[7];
+	ChessPiece* pieceBattle[7];
 };
+
+#endif // !_PLAYER_H

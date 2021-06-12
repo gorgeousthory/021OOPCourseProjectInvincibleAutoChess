@@ -24,6 +24,7 @@ bool Clock::init()
 
 	//此后对应人员请在此处加入相应的可视化实现，如进度条等
 
+	timeLabel->setPosition(0,0);
 	this->addChild(timeLabel);
 	this->scheduleUpdate();
 

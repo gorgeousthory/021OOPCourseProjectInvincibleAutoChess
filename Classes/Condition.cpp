@@ -21,12 +21,12 @@ double Condition::getFragile()
 	return fragile;
 }
 
-void Condition::controlInspireAtk(double a1)
+void Condition::controlInspireAttack(double a1)
 {
 	inspireAttack = a1;
 }
 
-double Condition::getInsAtk()
+double Condition::getInspireAttack()
 {
 	return inspireAttack;
 }

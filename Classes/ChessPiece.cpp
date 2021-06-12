@@ -2,8 +2,6 @@
 
 bool ChessPiece::init(int id)
 {
-	if (!ChessPiece::init(id))
-		return false;
 
 	// 初始化各项数据
 	//_pieceName = ConfigController::getDataByID(id).asString();
@@ -18,12 +16,7 @@ bool ChessPiece::init(int id)
 
 bool ChessPiece::init()
 {
-	if (!ChessPiece::init()) {
-		return false;
-	}
-	else {
-		return true;
-	}
+	return true;
 }
 
 void ChessPiece::initPieceIfo(int id)
@@ -46,6 +39,11 @@ const PieceCoordinate* ChessPiece::getPrtCoordinateByType(CoordinateType type)
 	{
 		return &_realCoordinate;
 	}
+}
+
+void ChessPiece::setPieceLevel(const Level newLevel)
+{
+	_pieceLevel = newLevel;
 }
 
 
@@ -76,6 +74,21 @@ bool ChessPiece::updatePieceInfo(const double damage, PieceCoordinate* newRealCo
 
 	// 动画应该在PlayScene中创建，这里先放在这里（版本1.1.1）
 	//auto updatePiecePos = MoveTo::create(time, Vec2(newRealCoordinate->getX(), newRealCoordinate->getY()));
+}
+
+const string ChessPiece::getPieceName()
+{
+	return _pieceName;
+}
+
+const PieceInfo* ChessPiece::getCrtPieceCondition()
+{
+	return &_pieceCrtCondition;
+}
+
+const Level ChessPiece::getPieceLevel()
+{
+	return _pieceLevel;
 }
 
 bool ChessPiece::ifDead()
@@ -165,4 +178,137 @@ void ChessPiece::attackOne(ChessPiece& A)
 {
 	//回血&&给对象A打伤害
 	attackBack(A.beenAttack(myAttack()));
+}
+
+int PieceCoordinate::getX() const
+{
+	return _x;
+}
+
+int PieceCoordinate::getY() const
+{
+	return _y;
+}
+
+void PieceCoordinate::setX(const int x)
+{
+	_x = x;
+}
+
+void PieceCoordinate::setY(const int y)
+{
+	_y = y;
+}
+
+int tank::oRankTank = 0;
+int tank::twRankTank = 0;
+void tank::IncreaseOne()
+{
+	oRankTank++;
+}
+
+void tank::DecreaseOne()
+{
+	oRankTank--;
+}
+
+void tank::IncreaseTwo()
+{
+	twRankTank++;
+}
+
+void tank::DecreaseTwo()
+{
+	twRankTank--;
+}
+
+int mage::oRankMage = 0;
+int mage::twRankMage = 0;
+
+void mage::Increase()
+{
+	oRankMage++;
+}
+
+void mage::Decrease()
+{
+	oRankMage--;
+}
+
+void mage::IncreaseTwo()
+{
+	twRankMage++;
+}
+
+void mage::DecreaseTwo()
+{
+	twRankMage--;
+}
+
+int stalker::oRankStalker = 0;
+int stalker::twRankStalker = 0;
+
+void stalker::Increase()
+{
+	oRankStalker++;
+}
+
+void stalker::Decrease()
+{
+	oRankStalker--;
+}
+
+void stalker::IncreaseTwo()
+{
+	twRankStalker++;
+}
+
+void stalker::DecreaseTwo()
+{
+	twRankStalker--;
+}
+
+int therapist::oRankTherapist = 0;
+int therapist::twRankTherapist = 0;
+void therapist::Increase()
+{
+	oRankTherapist++;
+}
+
+void therapist::Decrease()
+{
+	oRankTherapist--;
+}
+
+void therapist::IncreaseTwo()
+{
+	twRankTherapist++;
+}
+
+void therapist::DecreaseTwo()
+{
+	twRankTherapist--;
+}
+
+int shooter::oRankShooter = 0;
+int shooter::twRankShooter = 0;
+
+void shooter::Increase()
+{
+	oRankShooter++;
+}
+
+void shooter::Decrease()
+{
+	oRankShooter--;
+}
+
+void shooter::IncreaseTwo()
+{
+	twRankShooter++;
+}
+
+void shooter::DecreaseTwo()
+{
+	twRankShooter--;
 }

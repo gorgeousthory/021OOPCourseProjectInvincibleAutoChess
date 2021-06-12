@@ -2,7 +2,6 @@
 
 USING_NS_CC;
 
-
 /*
 //the example to show the use of Csv
 	CsvParser csv;
@@ -19,7 +18,6 @@ USING_NS_CC;
 	b->setPosition(visibleSize / 2);
 	this->addChild(b, 1);
 */
-
 
 //×Ö·û´®·Ö¸îº¯Êý
 void split(const std::string& str, const char* reps, std::vector<std::string>& tarVector)
@@ -82,4 +80,19 @@ void CsvParser::parseWithFile(const std::string& csvFilename)
 		LineString lineStr(lineInfo[i]);
 		_dataInfo.push_back(lineStr);
 	}
+}
+
+size_t CsvParser::finditem(const std::string& src) const
+{
+	auto csv = *this;
+	for (int i = 0; i < this->getRowCount(); i++) {
+		for (int j = 0; j < this->getColumnCount(); j++) {
+			if (src == csv[i][j].c_str())
+			{
+				return i;
+			}
+		}
+	}
+
+	return size_t();
 }

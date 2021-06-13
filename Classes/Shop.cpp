@@ -1,21 +1,57 @@
 #include "Shop.h"
 
+bool Shop::refresh()
+{
+	//如果已经有棋子，清空
+	if (!pieceList.empty()) {
+		for (int i = 0; i < 4; i++) {
+			delete(pieceList[i]);
+		}
+		pieceList.clear();
+	}
+
+	srand(time(NULL));
+	//增添棋子
+	for (int i = 0; i < 4; i++) {
+		int figure = rand() % 5;
+		switch (figure)
+		{
+		case 0:
+			pieceList.push_back(new tank);
+			break;
+		case 1:
+			pieceList.push_back(new mage);
+			break;
+		case 2:
+			pieceList.push_back(new shooter);
+			break;
+		case 3:
+			pieceList.push_back(new therapist);
+			break;
+		case 4:
+			pieceList.push_back(new stalker);
+			break;
+		}
+	}
+
+	gear = rand() % 5;
+	return true;
+}
 
 bool Shop::init()
 {
-	return false;
+	refresh();
 }
 
-bool Shop::init(int random)
+template<class ClassName, typename price>
+bool Shop::qualification(int money, int maxPiece, int pieceNum, ClassName* A, typename price)
 {
-	if (!Shop::init()) {
-		return false;
+	if (money >= price && pieceNum < maxPiece) {
+		return true;
 	}
 	else {
-		//这里就利用余数创造棋子和装备
-		//然后放入private数据中
+		return false;
 	}
-	return false;
 }
 
 /*
@@ -23,17 +59,16 @@ bool Shop::init(int random)
       然后返回不同的棋子，其中如果返回特殊数据棋子则算为购买失败
 参数：A是被购买的棋子
 */
-template<class ClassName, typename price>
-ClassName Shop::pieceIn(int money,int maxPiece, int pieceNum, ClassName A,typename price)
+template<class ClassName>
+ClassName Shop::pieceIn(ClassName* A)
 {
-	if (money >= price && pieceNum < maxPiece) {//购买成功   
+	ClassName entity = *A;
+	return entity;
+}
 
-		return A;//返回一个棋子，这里需要细化
-	}
-	else {//购买失败，返回特定棋子
-
-	}
-	return ChessPiece();
+int Shop::pieceInEquip()
+{
+	return gear;
 }
 
 template<class ClassName>

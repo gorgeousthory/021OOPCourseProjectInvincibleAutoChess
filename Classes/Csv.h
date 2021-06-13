@@ -6,23 +6,23 @@
 #include "cocos2d.h"
 USING_NS_CC;
 
-#define STAR1			0
-#define STAR2			1
-#define STAR3			2
+#define D_STAR1				0
+#define D_STAR2				1
+#define D_STAR3				2
 
-#define NUMBER			0
-#define EN_NAME			1
-#define CH_NAME			2
-#define PATH			3
-#define COST			4
-#define HP				5
-#define MP				6
-#define ATK				7
-#define DFC				8
-#define ATK_SPD			9
-#define ATK_SCP			10
-#define CRT_CHC			11
-#define CRT_DMG			12
+#define D_NUMBER			0
+#define D_EN_NAME			1
+#define D_CH_NAME			2
+#define D_PATH				3
+#define D_COST				4
+#define D_HP				5
+#define D_MP				6
+#define D_ATK				7
+#define D_DFC				8
+#define D_ATK_SPD			9
+#define D_ATK_SCP			10
+#define D_CRT_CHC			11
+#define D_CRT_DMG			12
 
 
 class LineString

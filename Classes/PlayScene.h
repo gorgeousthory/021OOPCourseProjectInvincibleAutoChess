@@ -56,6 +56,9 @@ private:
 	// 退出按钮的点击事件
 	void menuExitCallBack(Ref* sender);
 
+	// 购买卡片的点击事件
+	
+
 	//按下回调
 	virtual int onTouchBegan(Touch* touch, Event* event);
 

@@ -47,7 +47,7 @@ bool PlayScene::init()
 	backGround->setPosition(visibleSize / 2);
 	Vec2 originSize = backGround->getContentSize();
 	backGround->setScale(visibleSize.height / originSize.y);
-	playLayer->addChild(backGround);
+	playLayer->addChild(backGround, 1);
 
 	createBoard(Vec2(config->getPx()->x * 47.5, config->getPx()->y * 16));
 
@@ -60,7 +60,7 @@ bool PlayScene::init()
 	auto pieceCard = PlayScene::createPieceCard("ABCD", "/res/Books/AdvancedMathematics.png", Vec2(-40 * config->getPx()->x, -45 * config->getPx()->y), CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
 
 	auto menu = Menu::create(exitButton, pieceCard, nullptr);
-	playLayer->addChild(menu, 10);
+	playLayer->addChild(menu, 5);
 
 	return true;
 }
@@ -93,7 +93,7 @@ void PlayScene::createBoard(Vec2 position)
 			chessBoard[i][j]->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 			chessBoard[i][j]->setScale(scale);
 			chessBoard[i][j]->setPosition(Vec2(position.x + originSize.x * j, position.y + originSize.y * i));
-			playLayer->addChild(chessBoard[i][j]);
+			playLayer->addChild(chessBoard[i][j], 2);
 		}
 	}
 
@@ -212,8 +212,6 @@ int PlayScene::onTouchBegan(Touch* touch, Event* event)
 
 void PlayScene::onTouchEnded(Touch* touch, Event* event)
 {
-	auto board = ChessBoard::getInstance();
-
 	Vec2 position = touch->getLocation();
 	PieceCoordinate* logPosition = coordingrevert(position);
 

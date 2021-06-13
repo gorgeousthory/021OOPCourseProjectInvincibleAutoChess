@@ -397,6 +397,44 @@ void mage::promoteRank()
 	}
 }
 
+vector<ChessPiece*>  mage::promoteRank(vector<ChessPiece*> piece)
+{
+	vector<ChessPiece*> result;
+	if (Level::level1 == getPieceLevel())
+	{
+		if (oRankMage >= 3)
+		{
+			setPieceLevel(Level::level2);
+			oRankMage = oRankMage - 3;
+			int m1 = 0;
+			for (auto i1 : piece)
+			{
+				if ("mage" == getTag() && m1 < 3 && Level::level1 == i1->getPieceLevel())
+					m1++;
+				else
+					result.push_back(i1);
+			}
+		}
+	}
+	else if (Level::level2 == getPieceLevel())
+	{
+		if (twRankMage >= 3)
+		{
+			setPieceLevel(Level::level3);
+			twRankMage = twRankMage - 3;
+			int m1 = 0;
+			for (auto i1 : piece)
+			{
+				if ("mage" == getTag() && m1 < 3 && Level::level2 == i1->getPieceLevel())
+					m1++;
+				else
+					result.push_back(i1);
+			}
+		}
+	}
+	return result;
+}
+
 void stalker::promoteRank()
 {
 	if (Level::level1 == getPieceLevel())
@@ -415,6 +453,44 @@ void stalker::promoteRank()
 			twRankStalker = twRankStalker - 3;
 		}
 	}
+}
+
+vector<ChessPiece*>  stalker::promoteRank(vector<ChessPiece*> piece)
+{
+	vector<ChessPiece*> result;
+	if (Level::level1 == getPieceLevel())
+	{
+		if (oRankStalker >= 3)
+		{
+			setPieceLevel(Level::level2);
+			oRankStalker = oRankStalker - 3;
+			int m1 = 0;
+			for (auto i1 : piece)
+			{
+				if ("stalker" == getTag() && m1 < 3 && Level::level1 == i1->getPieceLevel())
+					m1++;
+				else
+					result.push_back(i1);
+			}
+		}
+	}
+	else if (Level::level2 == getPieceLevel())
+	{
+		if (twRankStalker >= 3)
+		{
+			setPieceLevel(Level::level3);
+			twRankStalker = twRankStalker - 3;
+			int m1 = 0;
+			for (auto i1 : piece)
+			{
+				if ("stalker" == getTag() && m1 < 3 && Level::level2 == i1->getPieceLevel())
+					m1++;
+				else
+					result.push_back(i1);
+			}
+		}
+	}
+	return result;
 }
 
 void therapist::promoteRank()
@@ -437,6 +513,44 @@ void therapist::promoteRank()
 	}
 }
 
+vector<ChessPiece*>  therapist::promoteRank(vector<ChessPiece*> piece)
+{
+	vector<ChessPiece*> result;
+	if (Level::level1 == getPieceLevel())
+	{
+		if (oRankTherapist >= 3)
+		{
+			setPieceLevel(Level::level2);
+			oRankTherapist = oRankTherapist - 3;
+			int m1 = 0;
+			for (auto i1 : piece)
+			{
+				if ("therapist" == getTag() && m1 < 3 && Level::level1 == i1->getPieceLevel())
+					m1++;
+				else
+					result.push_back(i1);
+			}
+		}
+	}
+	else if (Level::level2 == getPieceLevel())
+	{
+		if (twRankTherapist >= 3)
+		{
+			setPieceLevel(Level::level3);
+			twRankTherapist = twRankTherapist - 3;
+			int m1 = 0;
+			for (auto i1 : piece)
+			{
+				if ("therapist" == getTag() && m1 < 3 && Level::level2 == i1->getPieceLevel())
+					m1++;
+				else
+					result.push_back(i1);
+			}
+		}
+	}
+	return result;
+}
+
 void shooter::promoteRank()
 {
 	if (Level::level1 == getPieceLevel())
@@ -455,4 +569,42 @@ void shooter::promoteRank()
 			twRankShooter = twRankShooter - 3;
 		}
 	}
+}
+
+vector<ChessPiece*>  shooter::promoteRank(vector<ChessPiece*> piece)
+{
+	vector<ChessPiece*> result;
+	if (Level::level1 == getPieceLevel())
+	{
+		if (oRankShooter >= 3)
+		{
+			setPieceLevel(Level::level2);
+			oRankShooter = oRankShooter - 3;
+			int m1 = 0;
+			for (auto i1 : piece)
+			{
+				if ("shooter" == getTag() && m1 < 3 && Level::level1 == i1->getPieceLevel())
+					m1++;
+				else
+					result.push_back(i1);
+			}
+		}
+	}
+	else if (Level::level2 == getPieceLevel())
+	{
+		if (twRankShooter >= 3)
+		{
+			setPieceLevel(Level::level3);
+			twRankShooter = twRankShooter - 3;
+			int m1 = 0;
+			for (auto i1 : piece)
+			{
+				if ("shooter" == getTag() && m1 < 3 && Level::level2 == i1->getPieceLevel())
+					m1++;
+				else
+					result.push_back(i1);
+			}
+		}
+	}
+	return result;
 }

@@ -10,25 +10,25 @@
 #pragma once
 #ifndef _CHESSPIECE_H_
 #define _CHESSPIECE_H_
+#include"Csv.h"
 #include "ConfigController.h"
 #include"Equipment.h"
 #include"Condition.h"
-
 struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 {
-	double healthPoint; // 生命
+	double healthPoint; // 实时生命
 	double healthPointM;//最大生命值
 	
-	double magicPoint; // 法力
+	double magicPoint; // 实时法力
 	double magicPointM; // 最大法力
 
-	double attack; // 攻击力
+	double attack; // 实时攻击力
 	double equipAttack;//装备+初始
 	
-	double defence; // 防御力
+	double defence; // 实时防御力
 	double equpiDefence;//装备+初始
 
-	double attackSpeed; // 攻击速度
+	double attackSpeed; // 实时攻击速度
 	double equipAttackSpeed; //装备 + 初始
 
 	double attackScope; // 攻击距离
@@ -87,6 +87,7 @@ public:
 	// 获取当前棋子数值
 	const PieceInfo* getCrtPieceCondition();
 
+
 	// 获取当前棋子星级
 	const Level getPieceLevel();
 
@@ -137,7 +138,7 @@ public:
 	bool ifDead();
 
 	int storageNum = 0;//上方棋子为负数，下方棋子为正数
-private:
+protected:
 	string _pieceName; // 名称
 	
 	string _piecePicPath; // 模型图片相对路径

@@ -27,18 +27,18 @@ bool PlayScene::init()
 	timeLabel->setPosition(100, 800);
 	this->addChild(timeLabel);
 	// 添加进度条
-	auto loadingBarBack = Sprite::create("res/UI/LoginLoadingBarBack.png"); // 进度条的背景
+	auto loadingBarBack = Sprite::create("res/UI/TimeBar1.png"); // 进度条的背景
 	Vec2 originSize = loadingBarBack->getContentSize();
 	loadingBarBack->setScale(30 * ConfigController::getInstance()->getPx()->x / originSize.x);
-	loadingBarBack->setPosition(200,700);
+	loadingBarBack->setPosition(200, 700);
 	this->addChild(loadingBarBack, 3);
-	auto loadingBarFront = Sprite::create("res/UI/LoginLoadingBarFront.png"); // 进度条的前景
+	auto loadingBarFront = Sprite::create("res/UI/TimeBar2.png"); // 进度条的前景
 
 	loadingBar = ProgressTimer::create(loadingBarFront);
 	loadingBar->setBarChangeRate(Vec2(1, 0));
 	loadingBar->setType(ProgressTimer::Type::BAR);// 设置进度条类型
 	loadingBar->setMidpoint(Vec2(0, 1));//设置运动方向
-	loadingBar->setPosition(200,700);
+	loadingBar->setPosition(200, 700);
 	loadingBar->setScale(30 * ConfigController::getInstance()->getPx()->x / originSize.x);
 	loadingBar->setPercentage(0);//设置初始值为0
 	this->addChild(loadingBar, 3);
@@ -49,7 +49,7 @@ bool PlayScene::init()
 	playLayer->setContentSize(visibleSize);
 	this->addChild(playLayer);
 
-	auto exitButton = LoginScene::createGameButton("Exit!", "/res/UI/ExitNormal.PNG", "/res/UI/ExitSelected.PNG", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
+	auto exitButton = LoginScene::createGameButton("Exit!", "/res/UI/ExitNormal.png", "/res/UI/ExitSelected.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
 	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	originSize = exitButton->getContentSize();
 	exitButton->setScale(10 * config->getPx()->x / originSize.x);
@@ -60,11 +60,11 @@ bool PlayScene::init()
 	playLayer->addChild(chessBoard.at(0), 1);
 
 	// 测试用棋子卡片
-	auto pieceCard1 = PlayScene::createPieceCard("高等数学", "/res/Books/AdvancedMathematics.PNG", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
-	auto pieceCard2 = PlayScene::createPieceCard("高等数学", "/res/Books/AdvancedMathematics.PNG", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
-	auto pieceCard3 = PlayScene::createPieceCard("高等数学", "/res/Books/AdvancedMathematics.PNG", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
-	auto pieceCard4 = PlayScene::createPieceCard("高等数学", "/res/Books/AdvancedMathematics.PNG", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
-	auto pieceCard5 = PlayScene::createPieceCard("高等数学", "/res/Books/AdvancedMathematics.PNG", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
+	auto pieceCard1 = PlayScene::createPieceCard("AdvancedMathematics", "/res/Books/AdvancedMathematics.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
+	auto pieceCard2 = PlayScene::createPieceCard("LinearAlgebra", "/res/Books/LinearAlgebra.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
+	auto pieceCard3 = PlayScene::createPieceCard("CollegePhysics", "/res/Books/CollegePhysics.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
+	auto pieceCard4 = PlayScene::createPieceCard("MordernHistory", "/res/Books/MordernHistory.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
+	auto pieceCard5 = PlayScene::createPieceCard("C++PrimerPlus", "/res/Books/C++PrimerPlus.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
 	pieceCard1->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
 	pieceCard2->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
 	pieceCard3->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
@@ -90,7 +90,7 @@ Vector<Sprite*> PlayScene::createChessBoard()
 	auto config = ConfigController::getInstance();
 
 	Vector<Sprite*> ChessBoard;	//the vector contains the pieces of board;
-	auto perBoard = Sprite::createWithTexture(texture->getTextureForKey("/res/Background/BoardPiece.PNG"));
+	auto perBoard = Sprite::createWithTexture(texture->getTextureForKey("/res/Background/BoardPiece.png"));
 	Vec2 originSize = perBoard->getContentSize();
 	float BoardScale = 8 * config->getPx()->x / originSize.x;
 	const int MAX_BoardX = 9, MAX_BoardY = 8;	//the size of Board
@@ -101,7 +101,7 @@ Vector<Sprite*> PlayScene::createChessBoard()
 		for (int ix = 0; ix < MAX_BoardX; ix++)
 		{
 			/*the reference piece is the BOTTOM_LEFT piece,of which the ANCHOR point is BOTTOM_RIGHT*/
-			ChessBoard.pushBack(Sprite::createWithTexture(texture->getTextureForKey("/res/Background/BoardPiece.PNG")));
+			ChessBoard.pushBack(Sprite::createWithTexture(texture->getTextureForKey("/res/Background/BoardPiece.png")));
 			num = ChessBoard.size() - 1;
 			ChessBoard.at(num)->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
 			temp.x += halfBoardLenth * 2;
@@ -122,7 +122,7 @@ Vector<Sprite*> PlayScene::createChessBoard()
 			temp.x += halfBoardLenth * 2;
 			if (!(ix >= 0 && ix <= MAX_BoardX - 1 && iy >= 0 && iy <= MAX_BoardY - 1))
 			{
-				ChessBoard.pushBack(Sprite::createWithTexture(texture->getTextureForKey("/res/Background/ReadyZone.PNG")));
+				ChessBoard.pushBack(Sprite::createWithTexture(texture->getTextureForKey("/res/Background/ReadyZone.png")));
 				num = ChessBoard.size() - 1;
 				ChessBoard.at(num)->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
 				ChessBoard.at(num)->setPosition(temp);
@@ -139,26 +139,44 @@ Vector<Sprite*> PlayScene::createChessBoard()
 	return ChessBoard;
 }
 
+Vector<Sprite*> levelStars(const string& value)
+{
+	Vector<Sprite*> stars;	//the vector contains the stars;
+	int num = 0;
+	Vec2 tmp = {};
+	for (int i = 0; i < Value(value).asInt(); i++)
+	{
+		stars.pushBack(Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("/res/Icons/Star.png")));	//the star icon	
+		num = stars.size() - 1;
+		stars.at(num)->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+		tmp.x += stars.at(0)->getContentSize().width;
+		if (0 != num)
+		{
+			stars.at(num)->setPosition(tmp);
+			stars.at(0)->addChild(stars.at(num));
+		}
+	}
+	return stars;
+}
+
+
 MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath, const ccMenuCallback& callback)
 {
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
 
 	// 创建卡片精灵
-	auto cardBack = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/ShoppingCardNew.png"));
+	auto cardBack = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/Shoppingcard.png"));
 	auto item = MenuItemSprite::create(cardBack, cardBack, callback);
 
 	//fetch the pic and the value stored in the data file "PiecesData.csv"
 	CsvParser csv;
 	csv.parseWithFile("Data/PiecesData.csv");
-	auto rowPosition = csv.finditem(pieceName);
+	auto rowPosition = csv.findRowOfItem(pieceName);
 	auto sprite = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
-	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.PNG"));		//the Health icon（生命）
-	auto Healthvalue = Label::createWithTTF(csv[rowPosition][5], "fonts/Marker Felt.ttf", 500);	//the value of Health icon
-	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.PNG")); 	//the Attack icon(攻击)
-	auto Attackvalue = Label::createWithTTF(csv[rowPosition][7], "fonts/Marker Felt.ttf", 500);	//the value of Attack
-	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.PNG"));	//the Armor icon(防御)
-	auto Armorvalue = Label::createWithTTF(csv[rowPosition][8], "fonts/Marker Felt.ttf", 500);	//the value of Armor
+	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png"));	//the Health icon（生命）
+	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png"));	//the Attack icon(攻击)
+	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png"));		//the Armor icon(防御)
 
 
 	//adjust the comparing position of the icons and values 调整对应图标和数值在卡片中的相对位置
@@ -167,22 +185,23 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	sprite->setPosition(Vec2(450, 800));
 	item->addChild(sprite);
 
+	auto Healthvalue = levelStars(csv[rowPosition][5]).at(0);
 	Healthvalue->setPosition(Vec2(1300, 200));
-	Healthvalue->setColor(Color3B::BLACK);
 	Healthicon->addChild(Healthvalue);
 	Healthicon->setScale(0.4);
 	Healthicon->setPosition(Vec2(1200, 1100));
 	item->addChild(Healthicon);
 
+	auto Attackvalue = levelStars(csv[rowPosition][8]).at(0);
 	Attackvalue->setPosition(Vec2(1300, 200));
-	Attackvalue->setColor(Color3B::BLACK);
 	Attackicon->addChild(Attackvalue);
 	Attackicon->setScale(0.4);
 	Attackicon->setPosition(Vec2(1200, 700));
 	item->addChild(Attackicon);
 
+	auto Armorvalue = levelStars(csv[rowPosition][10]).at(0);
 	Armorvalue->setPosition(Vec2(1300, 200));
-	Armorvalue->setColor(Color3B::BLACK);
+	//Armorvalue->setColor(Color3B::BLACK);
 	Armoricon->addChild(Armorvalue);
 	Armoricon->setScale(0.4);
 	Armoricon->setPosition(Vec2(1200, 300));
@@ -203,7 +222,7 @@ void PlayScene::update(float dt)
 		pastTime += dt;
 		temp += to_string(static_cast<int>(remainingTime));
 		timeLabel->setString(temp);
-		percentage =((pastTime) / 61.0)*100.0;
+		percentage = ((pastTime) / 61.0) * 100.0;
 		loadingBar->setPercentage(percentage);
 	}
 }

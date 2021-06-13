@@ -26,6 +26,8 @@ public:
 	// 创建可视化棋盘
 	Vector<Sprite*> createChessBoard();
 
+	//Vector<Sprite*> levelStars(const string& value);
+
 	// 创建可视化棋子卡片
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, const ccMenuCallback& callback);
 

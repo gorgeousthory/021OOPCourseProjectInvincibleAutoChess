@@ -36,7 +36,7 @@ public:
 
 	size_t getRowCount() const { return _dataInfo.size(); }	//获取行最大值
 	size_t getColumnCount() const { return _titles.size(); }	//获取列最大值
-	size_t finditem(const std::string& src) const;	//找到某个数据所在的行
+	size_t findRowOfItem(const std::string& src) const;	//找到某个数据所在的行
 
 	LineString& operator[](size_t index)
 	{

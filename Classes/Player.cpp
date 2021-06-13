@@ -46,32 +46,12 @@ void Player::promote()
 	  1.每次扣除hp的数量
 	  2.扣除hp的条件判断
 */
-void Player::hpDecrease()
+void Player::hpDecrease(int damage)
 {
-	if (true) {
-		healthPoint = healthPoint - 1;
-	}
-	else {
-		healthPoint = healthPoint;
-	}
+	healthPoint -= damage;
 }
 
-/*依照商店购买装备函数返回的整数获得对应装备*/
-void Player::getOneEquip(int equip)
+int Player::getHp()
 {
-	gear.push_back(equip);
+	return healthPoint;
 }
-
-/*选择对应装备，给予对应棋子*/
-/*gear中存储int对应装备请参考*/
-/*ChessPiece或shop类*/
-void Player::giveOneEquip(int which,ChessPiece* p1)
-{
-	p1->giveEquip(1,gear[which]);
-}
-
-//获得人物已持有装备数量
-int Player::howMEquip() { return gear.size(); };
-
-//返回玩家血量
-int Player::getHp() { return  healthPoint; };

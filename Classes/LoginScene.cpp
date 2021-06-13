@@ -72,7 +72,7 @@ bool LoginScene::init()
 	dataPathList.push_back("CloseSelected.png");
 	dataPathList.push_back("res/Books/AdvancedMathematics.png");
 	dataPathList.push_back("res/Background/BoardPiece.png");
-	dataPathList.push_back("res/Icons/Armor.PNG");
+	dataPathList.push_back("res/Icons/Armor.png");
 	dataPathList.push_back("res/UI/PlayNormal.png");
 
 	// 进行加载
@@ -81,20 +81,20 @@ bool LoginScene::init()
 	// ************可视化部分开始***************
 
 	// 添加游戏LOGO
-	auto gameLogo = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("/res/UI/Logo.PNG"));
+	auto gameLogo = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("/res/UI/Logo.png"));
 	gameLogo->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	originSize = gameLogo->getContentSize();
 	gameLogo->setScale(80 * ConfigController::getInstance()->getPx()->x / originSize.x);
 	gameLogo->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 5 * ConfigController::getInstance()->getPx()->y));
 	loginLayer->addChild(gameLogo, 2);
 
-	auto startButton = LoginScene::createGameButton("Start!", "/res/UI/PlayNormal.PNG", "/res/UI/PlaySelected.PNG", CC_CALLBACK_1(LoginScene::menuStartCallBack, this));
+	auto startButton = LoginScene::createGameButton("Start!", "/res/UI/PlayNormal.png", "/res/UI/PlaySelected.png", CC_CALLBACK_1(LoginScene::menuStartCallBack, this));
 	startButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	originSize = startButton->getContentSize();
 	startButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
 	startButton->setPosition(Vec2(0, -25 * ConfigController::getInstance()->getPx()->y));
 
-	auto exitButton = LoginScene::createGameButton("Exit!", "/res/UI/ExitNormal.PNG", "/res/UI/ExitSelected.PNG", CC_CALLBACK_1(LoginScene::menuExitCallBack, this));
+	auto exitButton = LoginScene::createGameButton("Exit!", "/res/UI/ExitNormal.png", "/res/UI/ExitSelected.png", CC_CALLBACK_1(LoginScene::menuExitCallBack, this));
 	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	originSize = exitButton->getContentSize();
 	exitButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);

@@ -10,25 +10,25 @@
 #pragma once
 #ifndef _CHESSPIECE_H_
 #define _CHESSPIECE_H_
+#include"Csv.h"
 #include "ConfigController.h"
 #include"Equipment.h"
 #include"Condition.h"
-
 struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 {
-	double healthPoint; // 生命
+	double healthPoint; // 实时生命
 	double healthPointM;//最大生命值
 	
-	double magicPoint; // 法力
+	double magicPoint; // 实时法力
 	double magicPointM; // 最大法力
 
-	double attack; // 攻击力
+	double attack; // 实时攻击力
 	double equipAttack;//装备+初始
 	
-	double defence; // 防御力
+	double defence; // 实时防御力
 	double equpiDefence;//装备+初始
 
-	double attackSpeed; // 攻击速度
+	double attackSpeed; // 实时攻击速度
 	double equipAttackSpeed; //装备 + 初始
 
 	double attackScope; // 攻击距离
@@ -87,6 +87,7 @@ public:
 	// 获取当前棋子数值
 	const PieceInfo* getCrtPieceCondition();
 
+
 	// 获取当前棋子星级
 	const Level getPieceLevel();
 
@@ -96,15 +97,21 @@ public:
 	// 设置当前棋子星级
 	void setPieceLevel(const Level newLevel);
 
+	//获取棋子类型
+	virtual string getTag() = 0;
+
 	//CREATE_FUNC(ChessPiece);   这里ChessPiece是抽象类不能create
 
 	//技能函数，继承
 	virtual void skill() = 0;
 	
 	//羁绊 继承
-	virtual void familyBuff() = 0;
+	//virtual void familyBuff() = 0;
 
-	//提升星级
+	//提升星级,参数为一个包括了玩家所有棋子的指针的vector
+	//函数的调用会返回一个消耗了对应棋子的vector。
+	virtual vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece) = 0;
+	//只单纯升级，不执行撤去棋子的操作
 	virtual void promoteRank() = 0;
 
 	//提供装备
@@ -131,7 +138,7 @@ public:
 	bool ifDead();
 
 	int storageNum = 0;//上方棋子为负数，下方棋子为正数
-private:
+protected:
 	string _pieceName; // 名称
 	
 	string _piecePicPath; // 模型图片相对路径
@@ -160,11 +167,14 @@ class tank : public ChessPiece
 public:
 	static int oRankTank;//记录一星tank的数量
 	static int twRankTank;//记录二星tank数量
+	string tag = "tank";//用于区分棋子类别
+	//获得棋子类别
+	string getTag();
 	//初始化函数
-	virtual bool init();
+	//virtual bool init();
 	tank();
 	//析构函数
-	~tank();
+	//~tank();
 	//数量记录，构造函数涉及到的地方较多,不好控制，干脆自己控制加1吧
 	void IncreaseOne();
 	void DecreaseOne();
@@ -173,8 +183,9 @@ public:
 	//技能函数
 	void skill();
 	//家族buff 空出来了
-	void familyBuff();
+	//void familyBuff();
 	//升级函数
+	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
 };
 
@@ -184,8 +195,11 @@ class mage : public ChessPiece
 public:
 	static int oRankMage;//记录一星Mage的数量
 	static int twRankMage;//记录二星Mage数量
+	string tag = "mage";
+	//获得棋子类别
+	string getTag();
 	mage();
-	~mage();
+	//~mage();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
 	void Increase();
 	void Decrease();
@@ -194,8 +208,9 @@ public:
 	//技能函数
 	void skill();
 	//家族buff 空出来了
-	void familyBuff();
+	//void familyBuff();
 	//升级函数
+	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
 };
 
@@ -205,8 +220,11 @@ class stalker : public ChessPiece
 public:
 	static int oRankStalker;//记录一星stalker的数量
 	static int twRankStalker;//记录二星stalker数量
+	string tag = "stalker";
+	//获得棋子类别
+	string getTag();
 	stalker();
-	~stalker();
+	//~stalker();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
 	void Increase();
 	void Decrease();
@@ -217,6 +235,7 @@ public:
 	//家族buff 空出来了
 	void familyBuff();
 	//升级函数
+	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
 };
 
@@ -226,8 +245,11 @@ class therapist : public ChessPiece
 public:
 	static int oRankTherapist;//记录一星therapist的数量
 	static int twRankTherapist;//记录二星therapist数量
+	string tag = "therapist";
+	//获得棋子类别
+	string getTag();
 	therapist();
-	~therapist();
+	//~therapist();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
 	void Increase();
 	void Decrease();
@@ -236,9 +258,10 @@ public:
 	//技能函数
 	void skill();
 	//家族buff 空出来了
-	void familyBuff();
+	//void familyBuff();
 	//升级函数
-	void promoteRank();
+	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
+    void promoteRank();
 };
 
 /*shooter*/
@@ -247,8 +270,11 @@ class shooter : public ChessPiece
 public:
 	static int oRankShooter;//记录一星shotter的数量
 	static int twRankShooter;//记录二星shotter数量
+	string tag = "shooter";
+	//获得棋子类别
+	string getTag();
 	shooter();
-	~shooter();
+	//~shooter();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
 	void Increase();
 	void Decrease();
@@ -257,8 +283,9 @@ public:
 	//技能函数
 	void skill();
 	//家族buff 空出来了
-	void familyBuff();
+	//void familyBuff();
 	//升级函数
+	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
 };
 #endif

@@ -2,14 +2,12 @@
 
 bool ChessBoard::init()
 {
-	if (!ChessBoard::init()) {
-		return false;
-	}
-	else {
-		for (auto n : board) {
-			*n = '.';//代表棋盘这里为空
+	for (int i = 0; i < BOARD_SIZE; i++) {
+		for (vector<Sprite*>::iterator it = board1[i].begin(); it != board1[i].end(); it++) {
+			*it = nullptr;
 		}
 	}
+	return true;
 }
 
 /*
@@ -70,6 +68,7 @@ vector<ChessPiece*>* ChessBoard::getPlayerB_PreZone_Pieces()
 	return &_prtPlayerB_PreZone_Pieces;
 }
 
+/*
 bool ChessBoard::setBoard(ChessPiece &piece)
 {
 	//检验棋盘对应位置是否为空，是否能换位置
@@ -80,7 +79,7 @@ bool ChessBoard::setBoard(ChessPiece &piece)
 	else {
 		return false;
 	}
-}
+}*/
 
 bool ChessBoard::isInBoard(Vec2 posi)
 {
@@ -92,4 +91,5 @@ bool ChessBoard::isInBoard(Vec2 posi)
 	}
 }
 
+int turn = 1;//第几局
 

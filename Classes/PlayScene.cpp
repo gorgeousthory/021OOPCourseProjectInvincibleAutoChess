@@ -15,93 +15,232 @@ bool PlayScene::init()
 	if (!Scene::init()) // 对父类init方法的判断
 		return false;
 
+	// 需要用到的单例工具
+	auto texture = Director::getInstance()->getTextureCache();
+	auto config = ConfigController::getInstance();
+
 	// 获取屏幕上的特殊点位
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	auto buttonPositiony = visibleSize.height / 3;	//	The y position of two buttons
 
-	// 添加白色背景层
-	/*auto backLayer = LayerColor::create(Color4B::WHITE);
-	backLayer->setPosition(origin);
-	backLayer->setContentSize(visibleSize);
-	this->addChild(backLayer);*/
+	// 创建单点事件监听器
+	auto clickListener = EventListenerTouchOneByOne::create();
+	clickListener->setSwallowTouches(true);
+	clickListener->onTouchBegan = CC_CALLBACK_2(PlayScene::onTouchBegan, this);
+	clickListener->onTouchEnded = CC_CALLBACK_2(PlayScene::onTouchEnded, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(clickListener, this);
 
-	//add a button to start game
-	auto startButton = Button::create("CloseNormal.png", "CloseSelected.png", "CloseSelected.png");
-	startButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-	startButton->setPosition(Vec2(visibleSize.width / 3, buttonPositiony));
-	startButton->setTitleLabel(Label::createWithTTF("PLAY", "fonts/Marker Felt.ttf", 52));
-	this->addChild(startButton);
-	startButton->addTouchEventListener(
-		[&](Ref* sender, Widget::TouchEventType type) {
-			if (type == Widget::TouchEventType::ENDED)
-			{
-				//Then here will be repalced with the GameScene!
-				return 1;
-			}
-		}
-	);
+	// 创建移动事件监听器
+	auto moveListener = EventListenerMouse::create();
+	moveListener->onMouseMove = CC_CALLBACK_1(PlayScene::onMouseMove, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(moveListener, this);
 
-	////add a button to end game
-	auto endButton = Button::create("CloseNormal.png", "CloseSelected.png", "CloseSelected.png");
-	endButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-	endButton->setPosition(Vec2(visibleSize.width * 2 / 3, buttonPositiony));
-	endButton->setTitleLabel(Label::createWithTTF("EXIT", "fonts/Marker Felt.ttf", 52));
-	this->addChild(endButton, 1);
-	endButton->addTouchEventListener(
-		[&](Ref* sender, Widget::TouchEventType type) {
-			if (type == Widget::TouchEventType::ENDED)
-			{
-				Director::getInstance()->end();
-			}
-		}
-	);
+	// 添加背景层
+	playLayer = Layer::create();
+	playLayer->setPosition(origin);
+	playLayer->setContentSize(visibleSize);
+	this->addChild(playLayer);
 
-	/*Following  block is the Shoppincard,which needs packaging.*/
-	//Fetch the pics and values from the file
-	auto card = Button::create("/res/Shoppingcard.PNG", "/res/Shoppingcard.PNG", "/res/Shoppingcard.PNG");	//the frame of the card
-	auto pic = Sprite::create("/res/Books/AdvancedMathematics.PNG");	//the figure pic of the card
-	auto Healthicon = Sprite::create("/res/Icons/Health.PNG");		//the Health icon（生命）
-	auto Healthvalue = Text::create("1000", "arial", 500);		//the value of Health icon
-	auto Attackicon = Sprite::create("/res/Icons/Attack.PNG");	//the Attack icon(攻击)
-	auto Attackvalue = Text::create("1000", "arial", 500);	//the value of Attack
-	auto Armoricon = Sprite::create("/res/Icons/Armor.PNG");	//the Armor icon(防御)
-	auto Armorvalue = Text::create("1000", "arial", 500);	//the value of Armor
+	// 添加背景图片
+	auto backGround = Sprite::createWithTexture(texture->getTextureForKey("/res/Background/PlaySceneBackground.png"));
+	backGround->setPosition(visibleSize / 2);
+	Vec2 originSize = backGround->getContentSize();
+	backGround->setScale(visibleSize.height / originSize.y);
+	playLayer->addChild(backGround);
 
-	//adjust the comparing position of icons and texts
-	pic->setScale(2.5);
-	pic->setPosition(Vec2(685, 1550));
-	card->addChild(pic);
+	createBoard(Vec2(config->getPx()->x * 47.5, config->getPx()->y * 16));
 
-	Healthvalue->setPosition(Vec2(1300, 270));
-	Healthvalue->setColor(Color3B::BLACK);
-	Healthicon->addChild(Healthvalue);
-	Healthicon->setScale(0.4);
-	Healthicon->setPosition(Vec2(1500, 2000));
-	card->addChild(Healthicon);
+	auto exitButton = LoginScene::createGameButton("Exit!", "/res/UI/ExitNormal.png", "/res/UI/ExitSelected.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
+	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	originSize = exitButton->getContentSize();
+	exitButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
+	exitButton->setPosition(Vec2(70 * ConfigController::getInstance()->getPx()->y, -35 * ConfigController::getInstance()->getPx()->y));
 
-	Attackvalue->setPosition(Vec2(1300, 270));
-	Attackvalue->setColor(Color3B::BLACK);
-	Attackicon->addChild(Attackvalue);
-	Attackicon->setScale(0.4);
-	Attackicon->setPosition(Vec2(1500, 1700));
-	card->addChild(Attackicon);
+	auto pieceCard = PlayScene::createPieceCard("ABCD", "/res/Books/AdvancedMathematics.png", Vec2(-40 * config->getPx()->x, -45 * config->getPx()->y), CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
 
-	Armorvalue->setPosition(Vec2(1300, 270));
-	Armorvalue->setColor(Color3B::BLACK);
-	Armoricon->addChild(Armorvalue);
-	Armoricon->setScale(0.4);
-	Armoricon->setPosition(Vec2(1500, 1400));
-	card->addChild(Armoricon);
-
-	//you just need to adjust the Button card.
-	card->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT + Vec2(0.1, 0.3));	//The defult ANCHOR is BOTTOM_LEFT
-	card->setPosition(Vec2(100, 0));
-	card->setScale(0.2);
-	this->addChild(card);
-
-	return card;
-
+	auto menu = Menu::create(exitButton, pieceCard, nullptr);
+	playLayer->addChild(menu, 10);
 
 	return true;
+}
+
+void PlayScene::createBoard(Vec2 position)
+{
+	auto texture = Director::getInstance()->getTextureCache();
+	auto config = ConfigController::getInstance();
+
+	auto sprite = Sprite::createWithTexture(texture->getTextureForKey("/res/Background/BoardPiece.png"));
+	sprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+	Vec2 originSize = sprite->getContentSize();
+	float scale = 6.5 * config->getPx()->x / originSize.x;
+	sprite->setScale(scale);
+	originSize.x *= scale;
+	originSize.y *= scale;
+
+	for (int i = 0; i < ROW_BOARD; i++)
+	{
+		for (int j = 0; j < COL_BOARD; j++)
+		{
+			if (i == 0 || i == ROW_BOARD - 1 || j == 0 || j == COL_BOARD - 1)
+			{
+				chessBoard[i].push_back(Sprite::createWithTexture(texture->getTextureForKey("/res/Background/ReadyZone.png")));
+			}
+			else
+			{
+				chessBoard[i].push_back(Sprite::createWithTexture(texture->getTextureForKey("/res/Background/BoardPiece.png")));
+			}
+			chessBoard[i][j]->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+			chessBoard[i][j]->setScale(scale);
+			chessBoard[i][j]->setPosition(Vec2(position.x + originSize.x * j, position.y + originSize.y * i));
+			playLayer->addChild(chessBoard[i][j]);
+		}
+	}
+
+}
+
+MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback)
+{
+	auto texture = Director::getInstance()->getTextureCache();
+	auto config = ConfigController::getInstance();
+	CsvParser csv;
+	csv.parseWithFile("Data/PiecesData.csv");
+
+	// 创建卡片精灵
+	auto cardBack = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/ShoppingCard.png"));
+	
+	// 创建一个精灵菜单项
+	auto item = MenuItemSprite::create(cardBack, cardBack, callback);
+	item->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+
+	// 卡片相关
+	auto sprite = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
+	Vec2 originSize = item->getContentSize();
+	float scale = 22 * config->getPx()->x / originSize.x;
+	item->setScale(scale);
+	item->setPosition(position.x, position.y);
+
+	// 棋子图片相关
+	originSize = sprite->getContentSize();
+	sprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	scale = 8 * config->getPx()->x / originSize.x;
+	sprite->setScale(scale);
+	sprite->setPosition(position.x + 84.7 * config->getPx()->x, position.y + 53 * config->getPx()->y);
+	Vec2 originPosition = Vec2(sprite->getPositionX(), sprite->getPositionY());
+	this->addChild(sprite);
+
+	// 名称相关
+	Value data = Value(csv[0][2].c_str());
+	auto nameLabel = Label::createWithTTF(pieceName, "fonts/Marker Felt.ttf", 30);
+	nameLabel->setColor(Color3B::BLACK);
+	nameLabel->setPosition(Vec2(originPosition.x, originPosition.y - 6.8 * config->getPx()->y));
+	this->addChild(nameLabel);
+
+	// 各项属性相关
+	auto healthIcon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png")); // the Health icon（生命）
+	auto healthValue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 27); //the value of Health icon
+	auto attackIcon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png")); //the Attack icon(攻击)
+	auto attackValue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 27); //the value of Attack
+	auto armorIcon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png")); //the Armor icon(防御)
+	auto armorValue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 27); //the value of Armor
+	originSize = healthIcon->getContentSize();
+	scale = 3 * config->getPx()->x / originSize.x;
+	healthIcon->setScale(scale);
+	attackIcon->setScale(scale);
+	armorIcon->setScale(scale);
+	healthValue->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+	attackValue->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+	armorValue->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+	healthValue->setColor(Color3B::BLACK);
+	attackValue->setColor(Color3B::BLACK);
+	armorValue->setColor(Color3B::BLACK);
+	healthIcon->setPosition(Vec2(originPosition.x + 8 * config->getPx()->x, originPosition.y + 3 * config->getPx()->y));
+	attackIcon->setPosition(Vec2(originPosition.x + 8 * config->getPx()->x, originPosition.y - 1 * config->getPx()->y));
+	armorIcon->setPosition(Vec2(originPosition.x + 8 * config->getPx()->x, originPosition.y - 5 * config->getPx()->y));
+	healthValue->setPosition(Vec2(originPosition.x + 10 * config->getPx()->x, originPosition.y + 3 * config->getPx()->y));
+	attackValue->setPosition(Vec2(originPosition.x + 10 * config->getPx()->x, originPosition.y - 1 * config->getPx()->y));
+	armorValue->setPosition(Vec2(originPosition.x + 10 * config->getPx()->x, originPosition.y - 5 * config->getPx()->y));
+	this->addChild(healthIcon);
+	this->addChild(attackIcon);
+	this->addChild(armorIcon);
+	this->addChild(healthValue);
+	this->addChild(attackValue);
+	this->addChild(armorValue);
+
+	return item;
+}
+
+PieceCoordinate* PlayScene::coordingrevert(Vec2 realPosition)
+{
+	auto config = ConfigController::getInstance();
+	realPosition.x -= config->getPx()->x * 47.5;
+	realPosition.y -= config->getPx()->y * 16;
+
+	PieceCoordinate logPosition;
+	float perLength = 6.5 * config->getPx()->x;
+	logPosition.setX(static_cast<int>(realPosition.x) % static_cast<int>(perLength));
+	logPosition.setY(static_cast<int>(realPosition.y) % static_cast<int>(perLength));
+
+	return &logPosition;
+}
+
+void PlayScene::menuExitCallBack(Ref* sender)
+{
+	Director::getInstance()->end();
+}
+
+int PlayScene::onTouchBegan(Touch* touch, Event* event)
+{
+	Vec2 position = touch->getLocation();
+	if (position.x > chessBoard[1][1]->getPositionX() && position.x < chessBoard[1][9]->getPositionX() && 
+		position.y > chessBoard[1][1]->getPositionY() && position.y < chessBoard[5][1]->getPositionY()) // 鼠标在棋盘战斗区
+	{
+		CCLOG("WAR");
+		return IN_WAR_ZONE;
+	}
+	else if (position.x > chessBoard[0][1]->getPosition().x && position.x < chessBoard[0][9]->getPosition().x &&
+			 position.y > chessBoard[0][1]->getPosition().y && position.y < chessBoard[1][1]->getPosition().y)
+	{
+		CCLOG("READY");
+		return IN_READY_ZONE;
+	}
+	else
+	{
+		return NOT_IN_BOARD;
+	}
+}
+
+void PlayScene::onTouchEnded(Touch* touch, Event* event)
+{
+	auto board = ChessBoard::getInstance();
+
+	Vec2 position = touch->getLocation();
+	PieceCoordinate* logPosition = coordingrevert(position);
+
+	// int clickType = PlayScene::onTouchBegan(touch, event);
+	/*switch (clickType)
+	{
+		case IN_WAR_ZONE:
+			if (board->getPlayerA_WarZone_Pieces()[logPosition->getX()][logPosition->getY()] != nullptr)
+			{
+				chessBoard[logPosition->getY() + 1][logPosition->getX()]->setOpacity(50);
+			}
+			break;
+
+		case IN_READY_ZONE:
+			if (board->getPlayerA_PreZone_Pieces()->at(logPosition->getX()) != nullptr)
+			{
+				chessBoard[0][logPosition->getX()]->setOpacity(50);
+			}
+			break;
+
+		default:
+			break;
+	}*/
+
+}
+
+void PlayScene::onMouseMove(Event* event)
+{
+	EventMouse* e = (EventMouse*)event;
 }

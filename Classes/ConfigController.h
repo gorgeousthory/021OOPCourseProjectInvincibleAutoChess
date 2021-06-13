@@ -42,7 +42,7 @@ public:
 	void setScaleAndPosition(Sprite* sprite, int scale, float pos_x, float pos_y);
 
 private:
-	static  ConfigController* instance;
+	static ConfigController* instance;
 };
 
 #endif // !_CONFIGCONTRLLER_H_

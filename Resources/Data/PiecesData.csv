@@ -1,0 +1,16 @@
+ID/棋子编号,NameByEng/英文名,NameByChi/中文名,path/路径,cost/学分,hp/生命值,mp/法力值,atk/攻击力,dfc/防御力,atkspd/攻速,atkscp/攻击范围,crtchc/暴击率,crtdmg/暴击伤害
+11,AdvancedMathematics,高等数学,/res/Books/AdvancedMathematics.PNG,5,750,100,90,30,0.75,3,0.25,2
+12,/,/,/res/Books/AdvancedMathematics.PNG,/,1350,100,162,30,0.75,3,0.25,2
+13,/,/,/res/Books/AdvancedMathematics.PNG,/,2430,100,292,30,0.75,3,0.25,2
+21,LinearAlgebra,线性代数,/res/Books/LinearAlgebra.PNG,4,950,80,60,60,0.6,1,0.25,2
+22,/,/,/res/Books/LinearAlgebra.PNG,/,1710,80,108,60,0.6,1,0.25,2
+23,/,/,/res/Books/LinearAlgebra.PNG,/,3078,80,195,60,0.6,1,0.25,2
+31,CollegePhysics,大学物理,/res/Books/CollegePhysics.PNG,3,700,20,82,30,0.8,1,0.25,2
+32,/,/,/res/Books/CollegePhysics.PNG,/,1260,20,108,30,0.8,1,0.25,2
+33,/,/,/res/Books/CollegePhysics.PNG,/,2268,20,189,30,0.8,1,0.25,2
+41,MordernHistory,近代史纲要,/res/Books/MordernHistory.PNG,3,850,60,72,30,0.6,2,0.25,2
+42,/,/,/res/Books/MordernHistory.PNG,/,1530,60,89,30,0.6,2,0.25,2
+43,/,/,/res/Books/MordernHistory.PNG,/,2754,60,160,30,0.6,2,0.25,2
+51,C++PrimerPlus,C++PrimerPlus,/res/Books/C++Primer.PNG,4,1000,80,130,50,0.4,1,0.25,2
+52,/,/,/res/Books/C++Primer.PNG,/,1800,80,234,50,0.4,1,0.25,2
+53,/,/,/res/Books/C++Primer.PNG,/,3240,80,422,50,0.4,1,0.25,2

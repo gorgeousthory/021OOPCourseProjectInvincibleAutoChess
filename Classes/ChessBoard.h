@@ -11,6 +11,9 @@
 #ifndef _CHESSBOARD_H_
 #define _CHESSBOARD_H_
 
+#include <vector>
+using std::vector;
+
 #include "ChessPiece.h"
 #include "ConfigController.h"
 
@@ -19,32 +22,37 @@ class ChessBoard :public Ref
 public:
 	virtual bool init();
 
-	// 逻辑坐标与实际坐标的转化
-	PieceCoordinate* coordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos);
+	static ChessBoard* getInstance();
+
+	static void destroyInstance();
+
+	~ChessBoard();
 
 	// 计算实际坐标间的距离
 	static double getDistance(PieceCoordinate* start, PieceCoordinate* end);
 
 	// 获取玩家A对战区棋子集合
-	Vector<ChessPiece*>* getPlayerA_WarZone_Pieces();
+	vector<ChessPiece*>* getPlayerA_WarZone_Pieces();
 
 	// 获取玩家A备战区棋子集合
-	Vector<ChessPiece*>* getPlayerA_PreZone_Pieces();
+	vector<ChessPiece*>* getPlayerA_PreZone_Pieces();
 
 	// 获取玩家B对战区棋子集合
-	Vector<ChessPiece*>* getPlayerB_WarZone_Pieces();
+	vector<ChessPiece*>* getPlayerB_WarZone_Pieces();
 
 	// 获取玩家B备战区棋子集合
-	Vector<ChessPiece*>* getPlayerB_PreZone_Pieces();
+	vector<ChessPiece*>* getPlayerB_PreZone_Pieces();
 
 private:
-	Vector<ChessPiece*> _prtPlayerA_WarZone_Pieces; // 记录玩家A对战区棋子集合
+	static ChessBoard* instance;
 
-	Vector<ChessPiece*> _prtPlayerA_PreZone_Pieces; // 记录玩家A备战区棋子集合
+	vector<ChessPiece*> _prtPlayerA_WarZone_Pieces[8]; // 记录玩家A对战区棋子集合
 
-	Vector<ChessPiece*> _prtPlayerB_WarZone_Pieces; // 记录玩家B对战区棋子集合
+	vector<ChessPiece*> _prtPlayerA_PreZone_Pieces; // 记录玩家A备战区棋子集合
 
-	Vector<ChessPiece*> _prtPlayerB_PreZone_Pieces; // 记录玩家B备战区棋子集合
+	vector<ChessPiece*> _prtPlayerB_WarZone_Pieces[8]; // 记录玩家B对战区棋子集合
+
+	vector<ChessPiece*> _prtPlayerB_PreZone_Pieces; // 记录玩家B备战区棋子集合
 };
 
 #endif // !_CHESSBOARD_H_

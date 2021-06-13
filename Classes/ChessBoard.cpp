@@ -1,20 +1,30 @@
 #include "ChessBoard.h"
 
+ChessBoard* ChessBoard::instance = nullptr;
 bool ChessBoard::init()
 {
 	return true;
 }
-
-PieceCoordinate* ChessBoard::coordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos)
+ChessBoard* ChessBoard::getInstance()
 {
-	if (type == CoordinateType::logical)
+	if (instance == nullptr)
 	{
-		return nullptr;
+		instance = new ChessBoard();
 	}
-	else
+	return instance;
+}
+
+void ChessBoard::destroyInstance()
+{
+	if (instance != nullptr)
 	{
-		return nullptr;
+		delete instance;
+		instance = nullptr;
 	}
+}
+
+ChessBoard::~ChessBoard()
+{
 }
 
 double ChessBoard::getDistance(PieceCoordinate* start, PieceCoordinate* end)
@@ -22,22 +32,22 @@ double ChessBoard::getDistance(PieceCoordinate* start, PieceCoordinate* end)
 	return sqrt(pow((start->getX() - end->getX()), 2) + pow((start->getY() - end->getY()), 2));
 }
 
-Vector<ChessPiece*>* ChessBoard::getPlayerA_WarZone_Pieces()
+vector<ChessPiece*>* ChessBoard::getPlayerA_WarZone_Pieces()
 {
-	return &_prtPlayerA_WarZone_Pieces;
+	return &_prtPlayerA_WarZone_Pieces[8];
 }
 
-Vector<ChessPiece*>* ChessBoard::getPlayerA_PreZone_Pieces()
+vector<ChessPiece*>* ChessBoard::getPlayerA_PreZone_Pieces()
 {
 	return &_prtPlayerA_PreZone_Pieces;
 }
 
-Vector<ChessPiece*>* ChessBoard::getPlayerB_WarZone_Pieces()
+vector<ChessPiece*>* ChessBoard::getPlayerB_WarZone_Pieces()
 {
-	return &_prtPlayerB_WarZone_Pieces;
+	return &_prtPlayerB_WarZone_Pieces[8];
 }
 
-Vector<ChessPiece*>* ChessBoard::getPlayerB_PreZone_Pieces()
+vector<ChessPiece*>* ChessBoard::getPlayerB_PreZone_Pieces()
 {
 	return &_prtPlayerB_PreZone_Pieces;
 }

@@ -92,7 +92,7 @@ public:
 	const Level getPieceLevel();
 
 	// 获取当前棋子位置
-	const PieceCoordinate* getPrtCoordinateByType(CoordinateType type);
+	PieceCoordinate* getPrtCoordinateByType(CoordinateType type);
 
 	// 设置当前棋子星级
 	void setPieceLevel(const Level newLevel);
@@ -134,10 +134,23 @@ public:
 	//上面攻击函数的package，攻击在这里调用，参数A即为被攻击的对象(定义为虚函数是因为这里牵扯到了棋子类，现在的棋子类是抽象类没办法当作参数)
 	void attackOne(ChessPiece &A);
 
-	//判断棋子是否死了
+	//判断棋子是否死了,死了就为真
 	bool ifDead();
 
 	int storageNum = 0;//上方棋子为负数，下方棋子为正数
+
+	//棋子的可视化
+	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position);
+
+	//返回一个精灵指针，当精灵已经被当作战斗棋子可视化（即放上棋盘以后），这个精灵指针有一个指向对象，可以通过对指针操作完成动画效果
+	Sprite* getChessPice();
+
+	//设定棋子的坐标,指实际值，即屏幕上的位置
+	void setVec2(Vec2 position);
+
+	Vec2 getVec2();
+	
+
 protected:
 	string _pieceName; // 名称
 	
@@ -156,6 +169,8 @@ protected:
 	PieceCoordinate _logCoordinate; // 棋子的逻辑位置
 
 	PieceCoordinate _realCoordinate; // 棋子的实际位置
+
+	Sprite* imagePiece;//指向可视化
 };
 
 //----------------------------------------------------------------------------------------------------------------------------------

@@ -29,7 +29,7 @@ void ChessPiece::initPieceIfo(int id)
 	// 后续数据的初始化待文件结构完善后再行添加，预计在1.4.0版本之前完成
 }
 
-const PieceCoordinate* ChessPiece::getPrtCoordinateByType(CoordinateType type)
+PieceCoordinate* ChessPiece::getPrtCoordinateByType(CoordinateType type)
 {
 	if (type == CoordinateType::logical)
 	{
@@ -93,7 +93,73 @@ const Level ChessPiece::getPieceLevel()
 
 bool ChessPiece::ifDead()
 {
-	return _pieceCrtCondition.healthPoint > 0 ? true : false;
+	return _pieceCrtCondition.healthPoint > 0 ? false : true;
+}
+
+Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2 position)
+{
+	auto texture = Director::getInstance()->getTextureCache();
+	auto config = ConfigController::getInstance();
+
+	CsvParser csv;
+	csv.parseWithFile("Data/PiecesData.csv");
+
+	auto piece = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
+	auto hpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/HpBar.png"));//生命条
+	auto mpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//蓝条
+	/*auto hpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//灰条
+	auto mpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//灰条
+
+	hpDecreaseBar->setColor(Color3B::BLACK);
+	mpDecreaseBar->setColor(Color3B::BLACK);
+
+	ProgressTimer* hp, mp;
+	hp = ProgressTimer::create(hpDecreaseBar);*/
+	Vec2 originSize1 = piece->getContentSize();
+	Vec2 originSize2 = hpBar->getContentSize();
+	Vec2 originSize3 = mpBar->getContentSize();
+	float scale1 = 4 * config->getPx()->x / originSize1.x;
+	float scale2 = 2;
+	float scale3 = 2;
+
+	piece->setScale(scale1);
+	hpBar->setScale(scale2);
+	mpBar->setScale(scale3);
+
+	hpBar->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+	mpBar->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+
+	hpBar->setScale(0.7, 2);
+	mpBar->setScale(0.7, 3);
+
+	piece->setPosition(position);
+	hpBar->setPosition(position.x + 300, position.y + 1700);
+	mpBar->setPosition(position.x + 300, position.y + 2000);
+
+	piece->addChild(hpBar);
+	piece->addChild(mpBar);
+
+	return piece;
+}
+
+Sprite* ChessPiece::getChessPice()
+{
+	return imagePiece;
+}
+
+
+void ChessPiece::setVec2(Vec2 position)
+{
+	_realCoordinate.setX(position.x);
+	_realCoordinate.setY(position.y);
+}
+
+Vec2 ChessPiece::getVec2()
+{
+	Vec2 position;
+	position.x = _realCoordinate.getX();
+	position.y = _realCoordinate.getY();
+	return position;
 }
 
 

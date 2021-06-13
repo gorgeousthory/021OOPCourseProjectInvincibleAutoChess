@@ -14,13 +14,7 @@
 
 #define BOARD_SIZE 8//定义棋盘大小
 
-#include "ChessPiece.h"
-#include "ConfigController.h"
-
-using namespace std;
-
-
-enum class CoordinateType { real, logical }; // 坐标类型
+#include"ChessPiece.h"
 
 class ChessBoard :public Ref
 {
@@ -48,17 +42,21 @@ public:
 	vector<ChessPiece*>* getPlayerB_PreZone_Pieces();
 
 	//设置棋盘上的棋子表示这里有棋子不能再放置了
-	bool setBoard(ChessPiece& piece);
+	bool setBoard(ChessPiece &piece);
+
+	//检测是否在棋盘范围内
+	static bool isInBoard(Vec2 posi);
+
 
 private:
 
-	vector<ChessPiece*>* _prtPlayerA_WarZone_Pieces; // 记录玩家A对战区棋子集合
+	vector<ChessPiece*> _prtPlayerA_WarZone_Pieces; // 记录玩家A对战区棋子集合
 
-	vector<ChessPiece*>* _prtPlayerA_PreZone_Pieces; // 记录玩家A备战区棋子集合
+	vector<ChessPiece*> _prtPlayerA_PreZone_Pieces; // 记录玩家A备战区棋子集合
 
-	vector<ChessPiece*>* _prtPlayerB_WarZone_Pieces; // 记录玩家B对战区棋子集合
+	vector<ChessPiece*> _prtPlayerB_WarZone_Pieces; // 记录玩家B对战区棋子集合
 
-	vector<ChessPiece*>* _prtPlayerB_PreZone_Pieces; // 记录玩家B备战区棋子集合
+	vector<ChessPiece*> _prtPlayerB_PreZone_Pieces; // 记录玩家B备战区棋子集合
 
 	//记录棋盘上哪里为空哪里有棋子
 	//仅用来确定是否可以移动，无法确定具体位置的具体棋子是什么

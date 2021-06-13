@@ -1,11 +1,10 @@
 #include "ChessPiece.h"
+
 bool ChessPiece::init(int id)
 {
-	if (!ChessPiece::init(id))
-		return false;
 
 	// 初始化各项数据
-	_pieceName = ConfigController::getDataByID(id).asString();
+	//_pieceName = ConfigController::getDataByID(id).asString();
 	_piecePicPath = "Resources/Sprite/";
 	_piecePicPath += _pieceName;
 
@@ -17,12 +16,7 @@ bool ChessPiece::init(int id)
 
 bool ChessPiece::init()
 {
-	if (!ChessPiece::init()) {
-		return false;
-	}
-	else {
-		return true;
-	}
+	return true;
 }
 
 void ChessPiece::initPieceIfo(int id)
@@ -45,6 +39,11 @@ const PieceCoordinate* ChessPiece::getPrtCoordinateByType(CoordinateType type)
 	{
 		return &_realCoordinate;
 	}
+}
+
+void ChessPiece::setPieceLevel(const Level newLevel)
+{
+	_pieceLevel = newLevel;
 }
 
 
@@ -70,360 +69,390 @@ bool ChessPiece::updatePieceInfo(const double damage, PieceCoordinate* newRealCo
 
 	// 更新棋子位置
 	const int MOVESPEED = 3; // 移动速度，单位：秒每单位像素
-	double distance = ChessBoard::getDistance(&_realCoordinate, newRealCoordinate);
-	auto time = static_cast<float>(distance / MOVESPEED);
+	//auto distance = ChessBoard::getDistance(&_realCoordinate, newRealCoordinate);
+	//auto time = static_cast<float>(distance / MOVESPEED);
 
 	// 动画应该在PlayScene中创建，这里先放在这里（版本1.1.1）
-	auto updatePiecePos = MoveTo::create(time, Vec2(newRealCoordinate->getX(), newRealCoordinate->getY()));
-}
-//----------------------------------------------------------------------------------------------------------------------------------
-int ChessPiece::myAttack()
-{
-	srand(time(NULL));
-	int rate = rand() % 100 + 1;
-	return rate <= _pieceCrtCondition.criticalChance ? 2 * _pieceCrtCondition.attack : _pieceCrtCondition.attack;
-}//这里模拟的暴击几率只是特别接近，并不完全准确(太难了)
-
-int ChessPiece::attackBack(int blood)
-{
-	_pieceCrtCondition.healthPoint = (_pieceCrtCondition.healthPoint + blood * _pieceCondition.getSuck()) <= _pieceCrtCondition.healthPointM? _pieceCrtCondition.healthPoint + blood * _pieceCondition.getSuck() : _pieceCrtCondition.healthPointM;
-}//根据造成的伤害回血
-
-int ChessPiece::beenAttack(int attack)
-{
-	double d_rate = _pieceCrtCondition.defence / (100.0 + _pieceCrtCondition.defence);//减伤比例
-	int blood = static_cast<int>((attack * d_rate) * (_pieceCondition.getFragile() + 1));
-	_pieceCrtCondition.healthPoint = _pieceCrtCondition.healthPoint - blood;
+	//auto updatePiecePos = MoveTo::create(time, Vec2(newRealCoordinate->getX(), newRealCoordinate->getY()));
 }
 
-void ChessPiece::attackOne(ChessPiece& who_been_a)
+const string ChessPiece::getPieceName()
 {
-	attackBack(who_been_a.beenAttack(myAttack()));
-}//攻击函数的package 
-//----------------------------------------------------------------------------------------------------------------------------------
-bool ChessPiece::ifDead() { return _pieceCrtCondition.healthPoint <= 0 ? true : false; };
-//----------------------------------------------------------------------------------------------------------------------------------
-void ChessPiece::chessMoveLogicalJump(vector<ChessPiece*>* Oc)
-{
-	int Dx = 0;//两者x距离
-	int Dy = 0;//两者y距离
-	int TargetX = 0;
-	int TargetY = 0;
-	int MinDistance=9999;//逻辑上，因为是跳跃移动，所以距离应该是横坐标差加纵坐标差
-	for (auto spObj : *Oc)
-	{
-		auto XY = spObj->getPrtCoordinateByType(CoordinateType::logical);
-		Dx = XY->getX()- _logCoordinate.getX();
-		Dy = XY->getY() - _logCoordinate.getY();
-		if (MinDistance <= pow(Dy + Dx,0.5))
-			;
-		else
-		{
-			TargetX = XY->getX();
-			TargetY = XY->getY();
-			MinDistance = pow(Dy + Dx, 0.5);
-		}
-
-		if (_logCoordinate.getX() != TargetX)
-			_logCoordinate.setX(TargetX);
-		else
-			;
-
-		if (_logCoordinate.getY() !=TargetY)
-			if(TargetY==0)
-				_logCoordinate.setY(_logCoordinate.getY() + 1);
-			else 
-				_logCoordinate.setY(_logCoordinate.getY() - 1);
-		else
-			;
-	}
+	return _pieceName;
 }
 
-void ChessPiece::chessMoveLogicalOne(vector<ChessPiece*>* Oc)
+const PieceInfo* ChessPiece::getCrtPieceCondition()
 {
-	int Dx = 0;//两者x距离
-	int Dy = 0;//两者y距离
-	int TargetX = 0;
-	int TargetY = 0;
-	int MinDistance = 9999;//逻辑上，因为是一步移动，所以距离应该是平方和开根
-	for (auto spObj : *Oc)
-	{
-		auto XY = spObj->getPrtCoordinateByType(CoordinateType::logical);
-		Dx = XY->getX() - _logCoordinate.getX();
-		Dy = XY->getY() - _logCoordinate.getY();
-		if (MinDistance <= Dy + Dx)
-			;
-		else
-		{
-			TargetX = XY->getX();
-			TargetY = XY->getY();
-			MinDistance = Dy + Dx;
-		}
-
-		if (_logCoordinate.getX() > TargetX&&Dx+Dy>=2)
-			_logCoordinate.setX(_logCoordinate.getX() - 1);
-		else if (_logCoordinate.getX() < TargetX && Dx + Dy >= 2)
-			_logCoordinate.setX(_logCoordinate.getX() + 1);
-		else
-			;
-
-		if (_logCoordinate.getY() > TargetY && Dx + Dy >= 2)
-			_logCoordinate.setY(_logCoordinate.getY() - 1);
-		else if (_logCoordinate.getY() < TargetY && Dx + Dy >= 2)
-			_logCoordinate.setY(_logCoordinate.getY() + 1);
-		else
-			;
-	}
+	return &_pieceCrtCondition;
 }
-//----------------------------------------------------------------------------------------------------------------------------------
-//计算buff并修改自身属性
+
+const Level ChessPiece::getPieceLevel()
+{
+	return _pieceLevel;
+}
+
+bool ChessPiece::ifDead()
+{
+	return _pieceCrtCondition.healthPoint > 0 ? true : false;
+}
+
+
 void ChessPiece::readCondition()
 {
-	_pieceCrtCondition.attack= _pieceCrtCondition.equipAttack * (1 + _pieceCondition.getInsAtk());
-	_pieceCrtCondition.defence = _pieceCrtCondition.equpiDefence * (1 + _pieceCondition.getInspireDefence());
-	_pieceCrtCondition.attackSpeed = _pieceCrtCondition.equipAttackSpeed * (1 + _pieceCondition.getInspireSpeed());
-}//计算buff加成并且获得相应增益
+	//实际战斗中，一个棋子的真实属性均在equipXX中储存，Attack/defence这些数据均是一个基础数据，基本不调用
+	//有攻击加成buff的攻击力
+	_pieceCrtCondition.equipAttack = _pieceCrtCondition.equipAttack * (1 + _pieceCrtCondition.myCondition.getInspireAttack());
+
+	//有防御加成
+	_pieceCrtCondition.equpiDefence = _pieceCrtCondition.equpiDefence * (1 + _pieceCrtCondition.myCondition.getInspireDefence());
+
+	//攻速加成
+	_pieceCrtCondition.equipAttackSpeed = _pieceCrtCondition.equipAttackSpeed * (1 + _pieceCrtCondition.myCondition.getInspireSpeed());
+}
 
 void ChessPiece::setCondition(double s, int Condition)
 {
 	switch (Condition)
 	{
 	case 1:
-		_pieceCondition.controlSleep(s);
+		_pieceCrtCondition.myCondition.controlSleep(s);
 		break;
 	case 2:
-		_pieceCondition.controlFragile(s);
+		_pieceCrtCondition.myCondition.controlFragile(s);
 		break;
 	case 3:
-		_pieceCondition.controlInspireAtk(s);
+		_pieceCrtCondition.myCondition.controlInspireAttack(s);
 		break;
 	case 4:
-		_pieceCondition.controlInspireSpeed(s);
+		_pieceCrtCondition.myCondition.controlInspireSpeed(s);
 		break;
 	case 5:
-		_pieceCondition.controlInspireDefence(s);
+		_pieceCrtCondition.myCondition.controlInspireDefence(s);
 		break;
 	case 6:
-		_pieceCondition.controlSuck(s);
+		_pieceCrtCondition.myCondition.controlSuck(s);
 		break;
 	case 7:
-		_pieceCondition.controlGetHp(s);
-		break;
-	default:
+		_pieceCrtCondition.myCondition.controlGetHp(s);
 		break;
 	}
 }
-/*参数1 对于控制类的 非0为真0为假*/
-/*对于比例类的,表示比例，提升百分之40，填写0.4*/
-/*对于数值类的,表示数指，每秒回血800，填写800*/
-/*参数2表示某一状态:1,控制 2,易损 3,攻击提升 4,攻速提升 5,防御提升 6,攻击吸血 7,回血状态*/
-//----------------------------------------------------------------------------------------------------------------------------------
-/*整形数字与装备对应关系
-* 1 yataghan,2 gem,3 dagger,4 ammoue,5 bow
-*/
-void ChessPiece::giveEquip(int qua, int e_class)
+
+int ChessPiece::myAttack()
 {
-	switch (e_class)
+	srand(time(NULL));
+	int rate = rand() % 100 + 1;
+	if (rate >= _pieceCrtCondition.criticalChance) {//暴击了
+		return 2 * _pieceCrtCondition.equipAttack;
+	}
+	else {//没暴击
+		return _pieceCrtCondition.equipAttack;
+	}
+}
+
+//blood指一次攻击产生的伤害，hp是攻击以后的血量
+int ChessPiece::attackBack(int blood)
+{
+	int hp = 0;//指攻击回复的hp
+	hp = _pieceCrtCondition.healthPoint + blood * _pieceCrtCondition.myCondition.getSuck();
+	if (hp >= _pieceCrtCondition.healthPointM) {
+		_pieceCrtCondition.healthPoint = _pieceCrtCondition.healthPointM;
+		return  _pieceCrtCondition.healthPointM;
+	}
+	else {
+		_pieceCrtCondition.healthPoint = hp;
+		return hp;
+	}
+}
+
+//返回受到的伤害
+int ChessPiece::beenAttack(int attack)
+{
+	double defenceRate = _pieceCrtCondition.defence / (1 + _pieceCrtCondition.defence);
+	int damage = attack * defenceRate * _pieceCrtCondition.myCondition.getFragile();//总共伤害
+	_pieceCrtCondition.healthPoint -= damage;
+	return damage;
+}
+
+void ChessPiece::attackOne(ChessPiece& A)
+{
+	//回血&&给对象A打伤害
+	attackBack(A.beenAttack(myAttack()));
+}
+
+int PieceCoordinate::getX() const
+{
+	return _x;
+}
+
+int PieceCoordinate::getY() const
+{
+	return _y;
+}
+
+void PieceCoordinate::setX(const int x)
+{
+	_x = x;
+}
+
+void PieceCoordinate::setY(const int y)
+{
+	_y = y;
+}
+
+int tank::oRankTank = 0;
+int tank::twRankTank = 0;
+void tank::IncreaseOne()
+{
+	oRankTank++;
+}
+
+void tank::DecreaseOne()
+{
+	oRankTank--;
+}
+
+void tank::IncreaseTwo()
+{
+	twRankTank++;
+}
+
+void tank::DecreaseTwo()
+{
+	twRankTank--;
+}
+
+int mage::oRankMage = 0;
+int mage::twRankMage = 0;
+
+void mage::Increase()
+{
+	oRankMage++;
+}
+
+void mage::Decrease()
+{
+	oRankMage--;
+}
+
+void mage::IncreaseTwo()
+{
+	twRankMage++;
+}
+
+void mage::DecreaseTwo()
+{
+	twRankMage--;
+}
+
+int stalker::oRankStalker = 0;
+int stalker::twRankStalker = 0;
+
+void stalker::Increase()
+{
+	oRankStalker++;
+}
+
+void stalker::Decrease()
+{
+	oRankStalker--;
+}
+
+void stalker::IncreaseTwo()
+{
+	twRankStalker++;
+}
+
+void stalker::DecreaseTwo()
+{
+	twRankStalker--;
+}
+
+int therapist::oRankTherapist = 0;
+int therapist::twRankTherapist = 0;
+void therapist::Increase()
+{
+	oRankTherapist++;
+}
+
+void therapist::Decrease()
+{
+	oRankTherapist--;
+}
+
+void therapist::IncreaseTwo()
+{
+	twRankTherapist++;
+}
+
+void therapist::DecreaseTwo()
+{
+	twRankTherapist--;
+}
+
+int shooter::oRankShooter = 0;
+int shooter::twRankShooter = 0;
+
+void shooter::Increase()
+{
+	oRankShooter++;
+}
+
+void shooter::Decrease()
+{
+	oRankShooter--;
+}
+
+void shooter::IncreaseTwo()
+{
+	twRankShooter++;
+}
+
+void shooter::DecreaseTwo()
+{
+	twRankShooter--;
+}
+
+string tank::getTag() { return tag; };
+string mage::getTag() { return tag; };
+string shooter::getTag() { return tag; };
+string therapist::getTag() { return tag; };
+string stalker::getTag() { return tag; };
+
+void tank::promoteRank()
+{
+	if (Level::level1 == getPieceLevel())
 	{
-	case 1:
-		_pieceEquipment.give_yataghan(qua);
-		break;
-	case 2:
-		_pieceEquipment.give_gem(qua);
-		break;
-	case 3:
-		_pieceEquipment.give_dagger(qua);
-		break;
-	case 4:
-		_pieceEquipment.give_ammoue(qua);
-		break;
-	case 5:
-		_pieceEquipment.give_bow(qua);
-		break;
-	default:
-		break;
+		if (oRankTank >= 3)
+		{
+			setPieceLevel(Level::level2);
+			oRankTank = oRankTank - 3;
+		}
 	}
-	readEquipment();
-	equipCombine();
-}//给予装备时就会进行装备合成和属性提升，如声明所说，是个package
-
-void ChessPiece::readEquipment()
-{
-	_pieceCrtCondition.healthPointM += _pieceEquipment.get_t_gem() * 150;
-	_pieceCrtCondition.equipAttackSpeed += _pieceEquipment.get_t_bow() * 0.1;
-	_pieceCrtCondition.equpiDefence += _pieceEquipment.get_t_ammoue() * 10;
-	_pieceCrtCondition.equipAttack += _pieceEquipment.get_t_yataghan() * 10;
-	_pieceCrtCondition.criticalChance += 10 * _pieceEquipment.get_t_dagger();
-}//这里的数据时随意给的，和数据链接的兄弟需要进行修改
-
-void ChessPiece::equipCombine()
-{
-
-}
-//获得名字
-const string ChessPiece::getPieceName() { return _pieceName; }
-
-// 获取当前棋子数值
-const PieceInfo* ChessPiece::getCrtPieceCondition() { return &_pieceCrtCondition; }
-
-// 获取当前棋子星级
-const Level ChessPiece::getPieceLevel() { return _pieceLevel; }
-
-// 设置当前棋子星级
-void ChessPiece::setPieceLevel(const Level newLevel) { _pieceLevel = newLevel; }
-
-
-//----------------------------------------------------------------------------------------------------------------------------------
-//分割线，以上是棋子基类的实现，以下是各种具体棋子的实现
-//----------------------------------------------------------------------------------------------------------------------------------
-
-/*tank*/
-//这里的构造函数需要做初始化的兄弟补充
-tank::tank()
-{
-
+	else if (Level::level2 == getPieceLevel())
+	{
+		if (twRankTank >= 3)
+		{
+			setPieceLevel(Level::level3);
+			twRankTank = twRankTank - 3;
+		}
+	}
 }
 
-void tank::skill()
+vector<ChessPiece*>  tank::promoteRank(vector<ChessPiece*> piece)
 {
-
+	vector<ChessPiece*> result;
+	if (Level::level1 == getPieceLevel())
+	{
+		if (oRankTank >= 3)
+		{
+			setPieceLevel(Level::level2);
+			oRankTank = oRankTank - 3;
+			int m1 = 0;
+			for (auto i1 : piece)
+			{
+				if ("tank" == getTag() && m1 < 3 && Level::level1 == i1->getPieceLevel())
+					m1++;
+				else
+					result.push_back(i1);
+			}
+		}
+	}
+	else if (Level::level2 == getPieceLevel())
+	{
+		if (twRankTank >= 3)
+		{
+			setPieceLevel(Level::level3);
+			twRankTank = twRankTank - 3;
+			int m1 = 0;
+			for (auto i1 : piece)
+			{
+				if ("tank" == getTag() && m1 < 3 && Level::level2 == i1->getPieceLevel())
+					m1++;
+				else
+					result.push_back(i1);
+			}
+		}
+	}
+	return result;
 }
 
-void tank::familyBuff()
+void mage::promoteRank()
 {
-
-}
-//注意，该函数的作用仅为检测数量并且升级
-//删去被使用棋子的方式要看其他部分具体编写方式，不固定
-void tank::promoteRank() 
-{
-	if (oRankTank >= 3)
-		setPieceLevel(Level::level2);
-	if(twRankTank>=3)
-		setPieceLevel(Level::level3);
-}
-//数量记录，构造函数涉及到的地方较多,不好控制，干脆自己控制加1吧
-void tank::IncreaseOne() { oRankTank++; }
-void tank::DecreaseOne() { oRankTank--; }
-void tank::IncreaseTwo() { twRankTank++; }
-void tank::DecreaseTwo() { twRankTank--; }
-
-/*mage*/
-mage::mage()
-{
-
-}
-
-void mage::skill()
-{
-
-}
-
-void mage::familyBuff()
-{
-
-}
-
-void mage::promoteRank() 
-{
-	if (oRankMage >= 3)
-		setPieceLevel(Level::level2);
-	if (twRankMage >= 3)
-		setPieceLevel(Level::level3);
-}
-
-void mage::Increase() { oRankMage++; }
-void mage::Decrease() { oRankMage--; }
-void mage::IncreaseTwo() { twRankMage++; }
-void mage::DecreaseTwo() { twRankMage--; }
-
-/*stalker*/
-stalker::stalker()
-{
-
-}
-
-void stalker::skill()
-{
-
-}
-
-void stalker::familyBuff()
-{
-
+	if (Level::level1 == getPieceLevel())
+	{
+		if (oRankMage >= 3)
+		{
+			setPieceLevel(Level::level2);
+			oRankMage = oRankMage - 3;
+		}
+	}
+	else if (Level::level2 == getPieceLevel())
+	{
+		if (twRankMage >= 3)
+		{
+			setPieceLevel(Level::level3);
+			twRankMage = twRankMage - 3;
+		}
+	}
 }
 
 void stalker::promoteRank()
 {
-	if (oRankStalker >= 3)
-		setPieceLevel(Level::level2);
-	if (twRankStalker >= 3)
-		setPieceLevel(Level::level3);
-}
-
-void stalker::Increase() { oRankStalker++; }
-void stalker::Decrease() { oRankStalker--; }
-void stalker::IncreaseTwo() { twRankStalker++; }
-void stalker::DecreaseTwo() { twRankStalker--; }
-/*therapist*/
-therapist::therapist()
-{
-
-}
-
-void therapist::skill()
-{
-
-}
-
-void therapist::familyBuff()
-{
-
+	if (Level::level1 == getPieceLevel())
+	{
+		if (oRankStalker >= 3)
+		{
+			setPieceLevel(Level::level2);
+			oRankStalker = oRankStalker - 3;
+		}
+	}
+	else if (Level::level2 == getPieceLevel())
+	{
+		if (twRankStalker >= 3)
+		{
+			setPieceLevel(Level::level3);
+			twRankStalker = twRankStalker - 3;
+		}
+	}
 }
 
 void therapist::promoteRank()
 {
-	if (oRankTherapist >= 3)
-		setPieceLevel(Level::level2);
-	if (twRankTherapist >= 3)
-		setPieceLevel(Level::level3);
+	if (Level::level1 == getPieceLevel())
+	{
+		if (oRankTherapist >= 3)
+		{
+			setPieceLevel(Level::level2);
+			oRankTherapist = oRankTherapist - 3;
+		}
+	}
+	else if (Level::level2 == getPieceLevel())
+	{
+		if (twRankTherapist >= 3)
+		{
+			setPieceLevel(Level::level3);
+			twRankTherapist = twRankTherapist - 3;
+		}
+	}
 }
 
-void therapist::Increase() { oRankTherapist++; }
-void therapist::Decrease() { oRankTherapist--; }
-void therapist::IncreaseTwo() { twRankTherapist++; }
-void therapist::DecreaseTwo() { twRankTherapist--; }
-/*shotter*/
-shotter::shotter()
+void shooter::promoteRank()
 {
-
+	if (Level::level1 == getPieceLevel())
+	{
+		if (oRankShooter >= 3)
+		{
+			setPieceLevel(Level::level2);
+			oRankShooter = oRankShooter - 3;
+		}
+	}
+	else if (Level::level2 == getPieceLevel())
+	{
+		if (twRankShooter >= 3)
+		{
+			setPieceLevel(Level::level3);
+			twRankShooter = twRankShooter - 3;
+		}
+	}
 }
-
-void shotter::skill()
-{
-
-}
-
-void shotter::familyBuff()
-{
-
-}
-
-void shotter::promoteRank()
-{
-	if (oRankShotter >= 3)
-		setPieceLevel(Level::level2);
-	if (twRankShotter >= 3)
-		setPieceLevel(Level::level3);
-}
-
-void shotter::Increase() { oRankShotter++; }
-void shotter::Decrease() { oRankShotter--; }
-void shotter::IncreaseTwo() { twRankShotter++; }
-void shotter::DecreaseTwo() { twRankShotter--; }
-//-----------------------------------棋子坐标类的实现-----------------------------------------------------
-int PieceCoordinate::getX() const { return _x; }
-int PieceCoordinate::getY() const { return _y; }
-void PieceCoordinate::setX(const int x) { _x = x; }
-void PieceCoordinate::setY(const int y) { _y = y; }
-//---------------------------------------------------------------------------------------------------------

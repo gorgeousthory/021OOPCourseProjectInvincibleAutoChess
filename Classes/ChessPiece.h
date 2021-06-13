@@ -1,45 +1,32 @@
 /********************************************
  * 功能：棋子模型
  * 作者：刘兴源,刘嘉诚
- * 版本：1.2.0
+ * 版本：1.2.1
  * 位置：Classes/model(筛选器)
  * 游戏引擎：Cocos2d-x 4.0
  * ******************************************
- * 更新内容：基本完成了逻辑层面大部分功能的实现
+ * 更新内容：合并了ljc上传的一些内容，增添了storageNum这个变量
  ********************************************/
 #pragma once
 #ifndef _CHESSPIECE_H_
 #define _CHESSPIECE_H_
-
-#include "cocos2d.h"
-#include "cocos/2d/CCAction.h"
-#include "cocos/2d/CCActionInterval.h"
-#include<time.h>
-#include<stdlib.h>
-USING_NS_CC;
-
 #include "ConfigController.h"
-#include "ChessBoard.h"
-#include "Equipment.h"
-#include "Condition.h"
-#include<vector>
-#include <string>
-#include<cmath>
-using std::string;
+#include"Equipment.h"
+#include"Condition.h"
 
 struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 {
-	int healthPoint; // 生命
-	int healthPointM;//最大生命值
+	double healthPoint; // 生命
+	double healthPointM;//最大生命值
 	
-	int magicPoint; // 法力
-	int magicPointM; // 最大法力
+	double magicPoint; // 法力
+	double magicPointM; // 最大法力
 
-	int attack; // 攻击力
-	int equipAttack;//装备+初始
+	double attack; // 攻击力
+	double equipAttack;//装备+初始
 	
-	int defence; // 防御力
-	int equpiDefence;//装备+初始
+	double defence; // 防御力
+	double equpiDefence;//装备+初始
 
 	double attackSpeed; // 攻击速度
 	double equipAttackSpeed; //装备 + 初始
@@ -49,9 +36,11 @@ struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 	double criticalChance; // 暴击几率
 
 	double criticalDamage; // 暴击伤害
+
+	Condition myCondition;//当前状态
 };
-//装备加初始的含义是初始属性加上装备属性，对应的另一项是战斗时的属性
-//和数据库连接时给予初始数据请给予初始加装备，并且readEquipment一次
+
+enum class CoordinateType{ real, logical }; // 坐标类型
 
 class PieceCoordinate // 棋子坐标
 {
@@ -107,7 +96,10 @@ public:
 	// 设置当前棋子星级
 	void setPieceLevel(const Level newLevel);
 
-	//CREATE_FUNC(ChessPiece);
+	//获取棋子类型
+	virtual string getTag() = 0;
+
+	//CREATE_FUNC(ChessPiece);   这里ChessPiece是抽象类不能create
 
 	//技能函数，继承
 	virtual void skill() = 0;
@@ -115,13 +107,14 @@ public:
 	//羁绊 继承
 	virtual void familyBuff() = 0;
 
-	//检测数量并提升星级，但注意不会删除被使用棋子
+	//提升星级,参数为一个包括了玩家所有棋子的指针的vector
+	//函数的调用会返回一个消耗了对应棋子的vector。
+	virtual vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece) = 0;
+	//只单纯升级，不执行撤去棋子的操作
 	virtual void promoteRank() = 0;
 
-	//提供装备,giveEquip属于package 直接调用即可
-	void equipCombine();//装备合成
-	void readEquipment();//读取装备属性
-	virtual void giveEquip(int equipNum, int equipType);
+	//提供装备
+	//virtual void giveEquip(int equipNum, int equipType);
 
 	//计算buff并修改自身属性
 	virtual void readCondition();
@@ -134,22 +127,16 @@ public:
 	//攻击：吸血函数
 	int attackBack(int blood);
 
-	//攻击：被攻击函数,根据对方hp和血量扣除自身的hp并且返回伤害
+	//攻击：被攻击函数,根据伤害量扣除自身的hp
 	int beenAttack(int attack);
 
-	//上面攻击函数的package，攻击在这里调用，参数A即为被攻击的对象
-	void attackOne(ChessPiece& A);
+	//上面攻击函数的package，攻击在这里调用，参数A即为被攻击的对象(定义为虚函数是因为这里牵扯到了棋子类，现在的棋子类是抽象类没办法当作参数)
+	void attackOne(ChessPiece &A);
 
 	//判断棋子是否死了
 	bool ifDead();
 
-	//方用来实现棋子的移动(逻辑上,横一步，竖一步，也可能只单方向走一步)因为是索敌移动，需要传入对方棋子vector的一个指针
-	void chessMoveLogicalOne(vector<ChessPiece*>* Oc);//指针获取调用棋盘的成员函数即可
-	//走到目标九宫格内为目标
-
-	//方法用来实现刺客型棋子的跳跃移动(逻辑上，一跳)因为是索敌移动，需要传入对方棋子vector的一个指针
-	void chessMoveLogicalJump(vector<ChessPiece*>* Oc);
-
+	int storageNum = 0;//上方棋子为负数，下方棋子为正数
 private:
 	string _pieceName; // 名称
 	
@@ -158,10 +145,6 @@ private:
 	string _pieceDataPath; // 基础数据在库中的key
 	
 	Level _pieceLevel; // 星级
-
-	Condition _pieceCondition;//棋子状态
-
-	Equip _pieceEquipment;//棋子装备
 
 	int _piecePerCost; // 一只一星棋子所需金币
 
@@ -173,16 +156,21 @@ private:
 
 	PieceCoordinate _realCoordinate; // 棋子的实际位置
 };
+
 //----------------------------------------------------------------------------------------------------------------------------------
 //分割线，以上是棋子基类的声明，以下是各种具体棋子的声明
 //----------------------------------------------------------------------------------------------------------------------------------
 /*tank*/
 class tank : public ChessPiece
 {
+public:
 	static int oRankTank;//记录一星tank的数量
 	static int twRankTank;//记录二星tank数量
-public:
+	string tag = "tank";//用于区分棋子类别
+	//获得棋子类别
+	string getTag();
 	//初始化函数
+	virtual bool init();
 	tank();
 	//析构函数
 	~tank();
@@ -196,15 +184,19 @@ public:
 	//家族buff 空出来了
 	void familyBuff();
 	//升级函数
+	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
 };
 
 /*mage*/
 class mage : public ChessPiece
 {
+public:
 	static int oRankMage;//记录一星Mage的数量
 	static int twRankMage;//记录二星Mage数量
-public:
+	string tag = "mage";
+	//获得棋子类别
+	string getTag();
 	mage();
 	~mage();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
@@ -217,15 +209,19 @@ public:
 	//家族buff 空出来了
 	void familyBuff();
 	//升级函数
+	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
 };
 
 /*stalker*/
 class stalker : public ChessPiece
 {
+public:
 	static int oRankStalker;//记录一星stalker的数量
 	static int twRankStalker;//记录二星stalker数量
-public:
+	string tag = "stalker";
+	//获得棋子类别
+	string getTag();
 	stalker();
 	~stalker();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
@@ -238,15 +234,19 @@ public:
 	//家族buff 空出来了
 	void familyBuff();
 	//升级函数
+	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
 };
 
 /*therapist*/
 class therapist : public ChessPiece
 {
+public:
 	static int oRankTherapist;//记录一星therapist的数量
 	static int twRankTherapist;//记录二星therapist数量
-public:
+	string tag = "therapist";
+	//获得棋子类别
+	string getTag();
 	therapist();
 	~therapist();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
@@ -259,17 +259,21 @@ public:
 	//家族buff 空出来了
 	void familyBuff();
 	//升级函数
-	void promoteRank();
+	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
+    void promoteRank();
 };
 
-/*shotter*/
-class shotter : public ChessPiece
+/*shooter*/
+class shooter : public ChessPiece
 {
-	static int oRankShotter;//记录一星shotter的数量
-	static int twRankShotter;//记录二星shotter数量
 public:
-	shotter();
-	~shotter();
+	static int oRankShooter;//记录一星shotter的数量
+	static int twRankShooter;//记录二星shotter数量
+	string tag = "shooter";
+	//获得棋子类别
+	string getTag();
+	shooter();
+	~shooter();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
 	void Increase();
 	void Decrease();
@@ -280,6 +284,7 @@ public:
 	//家族buff 空出来了
 	void familyBuff();
 	//升级函数
+	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
 };
 #endif

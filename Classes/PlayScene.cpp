@@ -50,10 +50,12 @@ bool PlayScene::init()
 
 	// 创建商店
 	shopModel = Shop::create();
-	createShop(Vec2(-40 * config->getPx()->x, -45 * config->getPx()->y));
+	createShop(Vec2(-45 * config->getPx()->x, -45 * config->getPx()->y));
 
 	// 创建玩家
 	playerA = Player::create();
+
+	
 
 
 
@@ -66,7 +68,7 @@ bool PlayScene::init()
 	exitButton->setPosition(Vec2(70 * ConfigController::getInstance()->getPx()->y, -35 * ConfigController::getInstance()->getPx()->y));
 
 
-	auto menu = Menu::create(exitButton, shop[0], shop[1], nullptr);
+	auto menu = Menu::create(exitButton, shop[0], shop[1], shop[2], shop[3], shop[4], nullptr);
 	playLayer->addChild(menu, 5);
 
 	return true;
@@ -110,9 +112,30 @@ void PlayScene::createShop(Vec2 position)
 {
 	// 单例工具
 	auto config = ConfigController::getInstance();
+	auto texture = Director::getInstance()->getTextureCache();
 
-	// 创建菜单项
-	auto menuItem = MenuItem::create();
+	// 刷新及购买经验
+	// 背景
+	auto shopMore = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/ShoppingMore.png"));
+	Vec2 originSize = shopMore->getContentSize();
+	float scale = 16.9 * config->getPx()->x / originSize.x;
+	shopMore->setScale(scale);
+	shopMore->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+	shopMore->setPosition(Vec2(position.x + 80 * config->getPx()->x, position.y + 45 * config->getPx()->y));
+	Vec2 originPosition = Vec2(shopMore->getPositionX(), shopMore->getPositionY());
+	playLayer->addChild(shopMore, 5);
+	// 两个菜单项
+	auto buyExp = LoginScene::createGameButton("", "/res/UI/UpgradeNormal.png", "/res/UI/UpgradeSelected.png", CC_CALLBACK_1(PlayScene::menuBuyExpCallBack, this));
+	auto freshShop = LoginScene::createGameButton("", "/res/UI/RefreshNormal.png", "/res/UI/RefreshSelected.png", CC_CALLBACK_1(PlayScene::menuFreshShopCallBack, this));
+	originSize = buyExp->getContentSize();
+	scale = 13.5 * 16.9 / 15 * config->getPx()->x / originSize.x;
+	buyExp->setScale(scale);
+	freshShop->setScale(scale);
+	buyExp->setPosition(Vec2(originPosition.x - 16.9 / 2 * config->getPx()->x, originPosition.y + 10.5 * 16.9 / 15 * config->getPx()->y));
+	freshShop->setPosition(Vec2(originPosition.x - 16.9 / 2 * config->getPx()->x, originPosition.y + 4 * 16.9 / 15 * config->getPx()->y));
+	playLayer->addChild(buyExp, 6);
+	playLayer->addChild(freshShop, 6);
+
 	// 棋子及装备卡片
 	auto pieceCard1 = PlayScene::createPieceCard("ABCD", "/res/Books/AdvancedMathematics.png", position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack, this));
 	auto pieceCard2 = PlayScene::createPieceCard("EFGH", "/res/Books/AdvancedMathematics.png", Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack, this));
@@ -130,6 +153,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 {
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
+	float adjust = 160 / 22;
 	CsvParser csv;
 	csv.parseWithFile("Data/PiecesData.csv");
 
@@ -142,57 +166,61 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 
 	// 卡片相关
 	auto sprite = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
+	sprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 	Vec2 originSize = item->getContentSize();
-	float scale = 22 * config->getPx()->x / originSize.x;
-	item->setScale(scale);
 	item->setPosition(position.x, position.y);
+	Vec2 originPosition = Vec2(sprite->getPositionX(), sprite->getPositionY());
 
 	// 棋子图片相关
 	originSize = sprite->getContentSize();
 	sprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-	scale = 8 * config->getPx()->x / originSize.x;
-	// sprite->setScale(scale);
-	sprite->setPosition(position.x + 84.7 * config->getPx()->x, position.y + 53.5 * config->getPx()->y);
-	Vec2 originPosition = Vec2(sprite->getPositionX(), sprite->getPositionY());
+	float scale = 8.5 * config->getPx()->x / originSize.x * adjust;
+	sprite->setScale(scale);
+	sprite->setPosition(originPosition.x + 38 * config->getPx()->x, originPosition.y + 67 * config->getPx()->y);
+	originPosition = Vec2(sprite->getPositionX(), sprite->getPositionY());
 	item->addChild(sprite, 6);
 
 	// 名称相关
 	Value data = Value(csv[0][2].c_str());
-	auto nameLabel = Label::createWithTTF(pieceName, "fonts/Marker Felt.ttf", 30);
+	auto nameLabel = Label::createWithTTF(pieceName, "fonts/Marker Felt.ttf", 30 * adjust);
 	nameLabel->setColor(Color3B::BLACK);
-	nameLabel->setPosition(Vec2(originPosition.x, originPosition.y - 7.2 * config->getPx()->y));
-	cardBack->addChild(nameLabel, 6);
+	nameLabel->setPosition(Vec2(originPosition.x, originPosition.y - 59 * config->getPx()->y));
+	item->addChild(nameLabel, 6);
 
 	// 各项属性相关
 	auto healthIcon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png")); // the Health icon（生命）
-	auto healthValue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 27); //the value of Health icon
+	auto healthValue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 27 * adjust); //the value of Health icon
 	auto attackIcon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png")); //the Attack icon(攻击)
-	auto attackValue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 27); //the value of Attack
+	auto attackValue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 27 * adjust); //the value of Attack
 	auto armorIcon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png")); //the Armor icon(防御)
-	auto armorValue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 27); //the value of Armor
+	auto armorValue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 27 * adjust); //the value of Armor
 	originSize = healthIcon->getContentSize();
-	scale = 3 * config->getPx()->x / originSize.x;
-	/*healthIcon->setScale(scale);
+	scale = 3 * config->getPx()->x / originSize.x * adjust;
+	healthIcon->setScale(scale);
 	attackIcon->setScale(scale);
-	armorIcon->setScale(scale);*/
+	armorIcon->setScale(scale);
 	healthValue->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
 	attackValue->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
 	armorValue->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
 	healthValue->setColor(Color3B::BLACK);
 	attackValue->setColor(Color3B::BLACK);
 	armorValue->setColor(Color3B::BLACK);
-	healthIcon->setPosition(Vec2(originPosition.x + 8 * config->getPx()->x, originPosition.y + 3 * config->getPx()->y));
-	attackIcon->setPosition(Vec2(originPosition.x + 8 * config->getPx()->x, originPosition.y - 1 * config->getPx()->y));
-	armorIcon->setPosition(Vec2(originPosition.x + 8 * config->getPx()->x, originPosition.y - 5 * config->getPx()->y));
-	healthValue->setPosition(Vec2(originPosition.x + 10 * config->getPx()->x, originPosition.y + 3 * config->getPx()->y));
-	attackValue->setPosition(Vec2(originPosition.x + 10 * config->getPx()->x, originPosition.y - 1 * config->getPx()->y));
-	armorValue->setPosition(Vec2(originPosition.x + 10 * config->getPx()->x, originPosition.y - 5 * config->getPx()->y));
+	healthIcon->setPosition(Vec2(originPosition.x + 10 * adjust * config->getPx()->x, originPosition.y + 3 * adjust * config->getPx()->y));
+	attackIcon->setPosition(Vec2(originPosition.x + 10 * adjust * config->getPx()->x, originPosition.y - 1 * adjust * config->getPx()->y));
+	armorIcon->setPosition(Vec2(originPosition.x + 10 * adjust * config->getPx()->x, originPosition.y - 5 * adjust * config->getPx()->y));
+	healthValue->setPosition(Vec2(originPosition.x + 12 * adjust * config->getPx()->x, originPosition.y + 3 * adjust * config->getPx()->y));
+	attackValue->setPosition(Vec2(originPosition.x + 12 * adjust * config->getPx()->x, originPosition.y - 1 * adjust * config->getPx()->y));
+	armorValue->setPosition(Vec2(originPosition.x + 12 * adjust * config->getPx()->x, originPosition.y - 5 * adjust * config->getPx()->y));
 	item->addChild(healthIcon, 6);
 	item->addChild(attackIcon, 6);
 	item->addChild(armorIcon, 6);
 	item->addChild(healthValue, 6);
 	item->addChild(attackValue, 6);
 	item->addChild(armorValue, 6);
+
+	originSize = item->getContentSize();
+	scale = 22 * config->getPx()->x / originSize.x;
+	item->setScale(scale);
 
 	return item;
 }
@@ -219,6 +247,16 @@ void PlayScene::menuExitCallBack(Ref* sender)
 void PlayScene::menuPieceCardCallBack(Ref* sender)
 {
 	
+}
+
+void PlayScene::menuFreshShopCallBack(Ref* sender)
+{
+
+}
+
+void PlayScene::menuBuyExpCallBack(Ref* sender)
+{
+
 }
 
 int PlayScene::onTouchBegan(Touch* touch, Event* event)

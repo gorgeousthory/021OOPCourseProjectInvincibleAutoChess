@@ -41,10 +41,10 @@ public:
 
 	virtual bool init();
 
-	// 创建可视化棋盘
+	// 创建可视化棋盘， position为(0, 0)位置欺骗图片左下角的锚点坐标
 	void createBoard(Vec2 position);
 
-	// 创建可视化商店
+	// 创建可视化商店，position为第一张卡片左下角的锚点坐标
 	void createShop(Vec2 position);
 
 	// 创建可视化棋子卡片
@@ -75,6 +75,12 @@ private:
 
 	// 购买卡片的点击事件
 	void menuPieceCardCallBack(Ref* sender);
+
+	// 刷新商店的点击事件
+	void menuFreshShopCallBack(Ref* sender);
+
+	// 购买经验的点击事件
+	void menuBuyExpCallBack(Ref* sender);
 
 	//按下回调
 	virtual int onTouchBegan(Touch* touch, Event* event);

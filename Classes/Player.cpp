@@ -2,12 +2,16 @@
 
 bool Player::init()
 {
-	if (!Player::init()) {
-		return false;
-	}
-	else {
-		return true;
-	}
+	money = 3;//初始化有3个coin
+
+	healthPoint = 30;
+
+	experience = 1;
+
+	maxPieceStorage = 5;//初始可拥有最大棋子个数
+
+	maxPieceBattle = 3;//初始可放最大棋子个数
+
 }
 
 bool Player::buyLevel(int coin, int level)

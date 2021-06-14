@@ -37,6 +37,9 @@ public:
 
 	template<class ClassName>
 	int pieceOut(ClassName piece);//卖棋子/装备
+
+	vector<ChessPiece*> getPieceList();
+	int getgear();
 	
 private:
 	//用于出售的棋子

@@ -162,6 +162,11 @@ Vec2 ChessPiece::getVec2()
 	return position;
 }
 
+int ChessPiece::getPiecePerCost()
+{
+	return _piecePerCost;
+}
+
 
 void ChessPiece::readCondition()
 {

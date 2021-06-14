@@ -149,6 +149,9 @@ public:
 	void setVec2(Vec2 position);
 
 	Vec2 getVec2();
+
+	//返回棋子的价格
+	int getPiecePerCost();
 	
 
 protected:

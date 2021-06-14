@@ -72,9 +72,9 @@ int Shop::pieceInEquip()
 	return gear;
 }
 
-vector<ChessPiece*> Shop::getPieceList()
+vector<ChessPiece*>* Shop::getPieceList()
 {
-	return pieceList;
+	return &pieceList;
 }
 
 int Shop::getgear()

@@ -38,7 +38,7 @@ public:
 	template<class ClassName>
 	int pieceOut(ClassName piece);//ÂôÆå×Ó/×°±¸
 
-	vector<ChessPiece*> getPieceList();
+	vector<ChessPiece*>* getPieceList();
 	int getgear();
 	
 private:

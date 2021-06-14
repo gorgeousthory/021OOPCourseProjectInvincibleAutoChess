@@ -2,12 +2,17 @@
 
 bool Player::init()
 {
-	if (!Player::init()) {
-		return false;
-	}
-	else {
-		return true;
-	}
+	money = 3;//初始化有3个coin
+
+	healthPoint = 30;
+
+	experience = 1;
+
+	maxPieceStorage = 5;//初始可拥有最大棋子个数
+
+	maxPieceBattle = 3;//初始可放最大棋子个数
+
+	return true;
 }
 
 bool Player::buyLevel(int coin, int level)
@@ -54,4 +59,61 @@ void Player::hpDecrease(int damage)
 int Player::getHp()
 {
 	return healthPoint;
+}
+
+ChessPiece** Player::getPieceBattle()
+{
+	return pieceBattle;
+}
+
+int Player::getExperience()
+{
+	return experience;
+}
+
+void Player::setExperience(int expe)
+{
+	if (expe > 0 && expe <= 10) {
+		experience = expe;
+	}
+}
+
+int Player::getRank()
+{
+	return rank;
+}
+
+void Player::setRank(int Rank)
+{
+	rank = Rank;
+}
+
+int Player::getMoney()
+{
+	return money;
+}
+
+void Player::setMoney(int coin)
+{
+	money = coin;
+}
+
+int Player::getMaxPieceStorage()
+{
+	return maxPieceStorage;
+}
+
+void Player::setMaxPieceStorage(int maxStorage)
+{
+	maxPieceStorage = maxStorage;
+}
+
+int Player::getMaxPieceBattle()
+{
+	return maxPieceBattle;
+}
+
+void Player::setMaxPieceBAttle(int maxBattle)
+{
+	maxPieceBattle = maxBattle;
 }

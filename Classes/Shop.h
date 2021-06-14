@@ -21,6 +21,9 @@ using namespace std;
 class Shop : public Ref
 {
 public:
+
+	CREATE_FUNC(Shop);
+
 	virtual bool init();
 	virtual bool refresh();//调用该函数刷新商店
 

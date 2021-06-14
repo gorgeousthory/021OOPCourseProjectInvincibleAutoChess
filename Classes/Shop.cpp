@@ -41,6 +41,7 @@ bool Shop::refresh()
 bool Shop::init()
 {
 	refresh();
+	return true;
 }
 
 template<class ClassName, typename price>

@@ -7,14 +7,14 @@
 #define nameL 2//中文名字对应列
 #define pathL 3//图片路径对应列
 #define costL 4//花销对应列
-#define hpL 5//生命值对应列
-#define mpL 6//魔法值对应列
-#define attackL 7//攻击力对应列
-#define defenceL 8//防御力对应列
-#define attackspeedL 9//攻速对应列
-#define attackscopeL 10//攻击距离对应列
-#define criticalchanceL 11//暴击几率对应列
-#define criticaldamageL 12//暴击伤害对应列
+#define hpL 6//生命值对应列
+#define mpL 7//魔法值对应列
+#define attackL 9//攻击力对应列
+#define defenceL 11//防御力对应列
+#define attackspeedL 12//攻速对应列
+#define attackscopeL 13//攻击距离对应列
+#define criticalchanceL 14//暴击几率对应列
+#define criticaldamageL 15//暴击伤害对应列
 bool ChessPiece::init(int id)
 {
 

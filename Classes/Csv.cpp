@@ -1,7 +1,5 @@
 #include "Csv.h"
 
-USING_NS_CC;
-
 /*
 //the example to show the use of Csv
 	CsvParser csv;
@@ -93,6 +91,6 @@ size_t CsvParser::findRowOfItem(const std::string& src) const
 			}
 		}
 	}
-
-	return size_t();
+	log("CsvParser::findRowOfItem : can not find the %s", src);
+	return -1;
 }

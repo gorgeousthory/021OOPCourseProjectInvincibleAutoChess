@@ -117,3 +117,17 @@ void Player::setMaxPieceBAttle(int maxBattle)
 {
 	maxPieceBattle = maxBattle;
 }
+
+int Player::getOwnPieceNum()
+{
+	int pieceNum = 0;
+	for (int i = 0; i < 8; i++) {
+		if (piecePossesion[i] != nullptr) {
+			pieceNum++;
+		}
+		else {
+			break;
+		}
+	}
+	return pieceNum;
+}

@@ -54,6 +54,8 @@ public:
 	int getMaxPieceBattle();
 	void setMaxPieceBAttle(int maxBattle);
 
+	int getOwnPieceNum();
+
 private:
 	//人物经验等级（最高为10）
 	int experience;

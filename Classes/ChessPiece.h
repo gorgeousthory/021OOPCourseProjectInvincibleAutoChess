@@ -14,21 +14,25 @@
 #include "ConfigController.h"
 #include"Equipment.h"
 #include"Condition.h"
+
 struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 {
 	double healthPoint; // 实时生命
-	double healthPointM;//最大生命值
+	double healthPointM;//最大生命值(除装备之外无其他提升方式，所以装备和初始合并)
 	
 	double magicPoint; // 实时法力
-	double magicPointM; // 最大法力
+	double magicPointM; // 最大法力(同生命值)
 
 	double attack; // 实时攻击力
+	double bAttack;//人物基础攻击力
 	double equipAttack;//装备+初始
 	
 	double defence; // 实时防御力
+	double bDefence;//人物基础防御力
 	double equpiDefence;//装备+初始
 
 	double attackSpeed; // 实时攻击速度
+	double bAttackSpeed;//基础攻击速度
 	double equipAttackSpeed; //装备 + 初始
 
 	double attackScope; // 攻击距离
@@ -149,10 +153,9 @@ public:
 	void setVec2(Vec2 position);
 
 	Vec2 getVec2();
-
-	//返回棋子的价格
-	int getPiecePerCost();
 	
+	//获得每个棋子的价格
+	int getPiecePerCost();
 
 protected:
 	string _pieceName; // 名称

@@ -1,19 +1,5 @@
 #include "ChessPiece.h"
 
-bool ChessPiece::init(int id)
-{
-
-	// 初始化各项数据
-	//_pieceName = ConfigController::getDataByID(id).asString();
-	_piecePicPath = "Resources/Sprite/";
-	_piecePicPath += _pieceName;
-
-	// 后续数据的初始化待文件结构完善后再行添加，预计在1.4.0版本之前完成
-
-
-	return true;
-}
-
 bool ChessPiece::init()
 {
 	return true;
@@ -21,12 +7,7 @@ bool ChessPiece::init()
 
 void ChessPiece::initPieceIfo(int id)
 {
-	//// 初始化各项数据
-	//_pieceName = ConfigController::getDataByID(id).asString();
-	//_piecePicPath = "Resources/Sprite/";
-	//_piecePicPath += _pieceName;
-
-	// 后续数据的初始化待文件结构完善后再行添加，预计在1.4.0版本之前完成
+	
 }
 
 const PieceCoordinate* ChessPiece::getPrtCoordinateByType(CoordinateType type)

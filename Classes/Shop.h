@@ -11,12 +11,9 @@
 #ifndef _SHOP_H_
 #define _SHOP_H_
 
-#include <cocos2d.h>
-USING_NS_CC;
-
-#include <stdlib.h>//这个头文件用于生成随机数，刷新商店可用
-#include "Storage.h"
-#include <time.h>
+#include<stdlib.h>//这个头文件用于生成随机数，刷新商店可用
+#include"Storage.h"
+#include<time.h>
 
 #define maxEquip 6//预留持有装备最大数
 using namespace std;
@@ -24,6 +21,9 @@ using namespace std;
 class Shop : public Ref
 {
 public:
+
+	CREATE_FUNC(Shop);
+
 	virtual bool init();
 	virtual bool refresh();//调用该函数刷新商店
 
@@ -38,11 +38,12 @@ public:
 	template<class ClassName>
 	int pieceOut(ClassName piece);//卖棋子/装备
 
-	CREATE_FUNC(Shop);
+	vector<ChessPiece*>* getPieceList();
+	int getgear();
 	
 private:
 	//用于出售的棋子
-	vector<ChessPiece*>pieceList;
+	vector<ChessPiece*> pieceList;
 
 	//用于出售的装备
 	int gear;

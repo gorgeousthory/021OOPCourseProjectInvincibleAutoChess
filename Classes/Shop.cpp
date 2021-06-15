@@ -72,6 +72,16 @@ int Shop::pieceInEquip()
 	return gear;
 }
 
+vector<ChessPiece*>* Shop::getPieceList()
+{
+	return &pieceList;
+}
+
+int Shop::getgear()
+{
+	return gear;
+}
+
 template<class ClassName>
 int Shop::pieceOut(ClassName piece)
 {

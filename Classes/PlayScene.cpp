@@ -278,7 +278,8 @@ void PlayScene::menuPieceCardCallBack5(Ref* sender)
 
 void PlayScene::buyCard(const unsigned int num)
 {
-	// ChessPiece* piece = shopModel->getPieceList()->at(num);
+	ChessPiece* piece = shopModel->getPieceList()->at(num);
+	
 
 	//if (Shop::qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), ))
 	//{

@@ -71,8 +71,6 @@ enum class Level { level1, level2, level3 };
 class ChessPiece : public Ref
 {
 public:
-	// 初始化棋子状态
-	virtual bool init(int id);
 	virtual bool init();
 
 	// 初始化棋子状态

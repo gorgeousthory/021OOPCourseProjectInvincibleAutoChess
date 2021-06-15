@@ -58,6 +58,7 @@ public:
 private:
 	// 场景层
 	Layer* playLayer;
+	Menu* menu;
 
 	// 棋盘
 	ChessBoard* chessBoardModel;
@@ -74,7 +75,12 @@ private:
 	void menuExitCallBack(Ref* sender);
 
 	// 购买卡片的点击事件
-	void menuPieceCardCallBack(Ref* sender);
+	void menuPieceCardCallBack1(Ref* sender);
+	void menuPieceCardCallBack2(Ref* sender);
+	void menuPieceCardCallBack3(Ref* sender);
+	void menuPieceCardCallBack4(Ref* sender);
+	void menuPieceCardCallBack5(Ref* sender);
+	void buyCard(const unsigned int num);
 
 	// 刷新商店的点击事件
 	void menuFreshShopCallBack(Ref* sender);

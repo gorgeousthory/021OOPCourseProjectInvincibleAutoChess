@@ -1,5 +1,20 @@
 #include "ChessPiece.h"
-
+#define AdvancedM 0//一级高数对应行，射手
+#define Linear 3//一级线代对应行，辅助
+#define Physics 6//一级大物对应行，刺客
+#define History 9 //一级近纲对应行，法师
+#define C_ 12//一级c++对应行，坦克
+#define nameL 2//中文名字对应列
+#define pathL 3//图片路径对应列
+#define costL 4//花销对应列
+#define hpL 6//生命值对应列
+#define mpL 7//魔法值对应列
+#define attackL 9//攻击力对应列
+#define defenceL 11//防御力对应列
+#define attackspeedL 12//攻速对应列
+#define attackscopeL 13//攻击距离对应列
+#define criticalchanceL 14//暴击几率对应列
+#define criticaldamageL 15//暴击伤害对应列
 bool ChessPiece::init(int id)
 {
 
@@ -167,13 +182,13 @@ void ChessPiece::readCondition()
 {
 	//实际战斗中，一个棋子的真实属性均在equipXX中储存，Attack/defence这些数据均是一个基础数据，基本不调用
 	//有攻击加成buff的攻击力
-	_pieceCrtCondition.equipAttack = _pieceCrtCondition.equipAttack * (1 + _pieceCrtCondition.myCondition.getInspireAttack());
+	_pieceCrtCondition.attack = _pieceCrtCondition.equipAttack * (1 + _pieceCrtCondition.myCondition.getInspireAttack());
 
 	//有防御加成
-	_pieceCrtCondition.equpiDefence = _pieceCrtCondition.equpiDefence * (1 + _pieceCrtCondition.myCondition.getInspireDefence());
+	_pieceCrtCondition.defence = _pieceCrtCondition.equpiDefence * (1 + _pieceCrtCondition.myCondition.getInspireDefence());
 
 	//攻速加成
-	_pieceCrtCondition.equipAttackSpeed = _pieceCrtCondition.equipAttackSpeed * (1 + _pieceCrtCondition.myCondition.getInspireSpeed());
+	_pieceCrtCondition.attackSpeed = _pieceCrtCondition.equipAttackSpeed * (1 + _pieceCrtCondition.myCondition.getInspireSpeed());
 }
 
 void ChessPiece::setCondition(double s, int Condition)
@@ -209,10 +224,10 @@ int ChessPiece::myAttack()
 	srand(time(NULL));
 	int rate = rand() % 100 + 1;
 	if (rate >= _pieceCrtCondition.criticalChance) {//暴击了
-		return 2 * _pieceCrtCondition.equipAttack;
+		return 2 * _pieceCrtCondition.attack;
 	}
 	else {//没暴击
-		return _pieceCrtCondition.equipAttack;
+		return _pieceCrtCondition.attack;
 	}
 }
 
@@ -424,26 +439,26 @@ void tank::promoteRank()
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[13][5].c_str());
+			a = Value(csv[C_ + 1][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[13][6].c_str());
+			a = Value(csv[C_ + 1][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[13][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[13][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[13][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[13][10].c_str());
+			a = Value(csv[C_ + 1][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[C_ + 1][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[C_ + 1][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[C_ + 1][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[13][11].c_str());	
+			a = Value(csv[C_ + 1][criticalchanceL].c_str());
 				_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[13][12].c_str());
+			a = Value(csv[C_ + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[12][3].c_str());
+			a = Value(csv[C_ + 1][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -459,26 +474,26 @@ void tank::promoteRank()
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[14][5].c_str());
+			a = Value(csv[C_ + 2][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[14][6].c_str());
+			a = Value(csv[C_ + 2][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[14][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[14][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[14][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[14][10].c_str());
+			a = Value(csv[C_ + 2][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[C_ + 2][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[C_ + 2][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[C_ + 2][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[14][11].c_str());	
-				_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[14][12].c_str());
+			a = Value(csv[C_ + 2][criticalchanceL].c_str());
+			_pieceCrtCondition.criticalChance = a.asDouble();
+			a = Value(csv[C_ + 2][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[14][3].c_str());
+			a = Value(csv[C_ + 2][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -508,26 +523,26 @@ vector<ChessPiece*>  tank::promoteRank(vector<ChessPiece*> piece)
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[13][5].c_str());
+			a = Value(csv[C_ + 1][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[13][6].c_str());
+			a = Value(csv[C_ + 1][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[13][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[13][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[13][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[13][10].c_str());
+			a = Value(csv[C_ + 1][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[C_ + 1][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[C_ + 1][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[C_ + 1][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[13][11].c_str());	
-				_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[13][12].c_str());
+			a = Value(csv[C_ + 1][criticalchanceL].c_str());
+			_pieceCrtCondition.criticalChance = a.asDouble();
+			a = Value(csv[C_ + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[13][3].c_str());
+			a = Value(csv[C_ + 1][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -551,26 +566,26 @@ vector<ChessPiece*>  tank::promoteRank(vector<ChessPiece*> piece)
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[14][5].c_str());
+			a = Value(csv[C_ + 2][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[14][6].c_str());
+			a = Value(csv[C_ + 2][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[14][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[14][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[14][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[14][10].c_str());
+			a = Value(csv[C_ + 2][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[C_ + 2][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[C_ + 2][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[C_ + 2][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[14][11].c_str());	
-				_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[14][12].c_str());
+			a = Value(csv[C_ + 2][criticalchanceL].c_str());
+			_pieceCrtCondition.criticalChance = a.asDouble();
+			a = Value(csv[C_ + 2][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[14][3].c_str());
+			a = Value(csv[C_ + 2][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -591,26 +606,26 @@ void mage::promoteRank()
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[10][5].c_str());
+			a = Value(csv[History + 1][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[10][6].c_str());
+			a = Value(csv[History + 1][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[10][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[10][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[10][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[10][10].c_str());
+			a = Value(csv[History + 1][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[History + 1][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[History + 1][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[History + 1][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[10][11].c_str());	
+			a = Value(csv[History + 1][criticalchanceL].c_str());
 				_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[10][12].c_str());
+			a = Value(csv[History + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[10][3].c_str());
+			a = Value(csv[History+1][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -626,26 +641,26 @@ void mage::promoteRank()
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[11][5].c_str());
+			a = Value(csv[History + 2][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[11][6].c_str());
+			a = Value(csv[History + 2][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[11][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[11][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[11][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[11][10].c_str());
+			a = Value(csv[History + 2][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[History + 2][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[History + 2][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[History + 2][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[11][11].c_str());	
-				_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[11][12].c_str());
+			a = Value(csv[History + 2][criticalchanceL].c_str());
+			_pieceCrtCondition.criticalChance = a.asDouble();
+			a = Value(csv[History + 2][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[11][3].c_str());
+			a = Value(csv[History + 2][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -674,26 +689,26 @@ vector<ChessPiece*>  mage::promoteRank(vector<ChessPiece*> piece)
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[10][5].c_str());
+			a = Value(csv[History + 1][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[10][6].c_str());
+			a = Value(csv[History + 1][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[10][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[10][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[10][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[10][10].c_str());
+			a = Value(csv[History + 1][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[History + 1][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[History + 1][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[History + 1][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[10][11].c_str());
-			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[10][12].c_str());
+			a = Value(csv[History + 1][criticalchanceL].c_str());
+				_pieceCrtCondition.criticalChance = a.asDouble();
+			a = Value(csv[History + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[10][3].c_str());
+			a = Value(csv[History+1][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -717,26 +732,26 @@ vector<ChessPiece*>  mage::promoteRank(vector<ChessPiece*> piece)
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[11][5].c_str());
+			a = Value(csv[History + 2][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[11][6].c_str());
+			a = Value(csv[History + 2][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[11][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[11][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[11][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[11][10].c_str());
+			a = Value(csv[History + 2][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[History + 2][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[History + 2][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[History + 2][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[11][11].c_str());
+			a = Value(csv[History + 2][criticalchanceL].c_str());
 			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[11][12].c_str());
+			a = Value(csv[History + 2][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[11][3].c_str());
+			a = Value(csv[History + 2][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -757,26 +772,26 @@ void stalker::promoteRank()
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[7][5].c_str());
+			a = Value(csv[Physics + 1][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[7][6].c_str());
+			a = Value(csv[Physics + 1][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[7][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[7][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[7][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[7][10].c_str());
+			a = Value(csv[Physics + 1][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[Physics + 1][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[Physics + 1][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[Physics + 1][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[7][11].c_str());
+			a = Value(csv[Physics + 1][criticalchanceL].c_str());
 			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[7][12].c_str());
+			a = Value(csv[Physics + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[7][3].c_str());
+			a = Value(csv[Physics + 1][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -792,26 +807,26 @@ void stalker::promoteRank()
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[8][5].c_str());
+			a = Value(csv[Physics + 2][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[8][6].c_str());
+			a = Value(csv[Physics + 2][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[8][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[8][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[8][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[8][10].c_str());
+			a = Value(csv[Physics + 2][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[Physics + 2][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[Physics + 2][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[Physics + 2][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[8][11].c_str());
+			a = Value(csv[Physics + 2][criticalchanceL].c_str());
 			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[8][12].c_str());
+			a = Value(csv[Physics + 2][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[8][3].c_str());
+			a = Value(csv[Physics + 2][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -839,26 +854,26 @@ vector<ChessPiece*>  stalker::promoteRank(vector<ChessPiece*> piece)
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[7][5].c_str());
+			a = Value(csv[Physics + 1][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[7][6].c_str());
+			a = Value(csv[Physics + 1][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[7][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[7][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[7][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[7][10].c_str());
+			a = Value(csv[Physics + 1][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[Physics + 1][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[Physics + 1][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[Physics + 1][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[7][11].c_str());
+			a = Value(csv[Physics + 1][criticalchanceL].c_str());
 			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[7][12].c_str());
+			a = Value(csv[Physics + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[7][3].c_str());
+			a = Value(csv[Physics + 1][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -882,26 +897,26 @@ vector<ChessPiece*>  stalker::promoteRank(vector<ChessPiece*> piece)
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[8][5].c_str());
+			a = Value(csv[Physics + 2][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[8][6].c_str());
+			a = Value(csv[Physics + 2][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[8][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[8][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[8][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[8][10].c_str());
+			a = Value(csv[Physics + 2][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[Physics + 2][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[Physics + 2][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[Physics + 2][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[8][11].c_str());
+			a = Value(csv[Physics + 2][criticalchanceL].c_str());
 			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[8][12].c_str());
+			a = Value(csv[Physics + 2][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[8][3].c_str());
+			a = Value(csv[Physics + 2][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -922,26 +937,26 @@ void therapist::promoteRank()
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[4][5].c_str());
+			a = Value(csv[Linear + 1][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[4][6].c_str());
+			a = Value(csv[Linear + 1][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[4][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[4][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[4][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[4][10].c_str());
+			a = Value(csv[Linear + 1][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[Linear + 1][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[Linear + 1][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[Linear + 1][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[4][11].c_str());
+			a = Value(csv[Linear + 1][criticalchanceL].c_str());
 			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[4][12].c_str());
+			a = Value(csv[Linear + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[4][3].c_str());
+			a = Value(csv[Linear + 1][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -957,26 +972,26 @@ void therapist::promoteRank()
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[5][5].c_str());
+			a = Value(csv[Linear + 2][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[5][6].c_str());
+			a = Value(csv[Linear + 2][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[5][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[5][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[5][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[5][10].c_str());
+			a = Value(csv[Linear + 2][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[Linear + 2][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[Linear + 2][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[Linear + 2][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[5][11].c_str());
+			a = Value(csv[Linear + 2][criticalchanceL].c_str());
 			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[5][12].c_str());
+			a = Value(csv[Linear + 2][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[5][3].c_str());
+			a = Value(csv[Linear + 2][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -1005,26 +1020,26 @@ vector<ChessPiece*>  therapist::promoteRank(vector<ChessPiece*> piece)
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[4][5].c_str());
+			a = Value(csv[Linear + 1][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[4][6].c_str());
+			a = Value(csv[Linear + 1][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[4][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[4][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[4][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[4][10].c_str());
+			a = Value(csv[Linear + 1][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[Linear + 1][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[Linear + 1][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[Linear + 1][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[4][11].c_str());
+			a = Value(csv[Linear + 1][criticalchanceL].c_str());
 			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[4][12].c_str());
+			a = Value(csv[Linear + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[4][3].c_str());
+			a = Value(csv[Linear + 1][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -1048,26 +1063,26 @@ vector<ChessPiece*>  therapist::promoteRank(vector<ChessPiece*> piece)
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[5][5].c_str());
+			a = Value(csv[Linear + 2][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[5][6].c_str());
+			a = Value(csv[Linear + 2][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[5][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[5][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[5][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[5][10].c_str());
+			a = Value(csv[Linear + 2][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[Linear + 2][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[Linear + 2][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[Linear + 2][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[5][11].c_str());
+			a = Value(csv[Linear + 2][criticalchanceL].c_str());
 			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[5][12].c_str());
+			a = Value(csv[Linear + 2][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[5][3].c_str());
+			a = Value(csv[Linear + 2][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -1088,26 +1103,26 @@ void shooter::promoteRank()
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[1][5].c_str());
+			a = Value(csv[AdvancedM + 1][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[1][6].c_str());
+			a = Value(csv[AdvancedM + 1][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[1][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[1][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[1][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[1][10].c_str());
+			a = Value(csv[AdvancedM + 1][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[AdvancedM + 1][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[AdvancedM + 1][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[AdvancedM + 1][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[1][11].c_str());
+			a = Value(csv[AdvancedM + 1][criticalchanceL].c_str());
 			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[1][12].c_str());
+			a = Value(csv[AdvancedM + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[1][3].c_str());
+			a = Value(csv[AdvancedM + 1][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -1123,26 +1138,26 @@ void shooter::promoteRank()
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[2][5].c_str());
+			a = Value(csv[AdvancedM + 2][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[2][6].c_str());
+			a = Value(csv[AdvancedM + 2][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[2][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[2][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[2][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[2][10].c_str());
+			a = Value(csv[AdvancedM + 2][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[AdvancedM + 2][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[AdvancedM + 2][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[AdvancedM + 2][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[2][11].c_str());
+			a = Value(csv[AdvancedM + 2][criticalchanceL].c_str());
 			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[2][12].c_str());
+			a = Value(csv[AdvancedM + 2][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[2][3].c_str());
+			a = Value(csv[AdvancedM + 2][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -1171,26 +1186,26 @@ vector<ChessPiece*>  shooter::promoteRank(vector<ChessPiece*> piece)
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[1][5].c_str());
+			a = Value(csv[AdvancedM + 1][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[1][6].c_str());
+			a = Value(csv[AdvancedM + 1][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[1][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[1][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[1][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[1][10].c_str());
+			a = Value(csv[AdvancedM + 1][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[AdvancedM + 1][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[AdvancedM + 1][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[AdvancedM + 1][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[1][11].c_str());
+			a = Value(csv[AdvancedM + 1][criticalchanceL].c_str());
 			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[1][12].c_str());
+			a = Value(csv[AdvancedM + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[1][3].c_str());
+			a = Value(csv[AdvancedM + 1][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -1214,26 +1229,26 @@ vector<ChessPiece*>  shooter::promoteRank(vector<ChessPiece*> piece)
 			Value a;
 
 			//升级更新棋子信息
-			a = Value(csv[2][5].c_str());
+			a = Value(csv[AdvancedM + 2][hpL].c_str());
 			_pieceCrtCondition.healthPoint = a.asDouble();
 			_pieceCrtCondition.healthPointM = a.asDouble();
-			a = Value(csv[2][6].c_str());
+			a = Value(csv[AdvancedM + 2][mpL].c_str());
 			_pieceCrtCondition.magicPoint = a.asDouble();
 			_pieceCrtCondition.magicPointM = a.asDouble();
-			a = Value(csv[2][7].c_str());
-			_pieceCrtCondition.equipAttack = a.asDouble();
-			a = Value(csv[2][8].c_str());
-			_pieceCrtCondition.equpiDefence = a.asDouble();
-			a = Value(csv[2][9].c_str());
-			_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-			a = Value(csv[2][10].c_str());
+			a = Value(csv[AdvancedM + 2][attackL].c_str());
+			_pieceCrtCondition.bAttack = a.asDouble();
+			a = Value(csv[AdvancedM + 2][defenceL].c_str());
+			_pieceCrtCondition.bDefence = a.asDouble();
+			a = Value(csv[AdvancedM + 2][attackspeedL].c_str());
+			_pieceCrtCondition.bAttackSpeed = a.asDouble();
+			a = Value(csv[AdvancedM + 2][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
-			a = Value(csv[2][11].c_str());
+			a = Value(csv[AdvancedM + 2][criticalchanceL].c_str());
 			_pieceCrtCondition.criticalChance = a.asDouble();
-			a = Value(csv[2][12].c_str());
+			a = Value(csv[AdvancedM + 2][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
 
-			a = Value(csv[2][3].c_str());
+			a = Value(csv[AdvancedM + 2][pathL].c_str());
 			_piecePicPath = a.asString();
 		}
 	}
@@ -1245,33 +1260,33 @@ tank::tank()
 {
 	CsvParser csv;
 	csv.parseWithFile("Data/PiecesData.csv");
-	Value a = Value(csv[12][2].c_str());
+	Value a = Value(csv[C_][nameL].c_str());
 	_pieceName = a.asString();
-	a = Value(csv[12][3].c_str());
+	a = Value(csv[C_][pathL].c_str());
 	_piecePicPath = a.asString();
 	_pieceLevel = Level::level1;
-	a = Value(csv[12][4].c_str());
+	a = Value(csv[C_][costL].c_str());
 	_piecePerCost = a.asInt();
 	_logCoordinate.setX(0); _logCoordinate.setY(0);
 	_realCoordinate.setX(0); _realCoordinate.setY(0);
 	//以下是棋子数值初始化
-	a = Value(csv[12][5].c_str());
+	a = Value(csv[C_][hpL].c_str());
 	_pieceCrtCondition.healthPoint = a.asDouble();
 	_pieceCrtCondition.healthPointM = a.asDouble();
-	a = Value(csv[12][6].c_str());
+	a = Value(csv[C_][mpL].c_str());
 	_pieceCrtCondition.magicPoint = a.asDouble();
 	_pieceCrtCondition.magicPointM = a.asDouble();
-	a = Value(csv[12][7].c_str());
-	_pieceCrtCondition.equipAttack = a.asDouble();
-	a = Value(csv[12][8].c_str());
-	_pieceCrtCondition.equpiDefence = a.asDouble();
-	a = Value(csv[12][9].c_str());
-	_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-	a = Value(csv[12][10].c_str());
+	a = Value(csv[C_][attackL].c_str());
+	_pieceCrtCondition.bAttack = a.asDouble();
+	a = Value(csv[C_][defenceL].c_str());
+	_pieceCrtCondition.bDefence = a.asDouble();
+	a = Value(csv[C_][attackspeedL].c_str());
+	_pieceCrtCondition.bAttackSpeed = a.asDouble();
+	a = Value(csv[C_][attackscopeL].c_str());
 	_pieceCrtCondition.attackScope = a.asDouble();
-	a = Value(csv[12][11].c_str());	
+	a = Value(csv[C_][criticalchanceL].c_str());
 	_pieceCrtCondition.criticalChance = a.asDouble();
-	a = Value(csv[12][12].c_str());
+	a = Value(csv[C_][criticaldamageL].c_str());
 	_pieceCrtCondition.criticalDamage = a.asDouble();
 }
 
@@ -1279,33 +1294,33 @@ mage::mage()
 {
 	CsvParser csv;
 	csv.parseWithFile("Data/PiecesData.csv");
-	Value a = Value(csv[9][2].c_str());
+	Value a = Value(csv[History][nameL].c_str());
 	_pieceName = a.asString();
-	a = Value(csv[9][3].c_str());
+	a = Value(csv[History][pathL].c_str());
 	_piecePicPath = a.asString();
 	_pieceLevel = Level::level1;
-	a = Value(csv[9][4].c_str());
+	a = Value(csv[History][costL].c_str());
 	_piecePerCost = a.asInt();
 	_logCoordinate.setX(0); _logCoordinate.setY(0);
 	_realCoordinate.setX(0); _realCoordinate.setY(0);
 	//以下是棋子数值初始化
-	a = Value(csv[9][5].c_str());
+	a = Value(csv[History][hpL].c_str());
 	_pieceCrtCondition.healthPoint = a.asDouble();
 	_pieceCrtCondition.healthPointM = a.asDouble();
-	a = Value(csv[9][6].c_str());
+	a = Value(csv[History][mpL].c_str());
 	_pieceCrtCondition.magicPoint = a.asDouble();
 	_pieceCrtCondition.magicPointM = a.asDouble();
-	a = Value(csv[9][7].c_str());
-	_pieceCrtCondition.equipAttack = a.asDouble();
-	a = Value(csv[9][8].c_str());
-	_pieceCrtCondition.equpiDefence = a.asDouble();
-	a = Value(csv[9][9].c_str());
-	_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-	a = Value(csv[9][10].c_str());
+	a = Value(csv[History][attackL].c_str());
+	_pieceCrtCondition.bAttack = a.asDouble();
+	a = Value(csv[History][defenceL].c_str());
+	_pieceCrtCondition.bDefence = a.asDouble();
+	a = Value(csv[History][attackspeedL].c_str());
+	_pieceCrtCondition.bAttackSpeed = a.asDouble();
+	a = Value(csv[History][attackscopeL].c_str());
 	_pieceCrtCondition.attackScope = a.asDouble();
-	a = Value(csv[9][11].c_str());	
+	a = Value(csv[History][criticalchanceL].c_str());
 		_pieceCrtCondition.criticalChance = a.asDouble();
-	a = Value(csv[9][12].c_str());
+	a = Value(csv[History][criticaldamageL].c_str());
 	_pieceCrtCondition.criticalDamage = a.asDouble();
 }
 
@@ -1313,33 +1328,33 @@ shooter::shooter()
 {
 	CsvParser csv;
 	csv.parseWithFile("Data/PiecesData.csv");
-	Value a = Value(csv[0][2].c_str());
+	Value a = Value(csv[AdvancedM][nameL].c_str());
 	_pieceName = a.asString();
-	a = Value(csv[0][3].c_str());
+	a = Value(csv[AdvancedM][pathL].c_str());
 	_piecePicPath = a.asString();
 	_pieceLevel = Level::level1;
-	a = Value(csv[0][4].c_str());
+	a = Value(csv[AdvancedM][costL].c_str());
 	_piecePerCost = a.asInt();
 	_logCoordinate.setX(0); _logCoordinate.setY(0);
 	_realCoordinate.setX(0); _realCoordinate.setY(0);
 	//以下是棋子数值初始化
-	a = Value(csv[0][5].c_str());
+	a = Value(csv[AdvancedM][hpL].c_str());
 	_pieceCrtCondition.healthPoint = a.asDouble();
 	_pieceCrtCondition.healthPointM = a.asDouble();
-	a = Value(csv[0][6].c_str());
+	a = Value(csv[AdvancedM][mpL].c_str());
 	_pieceCrtCondition.magicPoint = a.asDouble();
 	_pieceCrtCondition.magicPointM = a.asDouble();
-	a = Value(csv[0][7].c_str());
-	_pieceCrtCondition.equipAttack = a.asDouble();
-	a = Value(csv[0][8].c_str());
-	_pieceCrtCondition.equpiDefence = a.asDouble();
-	a = Value(csv[0][9].c_str());
-	_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-	a = Value(csv[0][10].c_str());
+	a = Value(csv[AdvancedM][attackL].c_str());
+	_pieceCrtCondition.bAttack = a.asDouble();
+	a = Value(csv[AdvancedM][defenceL].c_str());
+	_pieceCrtCondition.bDefence = a.asDouble();
+	a = Value(csv[AdvancedM][attackspeedL].c_str());
+	_pieceCrtCondition.bAttackSpeed = a.asDouble();
+	a = Value(csv[AdvancedM][attackscopeL].c_str());
 	_pieceCrtCondition.attackScope = a.asDouble();
-	a = Value(csv[0][11].c_str());	
+	a = Value(csv[AdvancedM][criticalchanceL].c_str());
 		_pieceCrtCondition.criticalChance = a.asDouble();
-	a = Value(csv[0][12].c_str());
+	a = Value(csv[AdvancedM][criticaldamageL].c_str());
 	_pieceCrtCondition.criticalDamage = a.asDouble();
 }
 
@@ -1347,33 +1362,33 @@ therapist::therapist()
 {
 	CsvParser csv;
 	csv.parseWithFile("Data/PiecesData.csv");
-	Value a = Value(csv[3][2].c_str());
+	Value a = Value(csv[Linear][nameL].c_str());
 	_pieceName = a.asString();
-	a = Value(csv[3][3].c_str());
+	a = Value(csv[Linear][pathL].c_str());
 	_piecePicPath = a.asString();
 	_pieceLevel = Level::level1;
-	a = Value(csv[3][4].c_str());
+	a = Value(csv[Linear][costL].c_str());
 	_piecePerCost = a.asInt();
 	_logCoordinate.setX(0); _logCoordinate.setY(0);
 	_realCoordinate.setX(0); _realCoordinate.setY(0);
 	//以下是棋子数值初始化
-	a = Value(csv[3][5].c_str());
+	a = Value(csv[Linear][hpL].c_str());
 	_pieceCrtCondition.healthPoint = a.asDouble();
 	_pieceCrtCondition.healthPointM = a.asDouble();
-	a = Value(csv[3][6].c_str());
+	a = Value(csv[Linear][mpL].c_str());
 	_pieceCrtCondition.magicPoint = a.asDouble();
 	_pieceCrtCondition.magicPointM = a.asDouble();
-	a = Value(csv[3][7].c_str());
-	_pieceCrtCondition.equipAttack = a.asDouble();
-	a = Value(csv[3][8].c_str());
-	_pieceCrtCondition.equpiDefence = a.asDouble();
-	a = Value(csv[3][9].c_str());
-	_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-	a = Value(csv[3][10].c_str());
+	a = Value(csv[Linear][attackL].c_str());
+	_pieceCrtCondition.bAttack = a.asDouble();
+	a = Value(csv[Linear][defenceL].c_str());
+	_pieceCrtCondition.bDefence = a.asDouble();
+	a = Value(csv[Linear][attackspeedL].c_str());
+	_pieceCrtCondition.bAttackSpeed = a.asDouble();
+	a = Value(csv[Linear][attackscopeL].c_str());
 	_pieceCrtCondition.attackScope = a.asDouble();
-	a = Value(csv[3][11].c_str());	
+	a = Value(csv[Linear][criticalchanceL].c_str());
 		_pieceCrtCondition.criticalChance = a.asDouble();
-	a = Value(csv[3][12].c_str());
+	a = Value(csv[Linear][criticaldamageL].c_str());
 	_pieceCrtCondition.criticalDamage = a.asDouble();
 }
 
@@ -1381,33 +1396,33 @@ stalker::stalker()
 {
 	CsvParser csv;
 	csv.parseWithFile("Data/PiecesData.csv");
-	Value a = Value(csv[6][2].c_str());
+	Value a = Value(csv[Physics][nameL].c_str());
 	_pieceName = a.asString();
-	a = Value(csv[6][3].c_str());
+	a = Value(csv[Physics][pathL].c_str());
 	_piecePicPath = a.asString();
 	_pieceLevel = Level::level1;
-	a = Value(csv[6][4].c_str());
+	a = Value(csv[Physics][costL].c_str());
 	_piecePerCost = a.asInt();
 	_logCoordinate.setX(0); _logCoordinate.setY(0);
 	_realCoordinate.setX(0); _realCoordinate.setY(0);
 	//以下是棋子数值初始化
-	a = Value(csv[6][5].c_str());
+	a = Value(csv[Physics][hpL].c_str());
 	_pieceCrtCondition.healthPoint = a.asDouble();
 	_pieceCrtCondition.healthPointM = a.asDouble();
-	a = Value(csv[6][6].c_str());
+	a = Value(csv[Physics][mpL].c_str());
 	_pieceCrtCondition.magicPoint = a.asDouble();
 	_pieceCrtCondition.magicPointM = a.asDouble();
-	a = Value(csv[6][7].c_str());
-	_pieceCrtCondition.equipAttack = a.asDouble();
-	a = Value(csv[6][8].c_str());
-	_pieceCrtCondition.equpiDefence = a.asDouble();
-	a = Value(csv[6][9].c_str());
-	_pieceCrtCondition.equipAttackSpeed = a.asDouble();
-	a = Value(csv[6][10].c_str());
+	a = Value(csv[Physics][attackL].c_str());
+	_pieceCrtCondition.bAttack = a.asDouble();
+	a = Value(csv[Physics][defenceL].c_str());
+	_pieceCrtCondition.bDefence = a.asDouble();
+	a = Value(csv[Physics][attackspeedL].c_str());
+	_pieceCrtCondition.bAttackSpeed = a.asDouble();
+	a = Value(csv[Physics][attackscopeL].c_str());
 	_pieceCrtCondition.attackScope = a.asDouble();
-	a = Value(csv[6][11].c_str());	
+	a = Value(csv[Physics][criticalchanceL].c_str());
 		_pieceCrtCondition.criticalChance = a.asDouble();
-	a = Value(csv[6][12].c_str());
+	a = Value(csv[Physics][criticaldamageL].c_str());
 	_pieceCrtCondition.criticalDamage = a.asDouble();
 }
 

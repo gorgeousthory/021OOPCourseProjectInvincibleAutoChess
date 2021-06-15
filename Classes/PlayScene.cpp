@@ -44,6 +44,14 @@ bool PlayScene::init()
 	backGround->setScale(visibleSize.height / originSize.y);
 	playLayer->addChild(backGround, 1);
 
+	// 添加退出按钮
+	auto exitButton = LoginScene::createGameButton("Exit!", "/res/UI/ExitNormal.png", "/res/UI/ExitSelected.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
+	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	originSize = exitButton->getContentSize();
+	exitButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
+	exitButton->setPosition(Vec2(70 * ConfigController::getInstance()->getPx()->y, -35 * ConfigController::getInstance()->getPx()->y));
+	menu = Menu::create(exitButton, nullptr);
+
 	// 创建棋盘
 	chessBoardModel = ChessBoard::create();
 	createBoard(Vec2(config->getPx()->x * 47.5, config->getPx()->y * 16));
@@ -51,26 +59,18 @@ bool PlayScene::init()
 	// 创建商店
 	shopModel = Shop::create();
 	createShop(Vec2(-45 * config->getPx()->x, -45 * config->getPx()->y));
+	for (int i = 0; i < 5; i++)
+	{
+		menu->addChild(shop.at(i));
+	}
+	
 
 	// 创建玩家
 	playerA = Player::create();
 
 	
 
-
-
-
-	// 添加退出按钮
-	auto exitButton = LoginScene::createGameButton("Exit!", "/res/UI/ExitNormal.png", "/res/UI/ExitSelected.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
-	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-	originSize = exitButton->getContentSize();
-	exitButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
-	exitButton->setPosition(Vec2(70 * ConfigController::getInstance()->getPx()->y, -35 * ConfigController::getInstance()->getPx()->y));
-
-
-	auto menu = Menu::create(exitButton, shop[0], shop[1], shop[2], shop[3], shop[4], nullptr);
 	playLayer->addChild(menu, 5);
-
 	return true;
 }
 
@@ -124,6 +124,7 @@ void PlayScene::createShop(Vec2 position)
 	shopMore->setPosition(Vec2(position.x + 80 * config->getPx()->x, position.y + 45 * config->getPx()->y));
 	Vec2 originPosition = Vec2(shopMore->getPositionX(), shopMore->getPositionY());
 	playLayer->addChild(shopMore, 5);
+
 	// 两个菜单项
 	auto buyExp = LoginScene::createGameButton("", "/res/UI/UpgradeNormal.png", "/res/UI/UpgradeSelected.png", CC_CALLBACK_1(PlayScene::menuBuyExpCallBack, this));
 	auto freshShop = LoginScene::createGameButton("", "/res/UI/RefreshNormal.png", "/res/UI/RefreshSelected.png", CC_CALLBACK_1(PlayScene::menuFreshShopCallBack, this));
@@ -133,16 +134,16 @@ void PlayScene::createShop(Vec2 position)
 	freshShop->setScale(scale);
 	buyExp->setPosition(Vec2(originPosition.x - 16.9 / 2 * config->getPx()->x, originPosition.y + 10.5 * 16.9 / 15 * config->getPx()->y));
 	freshShop->setPosition(Vec2(originPosition.x - 16.9 / 2 * config->getPx()->x, originPosition.y + 4 * 16.9 / 15 * config->getPx()->y));
-	playLayer->addChild(buyExp, 6);
-	playLayer->addChild(freshShop, 6);
+	menu->addChild(buyExp);
+	menu->addChild(freshShop);
 
 	// 棋子及装备卡片
-	auto pieceCard1 = PlayScene::createPieceCard("ABCD", "/res/Books/AdvancedMathematics.png", position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack, this));
-	auto pieceCard2 = PlayScene::createPieceCard("EFGH", "/res/Books/AdvancedMathematics.png", Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack, this));
-	auto pieceCard3 = PlayScene::createPieceCard("IJKL", "/res/Books/AdvancedMathematics.png", Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack, this));
-	auto pieceCard4 = PlayScene::createPieceCard("MNOP", "/res/Books/AdvancedMathematics.png", Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack, this));
-	auto pieceCard5 = PlayScene::createPieceCard("QRST", "/res/Books/AdvancedMathematics.png", Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack, this));
-	shop.push_back(pieceCard1);
+	auto pieceCard1 = PlayScene::createPieceCard("ABCD", "/res/Books/AdvancedMathematics.png", position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
+	auto pieceCard2 = PlayScene::createPieceCard("EFGH", "/res/Books/MordernHistory.png", Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
+	auto pieceCard3 = PlayScene::createPieceCard("IJKL", "/res/Books/C++PrimerPlus.png", Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
+	auto pieceCard4 = PlayScene::createPieceCard("ABCD", "/res/Books/LinearAlgebra.png", Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
+	auto pieceCard5 = PlayScene::createPieceCard("ABCD", "/res/Books/CollegePhysics.png", Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
+	shop.push_back(pieceCard1); 
 	shop.push_back(pieceCard2);
 	shop.push_back(pieceCard3);
 	shop.push_back(pieceCard4);
@@ -244,9 +245,47 @@ void PlayScene::menuExitCallBack(Ref* sender)
 	Director::getInstance()->end();
 }
 
-void PlayScene::menuPieceCardCallBack(Ref* sender)
+void PlayScene::menuPieceCardCallBack1(Ref* sender)
 {
-	
+	// 获取到当前所点击的棋子卡片
+	const unsigned int NUMBER = 1;
+	buyCard(NUMBER);
+}
+
+void PlayScene::menuPieceCardCallBack2(Ref* sender)
+{
+	const unsigned int NUMBER = 2;
+	buyCard(NUMBER);
+}
+
+void PlayScene::menuPieceCardCallBack3(Ref* sender)
+{
+	const unsigned int NUMBER = 3;
+	buyCard(NUMBER);
+}
+
+void PlayScene::menuPieceCardCallBack4(Ref* sender)
+{
+	const unsigned int NUMBER = 4;
+	buyCard(NUMBER);
+}
+
+void PlayScene::menuPieceCardCallBack5(Ref* sender)
+{
+	const unsigned int NUMBER = 5;
+	buyCard(NUMBER);
+}
+
+void PlayScene::buyCard(const unsigned int num)
+{
+	// ChessPiece* piece = shopModel->getPieceList()->at(num);
+
+	//if (Shop::qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), ))
+	//{
+	//	// 如果可以购买
+	//		// 设置player的对应数据
+
+	//}
 }
 
 void PlayScene::menuFreshShopCallBack(Ref* sender)

@@ -29,7 +29,7 @@ using namespace ui;
 using namespace std;
 
 #include "ConfigController.h"
-#include"PlayScene.h"
+#include "PlayScene.h"
 
 class LoginScene : public Scene
 {

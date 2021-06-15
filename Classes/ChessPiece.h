@@ -192,7 +192,7 @@ public:
 	//获得棋子类别
 	string getTag();
 	//初始化函数
-	//virtual bool init();
+	virtual bool init();
 	tank();
 	//析构函数
 	//~tank();

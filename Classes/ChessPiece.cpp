@@ -1261,6 +1261,41 @@ vector<ChessPiece*>  shooter::promoteRank(vector<ChessPiece*> piece)
 	return result;
 }
 
+bool tank::init()
+{
+	CsvParser csv;
+	csv.parseWithFile("Data/PiecesData.csv");
+	Value a = Value(csv[C_][nameL].c_str());
+	_pieceName = a.asString();
+	a = Value(csv[C_][pathL].c_str());
+	_piecePicPath = a.asString();
+	_pieceLevel = Level::level1;
+	a = Value(csv[C_][costL].c_str());
+	_piecePerCost = a.asInt();
+	_logCoordinate.setX(0); _logCoordinate.setY(0);
+	_realCoordinate.setX(0); _realCoordinate.setY(0);
+	//以下是棋子数值初始化
+	a = Value(csv[C_][hpL].c_str());
+	_pieceCrtCondition.healthPoint = a.asDouble();
+	_pieceCrtCondition.healthPointM = a.asDouble();
+	a = Value(csv[C_][mpL].c_str());
+	_pieceCrtCondition.magicPoint = a.asDouble();
+	_pieceCrtCondition.magicPointM = a.asDouble();
+	a = Value(csv[C_][attackL].c_str());
+	_pieceCrtCondition.bAttack = a.asDouble();
+	a = Value(csv[C_][defenceL].c_str());
+	_pieceCrtCondition.bDefence = a.asDouble();
+	a = Value(csv[C_][attackspeedL].c_str());
+	_pieceCrtCondition.bAttackSpeed = a.asDouble();
+	a = Value(csv[C_][attackscopeL].c_str());
+	_pieceCrtCondition.attackScope = a.asDouble();
+	a = Value(csv[C_][criticalchanceL].c_str());
+	_pieceCrtCondition.criticalChance = a.asDouble();
+	a = Value(csv[C_][criticaldamageL].c_str());
+	_pieceCrtCondition.criticalDamage = a.asDouble();
+	return true;
+}
+
 /**********************************以下为各类棋子数据初始化函数***************************************/
 tank::tank()
 {

@@ -19,32 +19,32 @@ public:
 
 	virtual bool init();
 
-	void tankStore(tank obj);
+	void tankStore(tank* obj);
 	void tankRemove(tank* ptr);
 
-	void mageStore(mage obj);
+	void mageStore(mage* obj);
 	void mageRemove(mage* ptr);
 
-	void shooterStore(shooter obj);
+	void shooterStore(shooter* obj);
 	void shooterRemove(shooter* ptr);
 
-	void stalkerStore(stalker obj);
+	void stalkerStore(stalker* obj);
 	void stalkerRemove(stalker* ptr);
 
-	void therapistStore(therapist obj);
+	void therapistStore(therapist* obj);
 	void therapistRemove(therapist* ptr);
 
 private:
 
-	vector<tank> tankStorage;
+	Vector<tank*> tankStorage;
 
-	vector<mage> mageStorage;
+	Vector<mage*> mageStorage;
 
-	vector<shooter> shooterStorage;
+	Vector<shooter*> shooterStorage;
 
-	vector <stalker> stalkerStorage;
+	Vector <stalker*> stalkerStorage;
 
-	vector<therapist> therapistStorage;
+	Vector<therapist*> therapistStorage;
 };
 
 #endif

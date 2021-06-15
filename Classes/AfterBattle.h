@@ -31,11 +31,6 @@ public:
 
 	bool detect(Player a, Player b);//检测是否有玩家死亡
 
-	void shopping();
-
-	void timing();
-
-	//void arrange() 这个函数中调用chessBoard的移动函数
 private:
 	
 };

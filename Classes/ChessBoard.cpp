@@ -3,7 +3,7 @@
 bool ChessBoard::init()
 {
 	for (int i = 0; i < BOARD_SIZE; i++) {
-		for (vector<Sprite*>::iterator it = board1[i].begin(); it != board1[i].end(); it++) {
+		for (vector<Sprite*>::iterator it = board[i].begin(); it != board[i].end(); it++) {
 			*it = nullptr;
 		}
 	}
@@ -41,11 +41,6 @@ PieceCoordinate* ChessBoard::coordinateConvert(CoordinateType type, PieceCoordin
 		newPos->setY(oldPos->getY() * 2 * halfBoardHeight - halfBoardHeight);
 		return newPos;
 	}
-}
-
-double ChessBoard::getDistance(PieceCoordinate* start, PieceCoordinate* end)
-{
-	return sqrt(pow((start->getX() - end->getX()), 2) + pow((start->getY() - end->getY()), 2));
 }
 
 vector<ChessPiece*>* ChessBoard::getPlayerA_WarZone_Pieces()

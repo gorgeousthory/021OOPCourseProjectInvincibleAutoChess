@@ -19,15 +19,15 @@
 class ChessBoard :public Ref
 {
 public:
+
+	CREATE_FUNC(ChessBoard);
+
 	virtual bool init();
 
 	//CREATE_FUNC(ChessBoard);
 
 	// 逻辑坐标与实际坐标的转化,转入的为对战区左下角第一格棋盘对应的精灵
-	PieceCoordinate* coordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos,Sprite* sprite);
-
-	// 计算实际坐标间的距离
-	static double getDistance(PieceCoordinate* start, PieceCoordinate* end);
+	PieceCoordinate* coordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos, Sprite* sprite);
 
 	// 获取玩家A对战区棋子集合
 	vector<ChessPiece*>* getPlayerA_WarZone_Pieces();
@@ -46,7 +46,6 @@ public:
 
 	//检测是否在棋盘范围内
 	static bool isInBoard(Vec2 posi);
-
 
 private:
 

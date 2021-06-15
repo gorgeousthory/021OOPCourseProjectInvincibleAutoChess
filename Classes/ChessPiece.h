@@ -14,21 +14,25 @@
 #include "ConfigController.h"
 #include"Equipment.h"
 #include"Condition.h"
+
 struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 {
 	double healthPoint; // 实时生命
-	double healthPointM;//最大生命值
+	double healthPointM;//最大生命值(除装备之外无其他提升方式，所以装备和初始合并)
 	
 	double magicPoint; // 实时法力
-	double magicPointM; // 最大法力
+	double magicPointM; // 最大法力(同生命值)
 
 	double attack; // 实时攻击力
+	double bAttack;//人物基础攻击力
 	double equipAttack;//装备+初始
 	
 	double defence; // 实时防御力
+	double bDefence;//人物基础防御力
 	double equpiDefence;//装备+初始
 
 	double attackSpeed; // 实时攻击速度
+	double bAttackSpeed;//基础攻击速度
 	double equipAttackSpeed; //装备 + 初始
 
 	double attackScope; // 攻击距离
@@ -92,7 +96,7 @@ public:
 	const Level getPieceLevel();
 
 	// 获取当前棋子位置
-	const PieceCoordinate* getPrtCoordinateByType(CoordinateType type);
+	PieceCoordinate* getPrtCoordinateByType(CoordinateType type);
 
 	// 设置当前棋子星级
 	void setPieceLevel(const Level newLevel);
@@ -106,7 +110,7 @@ public:
 	virtual void skill() = 0;
 	
 	//羁绊 继承
-	virtual void familyBuff() = 0;
+	//virtual void familyBuff() = 0;
 
 	//提升星级,参数为一个包括了玩家所有棋子的指针的vector
 	//函数的调用会返回一个消耗了对应棋子的vector。
@@ -134,10 +138,23 @@ public:
 	//上面攻击函数的package，攻击在这里调用，参数A即为被攻击的对象(定义为虚函数是因为这里牵扯到了棋子类，现在的棋子类是抽象类没办法当作参数)
 	void attackOne(ChessPiece &A);
 
-	//判断棋子是否死了
+	//判断棋子是否死了,死了就为真
 	bool ifDead();
 
 	int storageNum = 0;//上方棋子为负数，下方棋子为正数
+
+	//棋子的可视化
+	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position);
+
+	//返回一个精灵指针，当精灵已经被当作战斗棋子可视化（即放上棋盘以后），这个精灵指针有一个指向对象，可以通过对指针操作完成动画效果
+	Sprite* getChessPice();
+
+	//设定棋子的坐标,指实际值，即屏幕上的位置
+	void setVec2(Vec2 position);
+
+	Vec2 getVec2();
+	
+
 protected:
 	string _pieceName; // 名称
 	
@@ -156,6 +173,8 @@ protected:
 	PieceCoordinate _logCoordinate; // 棋子的逻辑位置
 
 	PieceCoordinate _realCoordinate; // 棋子的实际位置
+
+	Sprite* imagePiece;//指向可视化
 };
 
 //----------------------------------------------------------------------------------------------------------------------------------
@@ -171,10 +190,10 @@ public:
 	//获得棋子类别
 	string getTag();
 	//初始化函数
-	virtual bool init();
+	//virtual bool init();
 	tank();
 	//析构函数
-	~tank();
+	//~tank();
 	//数量记录，构造函数涉及到的地方较多,不好控制，干脆自己控制加1吧
 	void IncreaseOne();
 	void DecreaseOne();
@@ -183,7 +202,7 @@ public:
 	//技能函数
 	void skill();
 	//家族buff 空出来了
-	void familyBuff();
+	//void familyBuff();
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
@@ -199,7 +218,7 @@ public:
 	//获得棋子类别
 	string getTag();
 	mage();
-	~mage();
+	//~mage();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
 	void Increase();
 	void Decrease();
@@ -208,7 +227,7 @@ public:
 	//技能函数
 	void skill();
 	//家族buff 空出来了
-	void familyBuff();
+	//void familyBuff();
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
@@ -224,7 +243,7 @@ public:
 	//获得棋子类别
 	string getTag();
 	stalker();
-	~stalker();
+	//~stalker();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
 	void Increase();
 	void Decrease();
@@ -249,7 +268,7 @@ public:
 	//获得棋子类别
 	string getTag();
 	therapist();
-	~therapist();
+	//~therapist();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
 	void Increase();
 	void Decrease();
@@ -258,7 +277,7 @@ public:
 	//技能函数
 	void skill();
 	//家族buff 空出来了
-	void familyBuff();
+	//void familyBuff();
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
     void promoteRank();
@@ -274,7 +293,7 @@ public:
 	//获得棋子类别
 	string getTag();
 	shooter();
-	~shooter();
+	//~shooter();
 	//数量加一，构造函数涉及到的地方较多，干脆自己控制加1吧
 	void Increase();
 	void Decrease();
@@ -283,7 +302,7 @@ public:
 	//技能函数
 	void skill();
 	//家族buff 空出来了
-	void familyBuff();
+	//void familyBuff();
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();

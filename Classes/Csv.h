@@ -15,14 +15,17 @@ USING_NS_CC;
 #define D_CH_NAME			2
 #define D_PATH				3
 #define D_COST				4
-#define D_HP				5
-#define D_MP				6
-#define D_ATK				7
-#define D_DFC				8
-#define D_ATK_SPD			9
-#define D_ATK_SCP			10
-#define D_CRT_CHC			11
-#define D_CRT_DMG			12
+#define D_HP_LEVEL			5
+#define D_HP				6
+#define D_MP				7
+#define D_ATK_LEVEL			8
+#define D_ATK				9
+#define D_DFC_LEVEL			10
+#define D_DFC				11
+#define D_ATK_SPD			12
+#define D_ATK_SCP			13
+#define D_CRT_CHC			14
+#define D_CRT_DMG			15
 
 
 class LineString
@@ -56,7 +59,7 @@ public:
 
 	size_t getRowCount() const { return _dataInfo.size(); }	//获取行最大值
 	size_t getColumnCount() const { return _titles.size(); }	//获取列最大值
-	size_t finditem(const std::string& src) const;	//找到某个数据所在的行
+	size_t findRowOfItem(const std::string& src) const;	//找到某个数据所在的行
 
 	LineString& operator[](size_t index)
 	{

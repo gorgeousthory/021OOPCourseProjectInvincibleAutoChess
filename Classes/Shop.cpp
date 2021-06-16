@@ -44,8 +44,7 @@ bool Shop::init()
 	return true;
 }
 
-template<class ClassName, typename price>
-bool Shop::qualification(int money, int maxPiece, int pieceNum, ClassName* A, typename price)
+bool Shop::qualification(int money, int maxPiece, int pieceNum,int price)
 {
 	if (money >= price && pieceNum < maxPiece) {
 		return true;

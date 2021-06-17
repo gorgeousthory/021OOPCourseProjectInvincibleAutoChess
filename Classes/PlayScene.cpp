@@ -281,7 +281,7 @@ void PlayScene::menuExitCallBack(Ref* sender)
 void PlayScene::menuPieceCardCallBack1(Ref* sender)
 {
 	// 获取到当前所点击的棋子卡片
-	const unsigned int NUMBER = 0;
+	const int NUMBER = 0;
 	buyCard(NUMBER);
 	shop.at(NUMBER)->removeFromParent();
 }

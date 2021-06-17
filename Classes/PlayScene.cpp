@@ -66,6 +66,23 @@ bool PlayScene::init()
 	chessBoardModel = ChessBoard::create();
 	createBoard(Vec2(config->getPx()->x * 47.5, config->getPx()->y * 16));
 
+	// 添加计时器
+	auto loadingBarBack = Sprite::create("res/UI/LoginLoadingBarBack.png"); // 进度条的背景
+	originSize = loadingBarBack->getContentSize();
+	loadingBarBack->setScale(30 * ConfigController::getInstance()->getPx()->x / originSize.x);
+	loadingBarBack->setPosition(200, 600);//进度条背景的位置
+	auto loadingBarFront = Sprite::create("res/UI/LoginLoadingBarFront.png"); // 进度条的前景
+	loadingBar = ProgressTimer::create(loadingBarFront);
+	loadingBar->setBarChangeRate(Vec2(1, 0));
+	loadingBar->setType(ProgressTimer::Type::BAR);// 设置进度条类型
+	loadingBar->setMidpoint(Vec2(0, 1));//设置运动方向
+	loadingBar->setPosition(200, 600);//进度条的位置
+	loadingBar->setScale(30 * ConfigController::getInstance()->getPx()->x / originSize.x);
+	loadingBar->setPercentage(0);//设置初始值为0
+	this->addChild(loadingBarBack);
+	this->addChild(loadingBar);
+
+
 	// 创建玩家
 	playerA = Player::create();
 	playerA->retain();
@@ -80,7 +97,11 @@ bool PlayScene::init()
 	}
 
 
+	timeLabel->setPosition(300, 700);
+	this->addChild(timeLabel);
 	playLayer->addChild(menu, 5);
+	this->scheduleUpdate();
+
 	return true;
 }
 
@@ -164,11 +185,6 @@ void PlayScene::createShop(Vec2 position)
 	shop.push_back(pieceCard3);
 	shop.push_back(pieceCard4);
 	shop.push_back(pieceCard5);
-}
-
-void PlayScene::freshPieceCard()
-{
-
 }
 
 /*返回多个星星的图标,参数代表星星的个数，以向量中的第一个为父节点*/
@@ -271,6 +287,23 @@ PieceCoordinate PlayScene::coordingrevert(Vec2 realPosition)
 	logPosition.setY(static_cast<int>(realPosition.y) % static_cast<int>(perLength));
 
 	return logPosition;
+}
+
+void PlayScene::update(float dt)
+{
+	string temp = "Time:";
+	float damage = 0;
+	if (timeRemaining > 0.5f) {
+		timeRemaining -= dt;
+		damage = 61.0 - timeRemaining;
+
+		temp += (to_string(static_cast<int>(timeRemaining)));
+		timeLabel->setString(temp);
+		loadingBar->setPercentage((damage / 61.0) * 100);
+	}
+	//else {//时间到了
+
+	//}
 }
 
 void PlayScene::menuExitCallBack(Ref* sender)

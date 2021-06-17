@@ -47,14 +47,14 @@ public:
 	// 创建可视化商店，position为第一张卡片左下角的锚点坐标
 	void createShop(Vec2 position);
 
-	// 刷新可视化商店
-	void freshPieceCard();
-
 	// 创建可视化棋子卡片
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
 
 	// 坐标转换函数
 	static PieceCoordinate coordingrevert(Vec2 realPosition);
+
+	//更新函数
+	void update(float dt);
 
 	CREATE_FUNC(PlayScene);
 
@@ -73,6 +73,15 @@ private:
 
 	// 玩家
 	Player* playerA;
+
+	//计时器
+	float timeRemaining = 61.0f;
+	Label* timeLabel = Label::createWithSystemFont("Time:60", "Arial", 60);
+
+	// 资源加载进度条
+	ProgressTimer* loadingBar;
+	// 进度条行为
+	ProgressFromTo* barAction;
 
 	// 退出按钮的点击事件
 	void menuExitCallBack(Ref* sender);

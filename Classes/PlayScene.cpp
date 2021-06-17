@@ -47,6 +47,7 @@ bool PlayScene::init()
 	playLayer->setContentSize(visibleSize);
 	this->addChild(playLayer);
 
+
 	// 添加背景图片
 	auto backGround = Sprite::createWithTexture(texture->getTextureForKey("/res/Background/PlaySceneBackground.png"));
 	backGround->setPosition(visibleSize / 2);
@@ -66,6 +67,22 @@ bool PlayScene::init()
 	chessBoardModel = ChessBoard::create();
 	createBoard(Vec2(config->getPx()->x * 47.5, config->getPx()->y * 16));
 
+	// 添加计时器
+	auto loadingBarBack = Sprite::create("res/UI/LoginLoadingBarBack.png"); // 进度条的背景
+	originSize = loadingBarBack->getContentSize();
+	loadingBarBack->setScale(30 * ConfigController::getInstance()->getPx()->x / originSize.x);
+	loadingBarBack->setPosition(200, 600);//进度条背景的位置
+	auto loadingBarFront = Sprite::create("res/UI/LoginLoadingBarFront.png"); // 进度条的前景
+	loadingBar = ProgressTimer::create(loadingBarFront);
+	loadingBar->setBarChangeRate(Vec2(1, 0));
+	loadingBar->setType(ProgressTimer::Type::BAR);// 设置进度条类型
+	loadingBar->setMidpoint(Vec2(0,1));//设置运动方向
+	loadingBar->setPosition(200, 600);//进度条的位置
+	loadingBar->setScale(30 * ConfigController::getInstance()->getPx()->x / originSize.x);
+	loadingBar->setPercentage(0);//设置初始值为0
+	this->addChild(loadingBarBack);
+	this->addChild(loadingBar);
+
 	// 创建玩家
 	playerA = Player::create();
 	playerA->retain();
@@ -78,9 +95,11 @@ bool PlayScene::init()
 	{
 		menu->addChild(shop.at(i));
 	}
-
-
+	
+	timeLabel->setPosition(300, 700);
+	this->addChild(timeLabel);
 	playLayer->addChild(menu, 5);
+	this->scheduleUpdate();
 	return true;
 }
 
@@ -154,7 +173,7 @@ void PlayScene::createShop(Vec2 position)
 	menu->addChild(freshShop);
 
 	// 棋子及装备卡片
-	auto pieceCard1 = PlayScene::createPieceCard("AdvancedMathematics", "/res/Books/AdvancedMathematics.png", position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this),1);
+	auto pieceCard1 = PlayScene::createPieceCard("AdvancedMathematics", "/res/Books/AdvancedMathematics.png", position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this), 1);
 	auto pieceCard2 = PlayScene::createPieceCard("LinearAlgebra", "/res/Books/LinearAlgebra.png", Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this),2);
 	auto pieceCard3 = PlayScene::createPieceCard("CollegePhysics", "/res/Books/CollegePhysics.png", Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this),3);
 	auto pieceCard4 = PlayScene::createPieceCard("MordernHistory", "/res/Books/MordernHistory.png", Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this),4);
@@ -256,7 +275,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	return item;
 }
 
-PieceCoordinate* PlayScene::coordingrevert(Vec2 realPosition)
+PieceCoordinate PlayScene::coordingrevert(Vec2 realPosition)
 {
 	auto config = ConfigController::getInstance();
 	realPosition.x -= config->getPx()->x * 47.5;
@@ -267,7 +286,24 @@ PieceCoordinate* PlayScene::coordingrevert(Vec2 realPosition)
 	logPosition.setX(static_cast<int>(realPosition.x) % static_cast<int>(perLength));
 	logPosition.setY(static_cast<int>(realPosition.y) % static_cast<int>(perLength));
 
-	return &logPosition;
+	return logPosition;
+}
+
+void PlayScene::update(float dt)
+{
+	string temp = "Time:";
+	float damage = 0;
+	if (timeRemaining > 0.5f) {
+		timeRemaining -= dt;
+		damage = 61.0 - timeRemaining;
+
+		temp += (to_string(static_cast<int>(timeRemaining)));
+		timeLabel->setString(temp);
+		loadingBar->setPercentage((damage/61.0)*100);
+	}
+	//else {//时间到了
+
+	//}
 }
 
 void PlayScene::menuExitCallBack(Ref* sender)
@@ -280,7 +316,6 @@ void PlayScene::menuPieceCardCallBack1(Ref* sender)
 	// 获取到当前所点击的棋子卡片
 	const unsigned int NUMBER = 0;
 	buyCard(NUMBER);
-	this->removeChildByTag(1);
 }
 
 void PlayScene::menuPieceCardCallBack2(Ref* sender)
@@ -360,7 +395,7 @@ int PlayScene::onTouchBegan(Touch* touch, Event* event)
 void PlayScene::onTouchEnded(Touch* touch, Event* event)
 {
 	Vec2 position = touch->getLocation();
-	PieceCoordinate* logPosition = coordingrevert(position);
+	PieceCoordinate logPosition = coordingrevert(position);
 
 	// int clickType = PlayScene::onTouchBegan(touch, event);
 	/*switch (clickType)

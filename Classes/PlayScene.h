@@ -51,7 +51,10 @@ public:
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback,int tag);
 
 	// 坐标转换函数
-	static PieceCoordinate* coordingrevert(Vec2 realPosition);
+	static PieceCoordinate coordingrevert(Vec2 realPosition);
+
+	//更新函数
+	void update(float dt);
 
 	CREATE_FUNC(PlayScene);
 
@@ -70,6 +73,15 @@ private:
 
 	// 玩家
 	Player* playerA;
+
+	//计时器
+	float timeRemaining = 61.0f;
+	Label* timeLabel = Label::createWithSystemFont("Time:60", "Arial", 60);
+
+	// 资源加载进度条
+	ProgressTimer* loadingBar; 
+	// 进度条行为
+	ProgressFromTo* barAction;
 
 	// 退出按钮的点击事件
 	void menuExitCallBack(Ref* sender);

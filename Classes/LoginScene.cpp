@@ -18,6 +18,9 @@ bool LoginScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	
+	//play background music		播放背景音乐
+	_audioBgID = AudioEngine::play2d("/res/Music/musicBgm.mp3", true);
+
 	// LoginScene场景层
 	auto loginLayer = Layer::create();
 	loginLayer->setPosition(origin);
@@ -87,21 +90,27 @@ bool LoginScene::init()
 	gameLogo->setScale(80 * ConfigController::getInstance()->getPx()->x / originSize.x);
 	gameLogo->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 5 * ConfigController::getInstance()->getPx()->y));
 	loginLayer->addChild(gameLogo, 2);
-
+	//添加开始游戏按钮
 	auto startButton = LoginScene::createGameButton("Start!", "/res/UI/PlayNormal.png", "/res/UI/PlaySelected.png", CC_CALLBACK_1(LoginScene::menuStartCallBack, this));
 	startButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	originSize = startButton->getContentSize();
 	startButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
 	startButton->setPosition(Vec2(0, -25 * ConfigController::getInstance()->getPx()->y));
-
+	//添加结束游戏按钮
 	auto exitButton = LoginScene::createGameButton("Exit!", "/res/UI/ExitNormal.png", "/res/UI/ExitSelected.png", CC_CALLBACK_1(LoginScene::menuExitCallBack, this));
 	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	originSize = exitButton->getContentSize();
 	exitButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
 	exitButton->setPosition(Vec2(70 * ConfigController::getInstance()->getPx()->y, -35 * ConfigController::getInstance()->getPx()->y));
+	//添加音乐控制按钮
+	auto musicButton = LoginScene::createGameButton("", "/res/UI/MusicNormal.png", "/res/UI/MusicSelected.png", CC_CALLBACK_1(LoginScene::menuMusicCallBack, this));
+	musicButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	originSize = musicButton->getContentSize();
+	musicButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
+	musicButton->setPosition(Vec2(55 * ConfigController::getInstance()->getPx()->y, -35 * ConfigController::getInstance()->getPx()->y));
 	
 	// LoginScene菜单
-	auto menu = Menu::create(startButton, exitButton, nullptr);
+	auto menu = Menu::create(startButton, exitButton, musicButton, nullptr);
 	loginLayer->addChild(menu, 5);
 
 	// ************可视化部分结束***************
@@ -197,13 +206,28 @@ MenuItemSprite* LoginScene::createGameButton(string name, string normalPicPath, 
 
 void LoginScene::menuStartCallBack(Ref* sender)
 {
+	AudioEngine::stop(_audioBgID);
 	auto scene = PlayScene::create();
 	Director::getInstance()->replaceScene(scene);
 }
 
 void LoginScene::menuExitCallBack(Ref* sender)
 {
+	AudioEngine::stop(_audioBgID);
 	Director::getInstance()->end();
+}
+
+void LoginScene::menuMusicCallBack(Ref* sender)
+{
+	//根据当前音乐播放状态切换
+	if (AudioEngine::getState(_audioBgID) == AudioEngine::AudioState::PLAYING)
+	{
+		AudioEngine::pause(_audioBgID);
+	}
+	else if (AudioEngine::getState(_audioBgID) == AudioEngine::AudioState::PAUSED)
+	{
+		AudioEngine::resume(_audioBgID);
+	}
 }
 
 // 常用字节编码转换为宽字节编码

@@ -1,14 +1,5 @@
 #include "PlayScene.h"
 
-inline cocos2d::Sprite* ourCreate(const string & path)
-{
-	/*auto texture = Director::getInstance()->getTextureCache();
-	auto tmpSprite= Sprite::createWithTexture(texture->getTextureForKey(path));*/
-
-	auto tmpSprite = Sprite::create(path);
-
-	return tmpSprite;
-}
 
 Scene* PlayScene::createScene()
 {
@@ -19,6 +10,8 @@ bool PlayScene::init()
 {
 	if (!Scene::init()) // 对父类init方法的判断
 		return false;
+
+
 
 	// 需要用到的单例工具
 	auto texture = Director::getInstance()->getTextureCache();
@@ -62,23 +55,33 @@ bool PlayScene::init()
 	exitButton->setPosition(Vec2(70 * ConfigController::getInstance()->getPx()->y, -35 * ConfigController::getInstance()->getPx()->y));
 	menu = Menu::create(exitButton, nullptr);
 
+	//播放音乐
+	_audioBgID = AudioEngine::play2d("/res/Music/musicBgm.mp3", true);
+	//添加音乐按钮
+	auto musicButton = LoginScene::createGameButton("", "/res/UI/MusicNormal.png", "/res/UI/MusicSelected.png", CC_CALLBACK_1(PlayScene::menuMusicCallBack, this));
+	musicButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	musicButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	originSize = musicButton->getContentSize();
+	musicButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
+	musicButton->setPosition(Vec2(70 * ConfigController::getInstance()->getPx()->y, -15 * ConfigController::getInstance()->getPx()->y));
+	menu->addChild(musicButton);
+
 	// 创建棋盘
 	chessBoardModel = ChessBoard::create();
 	createBoard(Vec2(config->getPx()->x * 47.5, config->getPx()->y * 16));
 
+	// 创建玩家
+	playerA = Player::create();
+	playerA->retain();
+
 	// 创建商店
 	shopModel = Shop::create();
+	shopModel->retain();
 	createShop(Vec2(-45 * config->getPx()->x, -45 * config->getPx()->y));
 	for (int i = 0; i < 5; i++)
 	{
 		menu->addChild(shop.at(i));
 	}
-
-
-	// 创建玩家
-	playerA = Player::create();
-
-
 
 	playLayer->addChild(menu, 5);
 	return true;
@@ -146,19 +149,19 @@ void PlayScene::createShop(Vec2 position)
 	freshShop->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
 	//adjust the Position	调整相对大小
 	shopMore->setPosition(tmpVec2);
-	buyExp->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 1));
-	freshShop->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 0));
+	buyExp->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 1) + Vec2(-80 * config->getPx()->x, -45 * config->getPx()->y));
+	freshShop->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 0) + Vec2(-80 * config->getPx()->x, -45 * config->getPx()->y));
 	//add the parent node	添加父节点
 	playLayer->addChild(shopMore, 5);
 	menu->addChild(buyExp);
 	menu->addChild(freshShop);
 
 	// 棋子及装备卡片
-	auto pieceCard1 = PlayScene::createPieceCard("AdvancedMathematics", "/res/Books/AdvancedMathematics.png", position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
-	auto pieceCard2 = PlayScene::createPieceCard("LinearAlgebra", "/res/Books/LinearAlgebra.png", Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
-	auto pieceCard3 = PlayScene::createPieceCard("CollegePhysics", "/res/Books/CollegePhysics.png", Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
-	auto pieceCard4 = PlayScene::createPieceCard("MordernHistory", "/res/Books/MordernHistory.png", Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
-	auto pieceCard5 = PlayScene::createPieceCard("C++PrimerPlus", "/res/Books/C++PrimerPlus.png", Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
+	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
+	auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1)->getPieceName(), shopModel->getPieceList()->at(1)->getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
+	auto pieceCard3 = PlayScene::createPieceCard(shopModel->getPieceList()->at(2)->getPieceName(), shopModel->getPieceList()->at(2)->getPicPath(), Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
+	auto pieceCard4 = PlayScene::createPieceCard(shopModel->getPieceList()->at(3)->getPieceName(), shopModel->getPieceList()->at(3)->getPicPath(), Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
+	auto pieceCard5 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
 	shop.push_back(pieceCard1);
 	shop.push_back(pieceCard2);
 	shop.push_back(pieceCard3);
@@ -192,19 +195,19 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	auto config = ConfigController::getInstance();
 
 	// 创建卡片精灵
-	auto cardBack = ourCreate(("/res/UI/ShoppingCard.png"));
+	auto cardBack = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/ShoppingCard.png"));
 
 	// 创建一个精灵菜单项
 	auto item = MenuItemSprite::create(cardBack, cardBack, callback);
 
-	//fetch the pic and the value stored in the data file "PiecesData.csv"
+	//fetch the pic and the value stored in the data file "PiecesData.csv"	读取csv里的棋子数据
 	CsvParser csv;
 	csv.parseWithFile("Data/PiecesData.csv");
 	auto rowPosition = csv.findRowOfItem(pieceName);
-	auto sprite = ourCreate((piecePicPath));
-	auto Healthicon = ourCreate(("/res/Icons/Health.png"));	//the Health icon（生命）
-	auto Attackicon = ourCreate(("/res/Icons/Attack.png"));	//the Attack icon(攻击)
-	auto Armoricon = ourCreate(("/res/Icons/Armor.png"));		//the Armor icon(防御)
+	auto sprite = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
+	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png"));	//the Health icon（生命）
+	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png"));	//the Attack icon(攻击)
+	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png"));		//the Armor icon(防御)
 	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);	//the name of book 棋子名称
 
 
@@ -254,7 +257,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	return item;
 }
 
-PieceCoordinate* PlayScene::coordingrevert(Vec2 realPosition)
+PieceCoordinate PlayScene::coordingrevert(Vec2 realPosition)
 {
 	auto config = ConfigController::getInstance();
 	realPosition.x -= config->getPx()->x * 47.5;
@@ -265,65 +268,131 @@ PieceCoordinate* PlayScene::coordingrevert(Vec2 realPosition)
 	logPosition.setX(static_cast<int>(realPosition.x) % static_cast<int>(perLength));
 	logPosition.setY(static_cast<int>(realPosition.y) % static_cast<int>(perLength));
 
-	return &logPosition;
+	return logPosition;
 }
 
 void PlayScene::menuExitCallBack(Ref* sender)
 {
+	AudioEngine::stop(_audioBgID);
 	Director::getInstance()->end();
 }
 
+void PlayScene::menuMusicCallBack(Ref* sender)
+{
+	if (AudioEngine::getState(_audioBgID) == AudioEngine::AudioState::PLAYING)
+	{
+		AudioEngine::pause(_audioBgID);
+	}
+	else if (AudioEngine::getState(_audioBgID) == AudioEngine::AudioState::PAUSED)
+	{
+		AudioEngine::resume(_audioBgID);
+	}
+}
+
+
 void PlayScene::menuPieceCardCallBack1(Ref* sender)
 {
+	//play effect music of button	播放按钮音效
+	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
+
 	// 获取到当前所点击的棋子卡片
-	const unsigned int NUMBER = 1;
+	const unsigned int NUMBER = 0;
 	buyCard(NUMBER);
+	shop.at(NUMBER)->removeFromParent();
 }
 
 void PlayScene::menuPieceCardCallBack2(Ref* sender)
 {
-	const unsigned int NUMBER = 2;
+	//play effect music of button	播放按钮音效
+	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
+
+	const unsigned int NUMBER = 1;
 	buyCard(NUMBER);
+	shop.at(NUMBER)->removeFromParent();
 }
 
 void PlayScene::menuPieceCardCallBack3(Ref* sender)
 {
-	const unsigned int NUMBER = 3;
+	//play effect music of button	播放按钮音效
+	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
+
+	const unsigned int NUMBER = 2;
 	buyCard(NUMBER);
+	shop.at(NUMBER)->removeFromParent();
 }
 
 void PlayScene::menuPieceCardCallBack4(Ref* sender)
 {
-	const unsigned int NUMBER = 4;
+	//play effect music of button	播放按钮音效
+	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
+
+	const unsigned int NUMBER = 3;
 	buyCard(NUMBER);
+	shop.at(NUMBER)->removeFromParent();
 }
 
 void PlayScene::menuPieceCardCallBack5(Ref* sender)
 {
-	const unsigned int NUMBER = 5;
+	//play effect music of button	播放按钮音效
+	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
+
+	const unsigned int NUMBER = 4;
 	buyCard(NUMBER);
+	shop.at(NUMBER)->removeFromParent();
 }
 
 void PlayScene::buyCard(const unsigned int num)
 {
-	//ChessPiece* piece = shopModel->getPieceList()->at(num);
+	ChessPiece* piece = shopModel->getPieceList()->at(num);
 
-
-	//if (Shop::qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), ))
-	//{
-	//	// 如果可以购买
-	//		// 设置player的对应数据
-
-	//}
+	//能买
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	{
+		playerA->piecePossesion[playerA->getOwnPieceNum()] = piece;
+		playerA->retain();
+		this->addChild(piece->createChessPiece("a", "/res/Books/AdvancedMathematics.png", Vec2(200, 300), 0));
+		CCLOG("BUY");
+	}
+	else {
+		CCLOG("UNAFFORDABLE");
+	}
 }
 
 void PlayScene::menuFreshShopCallBack(Ref* sender)
 {
+	//play effect music of button	播放按钮音效
+	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
 
+	auto config = ConfigController::getInstance();
+
+	shopModel->refresh();
+	Vec2 position = Vec2(-config->getPx()->x * 45, -config->getPx()->y * 45);
+	for (unsigned int i = 0; i < shop.size(); i++)
+	{
+		shop.at(i)->removeFromParent();
+		shop.at(i)->release();
+	}
+	shop.clear();
+	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
+	auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1)->getPieceName(), shopModel->getPieceList()->at(1)->getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
+	auto pieceCard3 = PlayScene::createPieceCard(shopModel->getPieceList()->at(2)->getPieceName(), shopModel->getPieceList()->at(2)->getPicPath(), Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
+	auto pieceCard4 = PlayScene::createPieceCard(shopModel->getPieceList()->at(3)->getPieceName(), shopModel->getPieceList()->at(3)->getPicPath(), Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
+	auto pieceCard5 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
+	shop.push_back(pieceCard1);
+	shop.push_back(pieceCard2);
+	shop.push_back(pieceCard3);
+	shop.push_back(pieceCard4);
+	shop.push_back(pieceCard5);
+	for (unsigned int i = 0; i < shop.size(); i++)
+	{
+		menu->addChild(shop.at(i));
+	}
 }
 
 void PlayScene::menuBuyExpCallBack(Ref* sender)
 {
+	//play effect music of button	播放按钮音效
+	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
 
 }
 
@@ -351,7 +420,7 @@ int PlayScene::onTouchBegan(Touch* touch, Event* event)
 void PlayScene::onTouchEnded(Touch* touch, Event* event)
 {
 	Vec2 position = touch->getLocation();
-	PieceCoordinate* logPosition = coordingrevert(position);
+	PieceCoordinate logPosition = coordingrevert(position);
 
 	// int clickType = PlayScene::onTouchBegan(touch, event);
 	/*switch (clickType)

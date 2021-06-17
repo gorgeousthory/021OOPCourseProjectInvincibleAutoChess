@@ -49,7 +49,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        //glview = GLViewImpl::createWithFullScreen("InvincibleAutoChess");
+        // glview = GLViewImpl::createWithFullScreen("InvincibleAutoChess");
         glview = GLViewImpl::createWithRect("InvincibleAutoChess", cocos2d::Rect(0, 0, mediumResolutionSize.width, mediumResolutionSize.height));
 #else
         glview = GLViewImpl::create("InvincibleAutoChess");
@@ -86,6 +86,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // create a scene. it's an autorelease object
     auto scene = LoginScene::createScene();
+    // auto scene = TestDemo::createScene();
+    // run
     director->runWithScene(scene);
 
     return true;

@@ -15,12 +15,13 @@
 #define attackscopeL 13//攻击距离对应列
 #define criticalchanceL 14//暴击几率对应列
 #define criticaldamageL 15//暴击伤害对应列
+
 bool ChessPiece::init(int id)
 {
 
 	// 初始化各项数据
 	//_pieceName = ConfigController::getDataByID(id).asString();
-	_piecePicPath = "Resources/Sprite/";
+	_piecePicPath = "Resources/Books/";
 	_piecePicPath += _pieceName;
 
 	// 后续数据的初始化待文件结构完善后再行添加，预计在1.4.0版本之前完成
@@ -96,6 +97,11 @@ const string ChessPiece::getPieceName()
 	return _pieceName;
 }
 
+const string ChessPiece::getPicPath()
+{
+	return _piecePicPath;
+}
+
 const PieceInfo* ChessPiece::getCrtPieceCondition()
 {
 	return &_pieceCrtCondition;
@@ -111,7 +117,7 @@ bool ChessPiece::ifDead()
 	return _pieceCrtCondition.healthPoint > 0 ? false : true;
 }
 
-Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2 position)
+Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2 position,int type)
 {
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
@@ -150,10 +156,10 @@ Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2
 	piece->setPosition(position);
 	hpBar->setPosition(position.x + 300, position.y + 1700);
 	mpBar->setPosition(position.x + 300, position.y + 2000);
-
-	piece->addChild(hpBar);
-	piece->addChild(mpBar);
-
+	if (type == 1) {
+		piece->addChild(hpBar);
+		piece->addChild(mpBar);
+	}
 	return piece;
 }
 
@@ -175,6 +181,11 @@ Vec2 ChessPiece::getVec2()
 	position.x = _realCoordinate.getX();
 	position.y = _realCoordinate.getY();
 	return position;
+}
+
+int ChessPiece::getPiecePerCost()
+{
+	return _piecePerCost;
 }
 
 
@@ -1253,6 +1264,41 @@ vector<ChessPiece*>  shooter::promoteRank(vector<ChessPiece*> piece)
 		}
 	}
 	return result;
+}
+
+bool tank::init()
+{
+	CsvParser csv;
+	csv.parseWithFile("Data/PiecesData.csv");
+	Value a = Value(csv[C_][nameL].c_str());
+	_pieceName = a.asString();
+	a = Value(csv[C_][pathL].c_str());
+	_piecePicPath = a.asString();
+	_pieceLevel = Level::level1;
+	a = Value(csv[C_][costL].c_str());
+	_piecePerCost = a.asInt();
+	_logCoordinate.setX(0); _logCoordinate.setY(0);
+	_realCoordinate.setX(0); _realCoordinate.setY(0);
+	//以下是棋子数值初始化
+	a = Value(csv[C_][hpL].c_str());
+	_pieceCrtCondition.healthPoint = a.asDouble();
+	_pieceCrtCondition.healthPointM = a.asDouble();
+	a = Value(csv[C_][mpL].c_str());
+	_pieceCrtCondition.magicPoint = a.asDouble();
+	_pieceCrtCondition.magicPointM = a.asDouble();
+	a = Value(csv[C_][attackL].c_str());
+	_pieceCrtCondition.bAttack = a.asDouble();
+	a = Value(csv[C_][defenceL].c_str());
+	_pieceCrtCondition.bDefence = a.asDouble();
+	a = Value(csv[C_][attackspeedL].c_str());
+	_pieceCrtCondition.bAttackSpeed = a.asDouble();
+	a = Value(csv[C_][attackscopeL].c_str());
+	_pieceCrtCondition.attackScope = a.asDouble();
+	a = Value(csv[C_][criticalchanceL].c_str());
+	_pieceCrtCondition.criticalChance = a.asDouble();
+	a = Value(csv[C_][criticaldamageL].c_str());
+	_pieceCrtCondition.criticalDamage = a.asDouble();
+	return true;
 }
 
 /**********************************以下为各类棋子数据初始化函数***************************************/

@@ -22,6 +22,7 @@ USING_NS_CC;
 
 #include "ui/CocosGUI.h" 
 using namespace ui;
+#include "audio/include/AudioEngine.h"
 
 #include <list>
 #include <string>
@@ -59,12 +60,19 @@ private:
 	unsigned int resTotal; // 需要加载的资源总量
 
 	list<string> dataPathList; // 需要加载的资源路径表
+	
+	unsigned int _audioBgID;	//背景音乐编号
 
 	// 开始按钮的点击事件
 	void menuStartCallBack(Ref* sender);
 
 	// 退出按钮的点击事件
 	void menuExitCallBack(Ref* sender);
+
+	//	声音按钮的点击事件
+	void menuMusicCallBack(Ref* sender);
+
+
 };
 
 #endif

@@ -27,23 +27,25 @@ public:
 	virtual bool init();
 	virtual bool refresh();//调用该函数刷新商店
 
-	template<class ClassName,typename price>
-	bool qualification(int money, int maxPiece, int pieceNum, ClassName* A, typename price);
+	bool qualification(int money, int maxPiece, int pieceNum, int price);
 
 	template<class ClassName>
-	ClassName pieceIn(ClassName* A);//买棋子\
+	ClassName pieceIn(ClassName* A);//买棋子
 
 	int pieceInEquip();//买装备
 
 	template<class ClassName>
 	int pieceOut(ClassName piece);//卖棋子/装备
+
+	Vector<ChessPiece*>* getPieceList();
+	int getgear();
 	
 private:
 	//用于出售的棋子
-	vector<ChessPiece*>pieceList;
+	Vector<ChessPiece*> pieceList;
 
 	//用于出售的装备
-	int gear;
+	int gear=-1;
 };
 
 #endif // !_SHOP_

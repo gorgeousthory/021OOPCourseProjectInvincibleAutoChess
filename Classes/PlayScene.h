@@ -15,6 +15,7 @@ USING_NS_CC;
 
 #include "ui/CocosGUI.h" 
 using namespace ui;
+#include "audio/include/AudioEngine.h"
 
 #include <vector>
 using std::vector;
@@ -51,7 +52,7 @@ public:
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
 
 	// 坐标转换函数
-	static PieceCoordinate* coordingrevert(Vec2 realPosition);
+	static PieceCoordinate coordingrevert(Vec2 realPosition);
 
 	CREATE_FUNC(PlayScene);
 
@@ -71,8 +72,13 @@ private:
 	// 玩家
 	Player* playerA;
 
+	//背景音乐
+	unsigned int _audioBgID;
+
 	// 退出按钮的点击事件
 	void menuExitCallBack(Ref* sender);
+	//	声音按钮的点击事件
+	void menuMusicCallBack(Ref* sender);
 
 	// 购买卡片的点击事件
 	void menuPieceCardCallBack1(Ref* sender);

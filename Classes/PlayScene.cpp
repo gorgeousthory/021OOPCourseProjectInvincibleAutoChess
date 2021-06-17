@@ -79,8 +79,8 @@ bool PlayScene::init()
 	loadingBar->setPosition(200, 600);//进度条的位置
 	loadingBar->setScale(30 * ConfigController::getInstance()->getPx()->x / originSize.x);
 	loadingBar->setPercentage(0);//设置初始值为0
-	this->addChild(loadingBarBack);
-	this->addChild(loadingBar);
+	playLayer->addChild(loadingBarBack, 3);
+	playLayer->addChild(loadingBar, 3);
 
 
 	// 创建玩家
@@ -95,11 +95,11 @@ bool PlayScene::init()
 	{
 		menu->addChild(shop.at(i));
 	}
-
+	playLayer->addChild(menu, 5);
 
 	timeLabel->setPosition(300, 700);
-	this->addChild(timeLabel);
-	playLayer->addChild(menu, 5);
+	playLayer->addChild(timeLabel);
+	
 	this->scheduleUpdate();
 
 	return true;

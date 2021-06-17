@@ -1,5 +1,7 @@
 #include "Csv.h"
 
+USING_NS_CC;
+
 /*
 //the example to show the use of Csv
 	CsvParser csv;
@@ -52,7 +54,8 @@ void LineString::initWithString(const std::string& str)
 //
 CsvParser::CsvParser()
 {
-
+	this->_dataInfo = {};
+	this->_titles = {};
 }
 
 CsvParser::~CsvParser()

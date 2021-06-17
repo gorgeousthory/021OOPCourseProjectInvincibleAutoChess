@@ -88,6 +88,9 @@ public:
 	// 获取棋子名称
 	const string getPieceName();
 
+	// 获取棋子路径
+	const string getPicPath();
+
 	// 获取当前棋子数值
 	const PieceInfo* getCrtPieceCondition();
 
@@ -208,6 +211,7 @@ public:
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
+	CREATE_FUNC(tank);
 };
 
 /*mage*/
@@ -233,6 +237,7 @@ public:
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
+	CREATE_FUNC(mage);
 };
 
 /*stalker*/
@@ -258,6 +263,7 @@ public:
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
+	CREATE_FUNC(stalker);
 };
 
 /*therapist*/
@@ -283,6 +289,7 @@ public:
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
     void promoteRank();
+	CREATE_FUNC(therapist);
 };
 
 /*shooter*/
@@ -308,5 +315,6 @@ public:
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
+	CREATE_FUNC(shooter);
 };
 #endif

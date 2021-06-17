@@ -48,7 +48,7 @@ public:
 	void createShop(Vec2 position);
 
 	// 创建可视化棋子卡片
-	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback,int tag);
+	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
 
 	// 坐标转换函数
 	static PieceCoordinate coordingrevert(Vec2 realPosition);
@@ -70,6 +70,7 @@ private:
 	// 商店
 	Shop* shopModel;
 	vector<MenuItemSprite*> shop;
+	int shopQualification[5] = { 1,1,1,1,1 };
 
 	// 玩家
 	Player* playerA;
@@ -79,7 +80,7 @@ private:
 	Label* timeLabel = Label::createWithSystemFont("Time:60", "Arial", 60);
 
 	// 资源加载进度条
-	ProgressTimer* loadingBar; 
+	ProgressTimer* loadingBar;
 	// 进度条行为
 	ProgressFromTo* barAction;
 

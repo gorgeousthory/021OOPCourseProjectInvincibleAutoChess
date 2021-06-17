@@ -97,6 +97,11 @@ const string ChessPiece::getPieceName()
 	return _pieceName;
 }
 
+const string ChessPiece::getPicPath()
+{
+	return _piecePicPath;
+}
+
 const PieceInfo* ChessPiece::getCrtPieceCondition()
 {
 	return &_pieceCrtCondition;

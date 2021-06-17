@@ -4,7 +4,6 @@
 #define __CSV_PARSER_H__
 
 #include "cocos2d.h"
-USING_NS_CC;
 
 #define D_STAR1				0
 #define D_STAR2				1
@@ -26,7 +25,6 @@ USING_NS_CC;
 #define D_ATK_SCP			13
 #define D_CRT_CHC			14
 #define D_CRT_DMG			15
-
 
 class LineString
 {

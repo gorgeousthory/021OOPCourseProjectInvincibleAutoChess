@@ -47,7 +47,6 @@ bool PlayScene::init()
 	playLayer->setContentSize(visibleSize);
 	this->addChild(playLayer);
 
-
 	// 添加背景图片
 	auto backGround = Sprite::createWithTexture(texture->getTextureForKey("/res/Background/PlaySceneBackground.png"));
 	backGround->setPosition(visibleSize / 2);
@@ -76,12 +75,13 @@ bool PlayScene::init()
 	loadingBar = ProgressTimer::create(loadingBarFront);
 	loadingBar->setBarChangeRate(Vec2(1, 0));
 	loadingBar->setType(ProgressTimer::Type::BAR);// 设置进度条类型
-	loadingBar->setMidpoint(Vec2(0,1));//设置运动方向
+	loadingBar->setMidpoint(Vec2(0, 1));//设置运动方向
 	loadingBar->setPosition(200, 600);//进度条的位置
 	loadingBar->setScale(30 * ConfigController::getInstance()->getPx()->x / originSize.x);
 	loadingBar->setPercentage(0);//设置初始值为0
-	this->addChild(loadingBarBack);
-	this->addChild(loadingBar);
+	playLayer->addChild(loadingBarBack, 3);
+	playLayer->addChild(loadingBar, 3);
+
 
 	// 创建玩家
 	playerA = Player::create();
@@ -95,11 +95,13 @@ bool PlayScene::init()
 	{
 		menu->addChild(shop.at(i));
 	}
-	
-	timeLabel->setPosition(300, 700);
-	this->addChild(timeLabel);
 	playLayer->addChild(menu, 5);
+
+	timeLabel->setPosition(300, 700);
+	playLayer->addChild(timeLabel,6);
+	
 	this->scheduleUpdate();
+
 	return true;
 }
 
@@ -143,7 +145,7 @@ void PlayScene::createShop(Vec2 position)
 	auto config = ConfigController::getInstance();
 	auto texture = Director::getInstance()->getTextureCache();
 
-	//preparations	加载操作UI前的相关准备
+	// preparations	加载操作UI前的相关准备
 	auto shopMore = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/ShoppingMore.png"));
 	auto buyExp = LoginScene::createGameButton("", "/res/UI/UpgradeNormal.png", "/res/UI/UpgradeSelected.png", CC_CALLBACK_1(PlayScene::menuBuyExpCallBack, this));
 	auto freshShop = LoginScene::createGameButton("", "/res/UI/RefreshNormal.png", "/res/UI/RefreshSelected.png", CC_CALLBACK_1(PlayScene::menuFreshShopCallBack, this));
@@ -165,19 +167,19 @@ void PlayScene::createShop(Vec2 position)
 	freshShop->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
 	//adjust the Position	调整相对大小
 	shopMore->setPosition(tmpVec2);
-	buyExp->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 1));
-	freshShop->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 0));
+	buyExp->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 1) + Vec2(- 80 * config->getPx()->x, -45 * config->getPx()->y));
+	freshShop->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 0) + Vec2(-80 * config->getPx()->x, -45 * config->getPx()->y));
 	//add the parent node	添加父节点
 	playLayer->addChild(shopMore, 5);
 	menu->addChild(buyExp);
 	menu->addChild(freshShop);
 
 	// 棋子及装备卡片
-	auto pieceCard1 = PlayScene::createPieceCard("AdvancedMathematics", "/res/Books/AdvancedMathematics.png", position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this), 1);
-	auto pieceCard2 = PlayScene::createPieceCard("LinearAlgebra", "/res/Books/LinearAlgebra.png", Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this),2);
-	auto pieceCard3 = PlayScene::createPieceCard("CollegePhysics", "/res/Books/CollegePhysics.png", Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this),3);
-	auto pieceCard4 = PlayScene::createPieceCard("MordernHistory", "/res/Books/MordernHistory.png", Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this),4);
-	auto pieceCard5 = PlayScene::createPieceCard("C++PrimerPlus", "/res/Books/C++PrimerPlus.png", Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this),5);
+	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
+	auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1)->getPieceName(), shopModel->getPieceList()->at(1)->getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
+	auto pieceCard3 = PlayScene::createPieceCard(shopModel->getPieceList()->at(2)->getPieceName(), shopModel->getPieceList()->at(2)->getPicPath(), Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
+	auto pieceCard4 = PlayScene::createPieceCard(shopModel->getPieceList()->at(3)->getPieceName(), shopModel->getPieceList()->at(3)->getPicPath(), Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
+	auto pieceCard5 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
 	shop.push_back(pieceCard1);
 	shop.push_back(pieceCard2);
 	shop.push_back(pieceCard3);
@@ -205,7 +207,7 @@ Vector<Sprite*> levelStars(const string& value)
 	}
 	return stars;
 }
-MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback,int tag)
+MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback)
 {
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
@@ -270,8 +272,6 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	item->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 	item->setPosition(position);
 
-	item->setTag(tag);
-
 	return item;
 }
 
@@ -299,7 +299,7 @@ void PlayScene::update(float dt)
 
 		temp += (to_string(static_cast<int>(timeRemaining)));
 		timeLabel->setString(temp);
-		loadingBar->setPercentage((damage/61.0)*100);
+		loadingBar->setPercentage((damage / 61.0) * 100);
 	}
 	//else {//时间到了
 
@@ -314,26 +314,54 @@ void PlayScene::menuExitCallBack(Ref* sender)
 void PlayScene::menuPieceCardCallBack1(Ref* sender)
 {
 	// 获取到当前所点击的棋子卡片
-	const unsigned int NUMBER = 0;
-	buyCard(NUMBER);
+	const int NUMBER = 0;
+	if (shopQualification[0]==0) {
+		CCLOG("emptyShop");
+	}
+	else {
+		buyCard(NUMBER);
+		shopQualification[0] = 0;
+		shop.at(NUMBER)->setEnabled(false);
+	}
 }
 
 void PlayScene::menuPieceCardCallBack2(Ref* sender)
 {
 	const unsigned int NUMBER = 1;
-	buyCard(NUMBER);
+	if (shopQualification[1] == 0) {
+		CCLOG("emptyShop");
+	}
+	else {//能买
+		buyCard(NUMBER);
+		shopQualification[1] = 0;
+		shop.at(NUMBER)->setEnabled(false);
+	}
 }
 
 void PlayScene::menuPieceCardCallBack3(Ref* sender)
 {
 	const unsigned int NUMBER = 2;
-	buyCard(NUMBER);
+	if (shopQualification[2] == 0) {
+		CCLOG("emptyShop");
+	}
+	else {
+		buyCard(NUMBER);
+		shopQualification[2] = 0;
+		shop.at(NUMBER)->setEnabled(false);
+	}
 }
 
 void PlayScene::menuPieceCardCallBack4(Ref* sender)
 {
 	const unsigned int NUMBER = 3;
-	buyCard(NUMBER);
+	if (shopQualification[3] == 0) {
+		CCLOG("emptyShop");
+	}
+	else {
+		buyCard(NUMBER);
+		shopQualification[3] = 0;
+		shop.at(NUMBER)->setEnabled(false);
+	}
 }
 
 //装备栏 
@@ -341,6 +369,7 @@ void PlayScene::menuPieceCardCallBack5(Ref* sender)
 {
 	const unsigned int NUMBER = 4;
 	buyCard(NUMBER);
+	shop.at(NUMBER)->removeFromParent();
 }
 
 void PlayScene::buyCard(const unsigned int num)
@@ -362,7 +391,33 @@ void PlayScene::buyCard(const unsigned int num)
 
 void PlayScene::menuFreshShopCallBack(Ref* sender)
 {
+	auto config = ConfigController::getInstance();
 
+	shopModel->refresh();
+	Vec2 position = Vec2(-config->getPx()->x * 45, -config->getPx()->y * 45);
+	for (unsigned int i = 0; i < shop.size(); i++)
+	{
+		shop.at(i)->removeFromParent();
+		shop.at(i)->release();
+	}
+	for (int i = 0; i < 5;i++) {
+		shopQualification[i] = 1;
+	}
+	shop.clear();
+	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
+	auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1)->getPieceName(), shopModel->getPieceList()->at(1)->getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
+	auto pieceCard3 = PlayScene::createPieceCard(shopModel->getPieceList()->at(2)->getPieceName(), shopModel->getPieceList()->at(2)->getPicPath(), Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
+	auto pieceCard4 = PlayScene::createPieceCard(shopModel->getPieceList()->at(3)->getPieceName(), shopModel->getPieceList()->at(3)->getPicPath(), Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
+	auto pieceCard5 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
+	shop.push_back(pieceCard1);
+	shop.push_back(pieceCard2);
+	shop.push_back(pieceCard3);
+	shop.push_back(pieceCard4);
+	shop.push_back(pieceCard5);
+	for (unsigned int i = 0; i < shop.size(); i++)
+	{
+		menu->addChild(shop.at(i));
+	}
 }
 
 void PlayScene::menuBuyExpCallBack(Ref* sender)

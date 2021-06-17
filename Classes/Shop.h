@@ -11,9 +11,11 @@
 #ifndef _SHOP_H_
 #define _SHOP_H_
 
-#include<stdlib.h>//这个头文件用于生成随机数，刷新商店可用
-#include"Storage.h"
+#include <cocos2d.h>
+#include <stdlib.h>//这个头文件用于生成随机数，刷新商店可用
 #include<time.h>
+
+#include "ChessPiece.h"
 
 #define maxEquip 6//预留持有装备最大数
 using namespace std;
@@ -38,12 +40,12 @@ public:
 	template<class ClassName>
 	int pieceOut(ClassName piece);//卖棋子/装备
 
-	vector<ChessPiece*>* getPieceList();
+	vector<ChessPiece>* getPieceList();
 	int getgear();
 	
 private:
 	//用于出售的棋子
-	vector<ChessPiece*> pieceList;
+	vector<ChessPiece> pieceList{};
 
 	//用于出售的装备
 	int gear;

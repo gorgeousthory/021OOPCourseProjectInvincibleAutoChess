@@ -4,8 +4,8 @@ bool Shop::refresh()
 {
 	//如果已经有棋子，清空
 	if (!pieceList.empty()) {
-		for (int i = 0; i < 4; i++) {
-			delete(pieceList[i]);
+		for (int i = 0; i < pieceList.size(); i++) {
+			pieceList.pop_back();
 		}
 		pieceList.clear();
 	}
@@ -14,22 +14,28 @@ bool Shop::refresh()
 	//增添棋子
 	for (int i = 0; i < 4; i++) {
 		int figure = rand() % 5;
+		ChessPiece piece0, piece1, piece2, piece3, piece4;
 		switch (figure)
 		{
 		case 0:
-			pieceList.push_back(new tank);
+			piece0.initPieceInfo(figure);
+			pieceList.push_back(piece0);
 			break;
 		case 1:
-			pieceList.push_back(new mage);
+			piece1.initPieceInfo(figure);
+			pieceList.push_back(piece1);
 			break;
 		case 2:
-			pieceList.push_back(new shooter);
+			piece2.initPieceInfo(figure);
+			pieceList.push_back(piece2);
 			break;
 		case 3:
-			pieceList.push_back(new therapist);
+			piece3.initPieceInfo(figure);
+			pieceList.push_back(piece3);
 			break;
 		case 4:
-			pieceList.push_back(new stalker);
+			piece4.initPieceInfo(figure);
+			pieceList.push_back(piece4);
 			break;
 		}
 	}
@@ -72,7 +78,7 @@ int Shop::pieceInEquip()
 	return gear;
 }
 
-vector<ChessPiece*>* Shop::getPieceList()
+vector<ChessPiece>* Shop::getPieceList()
 {
 	return &pieceList;
 }

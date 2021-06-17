@@ -58,18 +58,15 @@ bool PlayScene::init()
 
 	// 创建商店
 	shopModel = Shop::create();
+	shopModel->retain();
 	createShop(Vec2(-45 * config->getPx()->x, -45 * config->getPx()->y));
 	for (int i = 0; i < 5; i++)
 	{
 		menu->addChild(shop.at(i));
 	}
 	
-
 	// 创建玩家
 	playerA = Player::create();
-
-	
-
 	playLayer->addChild(menu, 5);
 	return true;
 }
@@ -132,101 +129,114 @@ void PlayScene::createShop(Vec2 position)
 	scale = 13.5 * 16.9 / 15 * config->getPx()->x / originSize.x;
 	buyExp->setScale(scale);
 	freshShop->setScale(scale);
-	buyExp->setPosition(Vec2(originPosition.x - 16.9 / 2 * config->getPx()->x, originPosition.y + 10.5 * 16.9 / 15 * config->getPx()->y));
-	freshShop->setPosition(Vec2(originPosition.x - 16.9 / 2 * config->getPx()->x, originPosition.y + 4 * 16.9 / 15 * config->getPx()->y));
+	buyExp->setPosition(Vec2(originPosition.x - (16.9 / 2 + 80) * config->getPx()->x, originPosition.y + (10.5 * 16.9 / 15 - 45) * config->getPx()->y));
+	freshShop->setPosition(Vec2(originPosition.x - (16.9 / 2 + 80) * config->getPx()->x, originPosition.y + (4 * 16.9 / 15 - 45) * config->getPx()->y));
 	menu->addChild(buyExp);
 	menu->addChild(freshShop);
 
 	// 棋子及装备卡片
-	auto pieceCard1 = PlayScene::createPieceCard("ABCD", "/res/Books/AdvancedMathematics.png", position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
-	auto pieceCard2 = PlayScene::createPieceCard("EFGH", "/res/Books/MordernHistory.png", Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
-	auto pieceCard3 = PlayScene::createPieceCard("IJKL", "/res/Books/C++PrimerPlus.png", Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
-	auto pieceCard4 = PlayScene::createPieceCard("ABCD", "/res/Books/LinearAlgebra.png", Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
+	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0).getPieceName(), shopModel->getPieceList()->at(0).getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
+	auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1).getPieceName(), shopModel->getPieceList()->at(1).getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
+	auto pieceCard3 = PlayScene::createPieceCard(shopModel->getPieceList()->at(2).getPieceName(), shopModel->getPieceList()->at(2).getPicPath(), Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
+	auto pieceCard4 = PlayScene::createPieceCard(shopModel->getPieceList()->at(3).getPieceName(), shopModel->getPieceList()->at(3).getPicPath(), Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
 	auto pieceCard5 = PlayScene::createPieceCard("ABCD", "/res/Books/CollegePhysics.png", Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
-	shop.push_back(pieceCard1); 
+	shop.push_back(pieceCard1);
 	shop.push_back(pieceCard2);
 	shop.push_back(pieceCard3);
 	shop.push_back(pieceCard4);
 	shop.push_back(pieceCard5);
 }
 
+/*返回多个星星的图标,参数代表星星的个数，以向量中的第一个为父节点*/
+Vector<Sprite*> levelStars(const string& value)
+{
+	Vector<Sprite*> stars;	//the vector contains the stars;
+	int num = 0;
+	Vec2 tmp = {};
+	for (int i = 0; i < Value(value).asInt(); i++)
+	{
+		stars.pushBack(Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("/res/Icons/Star.png")));	//the star icon	
+		num = stars.size() - 1;
+		stars.at(num)->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+		tmp.x += stars.at(0)->getContentSize().width;
+		if (0 != num)
+		{
+			stars.at(num)->setPosition(tmp);
+			stars.at(0)->addChild(stars.at(num));
+		}
+	}
+	return stars;
+}
+
 MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback)
 {
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
-	float adjust = 160 / 22;
-	CsvParser csv;
-	csv.parseWithFile("Data/PiecesData.csv");
 
 	// 创建卡片精灵
-	auto cardBack = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/ShoppingCard.png"));
-	
+	auto cardBack = Sprite::createWithTexture(texture->getTextureForKey(("/res/UI/ShoppingCard.png")));
+
 	// 创建一个精灵菜单项
 	auto item = MenuItemSprite::create(cardBack, cardBack, callback);
-	item->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 
-	// 卡片相关
-	auto sprite = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
-	sprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+	//fetch the pic and the value stored in the data file "PiecesData.csv"
+	CsvParser csv;
+	csv.parseWithFile("Data/PiecesData.csv");
+	auto rowPosition = csv.findRowOfItem(pieceName);
+	auto sprite = Sprite::createWithTexture(texture->getTextureForKey((piecePicPath)));
+	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey(("/res/Icons/Health.png")));	//the Health icon（生命）
+	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey(("/res/Icons/Attack.png")));	//the Attack icon(攻击)
+	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey(("/res/Icons/Armor.png")));	//the Armor icon(防御)
+	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);	//the name of book 棋子名称
+
+
+	//adjust the comparing position of the icons and values 调整对应图标和数值在卡片中的相对位置
 	Vec2 originSize = item->getContentSize();
-	item->setPosition(position.x, position.y);
-	Vec2 originPosition = Vec2(sprite->getPositionX(), sprite->getPositionY());
+	sprite->setScale(0.5);
+	sprite->setPosition(Vec2(450, 800));
+	item->addChild(sprite);
 
-	// 棋子图片相关
-	originSize = sprite->getContentSize();
-	sprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-	float scale = 8.5 * config->getPx()->x / originSize.x * adjust;
-	sprite->setScale(scale);
-	sprite->setPosition(originPosition.x + 38 * config->getPx()->x, originPosition.y + 67 * config->getPx()->y);
-	originPosition = Vec2(sprite->getPositionX(), sprite->getPositionY());
-	item->addChild(sprite, 6);
+	Name->setPosition(Vec2(450, 100));
+	Name->setColor(Color3B::BLACK);
+	item->addChild(Name);
 
-	// 名称相关
-	Value data = Value(csv[0][2].c_str());
-	auto nameLabel = Label::createWithTTF(pieceName, "fonts/Marker Felt.ttf", 30 * adjust);
-	nameLabel->setColor(Color3B::BLACK);
-	nameLabel->setPosition(Vec2(originPosition.x, originPosition.y - 59 * config->getPx()->y));
-	item->addChild(nameLabel, 6);
+	const int
+		x1 = 1150, y1 = 50,		//the stars position compared to the feature icon	星星相对于属性图标的位置
+		x2 = 1200, y2 = 700, dy = 400;	//the middle fearture position compared to the card, the height difference 中间的属性条相对于卡片的位置，和属性条之间的高度差
+	const float s1 = 0.8, s2 = 0.4;	//the stars scale, the feature scale	星星缩放比例，属性条缩放比例
+	/*Health feature 生命属性*/
+	auto Healthvalue = levelStars(csv[rowPosition][D_HP_LEVEL]).at(0);
+	Healthvalue->setPosition(Vec2(x1, y1));
+	Healthvalue->setScale(s1);
+	Healthicon->addChild(Healthvalue);
+	Healthicon->setScale(s2);
+	Healthicon->setPosition(Vec2(x2, y2 + dy * 1));
+	item->addChild(Healthicon);
+	/*Attack feature 攻击属性*/
+	auto Attackvalue = levelStars(csv[rowPosition][D_ATK_LEVEL]).at(0);
+	Attackvalue->setPosition(Vec2(x1, y1));
+	Attackvalue->setScale(s1);
+	Attackicon->addChild(Attackvalue);
+	Attackicon->setScale(s2);
+	Attackicon->setPosition(Vec2(x2, y2 + dy * 0));
+	item->addChild(Attackicon);
+	/*Armor feature 防御属性*/
+	auto Armorvalue = levelStars(csv[rowPosition][D_DFC_LEVEL]).at(0);
+	Armorvalue->setPosition(Vec2(x1, y1));
+	Armorvalue->setScale(s1);
+	Armoricon->addChild(Armorvalue);
+	Armoricon->setScale(s2);
+	Armoricon->setPosition(Vec2(x2, y2 - dy * 1));
+	item->addChild(Armoricon);
 
-	// 各项属性相关
-	auto healthIcon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png")); // the Health icon（生命）
-	auto healthValue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 27 * adjust); //the value of Health icon
-	auto attackIcon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png")); //the Attack icon(攻击)
-	auto attackValue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 27 * adjust); //the value of Attack
-	auto armorIcon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png")); //the Armor icon(防御)
-	auto armorValue = Label::createWithTTF("1000", "fonts/Marker Felt.ttf", 27 * adjust); //the value of Armor
-	originSize = healthIcon->getContentSize();
-	scale = 3 * config->getPx()->x / originSize.x * adjust;
-	healthIcon->setScale(scale);
-	attackIcon->setScale(scale);
-	armorIcon->setScale(scale);
-	healthValue->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-	attackValue->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-	armorValue->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-	healthValue->setColor(Color3B::BLACK);
-	attackValue->setColor(Color3B::BLACK);
-	armorValue->setColor(Color3B::BLACK);
-	healthIcon->setPosition(Vec2(originPosition.x + 10 * adjust * config->getPx()->x, originPosition.y + 3 * adjust * config->getPx()->y));
-	attackIcon->setPosition(Vec2(originPosition.x + 10 * adjust * config->getPx()->x, originPosition.y - 1 * adjust * config->getPx()->y));
-	armorIcon->setPosition(Vec2(originPosition.x + 10 * adjust * config->getPx()->x, originPosition.y - 5 * adjust * config->getPx()->y));
-	healthValue->setPosition(Vec2(originPosition.x + 12 * adjust * config->getPx()->x, originPosition.y + 3 * adjust * config->getPx()->y));
-	attackValue->setPosition(Vec2(originPosition.x + 12 * adjust * config->getPx()->x, originPosition.y - 1 * adjust * config->getPx()->y));
-	armorValue->setPosition(Vec2(originPosition.x + 12 * adjust * config->getPx()->x, originPosition.y - 5 * adjust * config->getPx()->y));
-	item->addChild(healthIcon, 6);
-	item->addChild(attackIcon, 6);
-	item->addChild(armorIcon, 6);
-	item->addChild(healthValue, 6);
-	item->addChild(attackValue, 6);
-	item->addChild(armorValue, 6);
-
-	originSize = item->getContentSize();
-	scale = 22 * config->getPx()->x / originSize.x;
-	item->setScale(scale);
+	item->setScale(22 * ConfigController::getInstance()->getPx()->x / originSize.x);//adjust the scale 调整大小
+	item->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+	item->setPosition(position);
 
 	return item;
 }
 
-PieceCoordinate* PlayScene::coordingrevert(Vec2 realPosition)
+PieceCoordinate PlayScene::coordingrevert(Vec2 realPosition)
 {
 	auto config = ConfigController::getInstance();
 	realPosition.x -= config->getPx()->x * 47.5;
@@ -237,48 +247,49 @@ PieceCoordinate* PlayScene::coordingrevert(Vec2 realPosition)
 	logPosition.setX(static_cast<int>(realPosition.x) % static_cast<int>(perLength));
 	logPosition.setY(static_cast<int>(realPosition.y) % static_cast<int>(perLength));
 
-	return &logPosition;
+	return logPosition;
 }
 
 void PlayScene::menuExitCallBack(Ref* sender)
 {
+	Director::getInstance()->getTextureCache()->removeAllTextures();
 	Director::getInstance()->end();
 }
 
 void PlayScene::menuPieceCardCallBack1(Ref* sender)
 {
 	// 获取到当前所点击的棋子卡片
-	const unsigned int NUMBER = 1;
+	const unsigned int NUMBER = 0;
 	buyCard(NUMBER);
 }
 
 void PlayScene::menuPieceCardCallBack2(Ref* sender)
 {
-	const unsigned int NUMBER = 2;
+	const unsigned int NUMBER = 1;
 	buyCard(NUMBER);
 }
 
 void PlayScene::menuPieceCardCallBack3(Ref* sender)
 {
-	const unsigned int NUMBER = 3;
+	const unsigned int NUMBER = 2;
 	buyCard(NUMBER);
 }
 
 void PlayScene::menuPieceCardCallBack4(Ref* sender)
 {
-	const unsigned int NUMBER = 4;
+	const unsigned int NUMBER = 3;
 	buyCard(NUMBER);
 }
 
 void PlayScene::menuPieceCardCallBack5(Ref* sender)
 {
-	const unsigned int NUMBER = 5;
+	const unsigned int NUMBER = 4;
 	buyCard(NUMBER);
 }
 
 void PlayScene::buyCard(const unsigned int num)
 {
-	ChessPiece* piece = shopModel->getPieceList()->at(num);
+	// ChessPiece* piece = shopModel->getPieceList()->at(num);
 	
 
 	//if (Shop::qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), ))
@@ -323,7 +334,7 @@ int PlayScene::onTouchBegan(Touch* touch, Event* event)
 void PlayScene::onTouchEnded(Touch* touch, Event* event)
 {
 	Vec2 position = touch->getLocation();
-	PieceCoordinate* logPosition = coordingrevert(position);
+	PieceCoordinate logPosition = coordingrevert(position);
 
 	// int clickType = PlayScene::onTouchBegan(touch, event);
 	/*switch (clickType)

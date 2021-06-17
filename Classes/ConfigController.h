@@ -21,9 +21,13 @@ using namespace std;
 #define HORIZONTAL_PIXEL_NUM 160
 #define VERTICAL_PIXEL_NUM 90
 
-class ConfigController
+class ConfigController : public Ref
 {
 public:
+	virtual bool init();
+
+	ConfigController();
+
 	static ConfigController* getInstance();
 
 	static void destroyInstance();
@@ -31,7 +35,7 @@ public:
 	~ConfigController();
 
 	// 获取当前设备单位像素的大小
-	Vec2* getPx() const ;
+	Vec2* getPx();
 
 	/********************************************
 	* 功能：对精灵进行缩放及位置调整
@@ -52,8 +56,12 @@ public:
 
 	Sprite* onTouchEnded(Touch* touch, Event* event);
 
+	CREATE_FUNC(ConfigController);
+
 private:
-	static  ConfigController* instance;
+	static ConfigController* instance;
+
+	Vec2 px;
 };
 
 #endif // !_CONFIGCONTRLLER_H_

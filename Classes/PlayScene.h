@@ -51,7 +51,7 @@ public:
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
 
 	// ×ø±ê×ª»»º¯Êý
-	static PieceCoordinate* coordingrevert(Vec2 realPosition);
+	static PieceCoordinate coordingrevert(Vec2 realPosition);
 
 	CREATE_FUNC(PlayScene);
 

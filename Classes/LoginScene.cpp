@@ -15,6 +15,7 @@ bool LoginScene::init()
 	// ************可视化部分开始***************
 
 	// 获取屏幕上的各项参数
+	auto config = ConfigController::getInstance();
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	
@@ -84,8 +85,8 @@ bool LoginScene::init()
 	auto gameLogo = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("/res/UI/Logo.png"));
 	gameLogo->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	originSize = gameLogo->getContentSize();
-	gameLogo->setScale(80 * ConfigController::getInstance()->getPx()->x / originSize.x);
-	gameLogo->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 5 * ConfigController::getInstance()->getPx()->y));
+	gameLogo->setScale(80 * config->getPx()->x / originSize.x);
+	gameLogo->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 5 * config->getPx()->y));
 	loginLayer->addChild(gameLogo, 2);
 
 	auto startButton = LoginScene::createGameButton("Start!", "/res/UI/PlayNormal.png", "/res/UI/PlaySelected.png", CC_CALLBACK_1(LoginScene::menuStartCallBack, this));

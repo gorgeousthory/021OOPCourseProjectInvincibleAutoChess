@@ -1,5 +1,15 @@
 #include "PlayScene.h"
 
+inline cocos2d::Sprite* ourCreate(const string & path)
+{
+	/*auto texture = Director::getInstance()->getTextureCache();
+	auto tmpSprite= Sprite::createWithTexture(texture->getTextureForKey(path));*/
+
+	auto tmpSprite = Sprite::create(path);
+
+	return tmpSprite;
+}
+
 Scene* PlayScene::createScene()
 {
 	return PlayScene::create();
@@ -56,6 +66,10 @@ bool PlayScene::init()
 	chessBoardModel = ChessBoard::create();
 	createBoard(Vec2(config->getPx()->x * 47.5, config->getPx()->y * 16));
 
+	// 创建玩家
+	playerA = Player::create();
+	playerA->retain();
+
 	// 创建商店
 	shopModel = Shop::create();
 	shopModel->retain();
@@ -64,9 +78,8 @@ bool PlayScene::init()
 	{
 		menu->addChild(shop.at(i));
 	}
-	
-	// 创建玩家
-	playerA = Player::create();
+
+
 	playLayer->addChild(menu, 5);
 	return true;
 }
@@ -111,40 +124,51 @@ void PlayScene::createShop(Vec2 position)
 	auto config = ConfigController::getInstance();
 	auto texture = Director::getInstance()->getTextureCache();
 
-	// 刷新及购买经验
-	// 背景
+	// preparations	加载操作UI前的相关准备
 	auto shopMore = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/ShoppingMore.png"));
-	Vec2 originSize = shopMore->getContentSize();
-	float scale = 16.9 * config->getPx()->x / originSize.x;
-	shopMore->setScale(scale);
-	shopMore->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-	shopMore->setPosition(Vec2(position.x + 80 * config->getPx()->x, position.y + 45 * config->getPx()->y));
-	Vec2 originPosition = Vec2(shopMore->getPositionX(), shopMore->getPositionY());
-	playLayer->addChild(shopMore, 5);
-
-	// 两个菜单项
 	auto buyExp = LoginScene::createGameButton("", "/res/UI/UpgradeNormal.png", "/res/UI/UpgradeSelected.png", CC_CALLBACK_1(PlayScene::menuBuyExpCallBack, this));
 	auto freshShop = LoginScene::createGameButton("", "/res/UI/RefreshNormal.png", "/res/UI/RefreshSelected.png", CC_CALLBACK_1(PlayScene::menuFreshShopCallBack, this));
-	originSize = buyExp->getContentSize();
-	scale = 13.5 * 16.9 / 15 * config->getPx()->x / originSize.x;
+	const Vec2 originSize = shopMore->getContentSize();
+	const float scale = 16.9 * config->getPx()->x / originSize.x;	//obtain the reasonable sacle	获取理论缩放比例
+	const Vec2 tmpVec2 = Vec2(position.x + 80 * config->getPx()->x, position.y + 45 * config->getPx()->y);	//obtain the reasonable positon	获取理论位置
+	const float singleX = shopMore->getContentSize().width * 0.01 * scale, singleY = shopMore->getContentSize().height * 0.01 * scale;	//obtain reasonable lenth	获取理论单位长度，横轴与纵轴
+	const float x1 = -5.560 * singleX, y1 = 4.561 * singleY, //x1,y1 refer to the position compared to the bgcard	x1，y1对应按钮相对背景卡的位置，在默认窗口大小时，实际值应接近-8，8
+				dy = 38.773 * singleY;						//dy refers to the height difference between two buttons	dy对应两张卡片的高度差，在默认窗口大小时，实际值应接近68
+
+	//adjust the bgcard the two buttons(upgrade and fresh)	调整背景图片两个菜单项（升级和刷新）除了相对位置之外其余皆同步
+	//adjust the scale	调整大小
+	shopMore->setScale(scale);
 	buyExp->setScale(scale);
 	freshShop->setScale(scale);
-	buyExp->setPosition(Vec2(originPosition.x - (16.9 / 2 + 80) * config->getPx()->x, originPosition.y + (10.5 * 16.9 / 15 - 45) * config->getPx()->y));
-	freshShop->setPosition(Vec2(originPosition.x - (16.9 / 2 + 80) * config->getPx()->x, originPosition.y + (4 * 16.9 / 15 - 45) * config->getPx()->y));
+	//adjust the AnchorPoint	调整锚点
+	shopMore->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+	buyExp->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+	freshShop->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+	//adjust the Position	调整相对大小
+	shopMore->setPosition(tmpVec2);
+	buyExp->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 1) + Vec2(- 80 * config->getPx()->x, -45 * config->getPx()->y));
+	freshShop->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 0) + Vec2(-80 * config->getPx()->x, -45 * config->getPx()->y));
+	//add the parent node	添加父节点
+	playLayer->addChild(shopMore, 5);
 	menu->addChild(buyExp);
 	menu->addChild(freshShop);
 
 	// 棋子及装备卡片
-	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0).getPieceName(), shopModel->getPieceList()->at(0).getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
-	auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1).getPieceName(), shopModel->getPieceList()->at(1).getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
-	auto pieceCard3 = PlayScene::createPieceCard(shopModel->getPieceList()->at(2).getPieceName(), shopModel->getPieceList()->at(2).getPicPath(), Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
-	auto pieceCard4 = PlayScene::createPieceCard(shopModel->getPieceList()->at(3).getPieceName(), shopModel->getPieceList()->at(3).getPicPath(), Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
-	auto pieceCard5 = PlayScene::createPieceCard("ABCD", "/res/Books/CollegePhysics.png", Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
+	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
+	auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1)->getPieceName(), shopModel->getPieceList()->at(1)->getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
+	auto pieceCard3 = PlayScene::createPieceCard(shopModel->getPieceList()->at(2)->getPieceName(), shopModel->getPieceList()->at(2)->getPicPath(), Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
+	auto pieceCard4 = PlayScene::createPieceCard(shopModel->getPieceList()->at(3)->getPieceName(), shopModel->getPieceList()->at(3)->getPicPath(), Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
+	auto pieceCard5 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
 	shop.push_back(pieceCard1);
 	shop.push_back(pieceCard2);
 	shop.push_back(pieceCard3);
 	shop.push_back(pieceCard4);
 	shop.push_back(pieceCard5);
+}
+
+void PlayScene::freshPieceCard()
+{
+
 }
 
 /*返回多个星星的图标,参数代表星星的个数，以向量中的第一个为父节点*/
@@ -167,14 +191,13 @@ Vector<Sprite*> levelStars(const string& value)
 	}
 	return stars;
 }
-
 MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback)
 {
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
 
 	// 创建卡片精灵
-	auto cardBack = Sprite::createWithTexture(texture->getTextureForKey(("/res/UI/ShoppingCard.png")));
+	auto cardBack = ourCreate(("/res/UI/ShoppingCard.png"));
 
 	// 创建一个精灵菜单项
 	auto item = MenuItemSprite::create(cardBack, cardBack, callback);
@@ -183,10 +206,10 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	CsvParser csv;
 	csv.parseWithFile("Data/PiecesData.csv");
 	auto rowPosition = csv.findRowOfItem(pieceName);
-	auto sprite = Sprite::createWithTexture(texture->getTextureForKey((piecePicPath)));
-	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey(("/res/Icons/Health.png")));	//the Health icon（生命）
-	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey(("/res/Icons/Attack.png")));	//the Attack icon(攻击)
-	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey(("/res/Icons/Armor.png")));	//the Armor icon(防御)
+	auto sprite = ourCreate((piecePicPath));
+	auto Healthicon = ourCreate(("/res/Icons/Health.png"));	//the Health icon（生命）
+	auto Attackicon = ourCreate(("/res/Icons/Attack.png"));	//the Attack icon(攻击)
+	auto Armoricon = ourCreate(("/res/Icons/Armor.png"));		//the Armor icon(防御)
 	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);	//the name of book 棋子名称
 
 
@@ -196,7 +219,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	sprite->setPosition(Vec2(450, 800));
 	item->addChild(sprite);
 
-	Name->setPosition(Vec2(450, 100));
+	Name->setPosition(Vec2(450,100));
 	Name->setColor(Color3B::BLACK);
 	item->addChild(Name);
 
@@ -252,7 +275,6 @@ PieceCoordinate PlayScene::coordingrevert(Vec2 realPosition)
 
 void PlayScene::menuExitCallBack(Ref* sender)
 {
-	Director::getInstance()->getTextureCache()->removeAllTextures();
 	Director::getInstance()->end();
 }
 
@@ -281,6 +303,7 @@ void PlayScene::menuPieceCardCallBack4(Ref* sender)
 	buyCard(NUMBER);
 }
 
+//装备栏 
 void PlayScene::menuPieceCardCallBack5(Ref* sender)
 {
 	const unsigned int NUMBER = 4;
@@ -289,20 +312,47 @@ void PlayScene::menuPieceCardCallBack5(Ref* sender)
 
 void PlayScene::buyCard(const unsigned int num)
 {
-	// ChessPiece* piece = shopModel->getPieceList()->at(num);
-	
+	ChessPiece* piece = shopModel->getPieceList()->at(num);
 
-	//if (Shop::qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), ))
-	//{
-	//	// 如果可以购买
-	//		// 设置player的对应数据
-
-	//}
+	//能买
+	if (shopModel->qualification(playerA->getMoney(),playerA->getMaxPieceStorage(),playerA->getOwnPieceNum(),piece->getPiecePerCost()))
+	{
+		playerA->piecePossesion[playerA->getOwnPieceNum()] = piece;
+		playerA->retain();
+		this->addChild(piece->createChessPiece("a", "/res/Books/AdvancedMathematics.png", Vec2(200, 300), 0));
+		CCLOG("BUY");
+	}
+	else {
+		CCLOG("UNAFFORDABLE");
+	}
 }
 
 void PlayScene::menuFreshShopCallBack(Ref* sender)
 {
+	auto config = ConfigController::getInstance();
 
+	shopModel->refresh();
+	Vec2 position = Vec2(config->getPx()->x * 47.5, config->getPx()->y * 16);
+	for (unsigned int i = 0; i < shop.size(); i++)
+	{
+		shop.at(i)->removeFromParent();
+		shop.at(i)->release();
+	}
+	shop.clear();
+	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
+	auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1)->getPieceName(), shopModel->getPieceList()->at(1)->getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
+	auto pieceCard3 = PlayScene::createPieceCard(shopModel->getPieceList()->at(2)->getPieceName(), shopModel->getPieceList()->at(2)->getPicPath(), Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
+	auto pieceCard4 = PlayScene::createPieceCard(shopModel->getPieceList()->at(3)->getPieceName(), shopModel->getPieceList()->at(3)->getPicPath(), Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
+	auto pieceCard5 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
+	shop.push_back(pieceCard1);
+	shop.push_back(pieceCard2);
+	shop.push_back(pieceCard3);
+	shop.push_back(pieceCard4);
+	shop.push_back(pieceCard5);
+	for (unsigned int i = 0; i < shop.size(); i++)
+	{
+		menu->addChild(shop.at(i));
+	}
 }
 
 void PlayScene::menuBuyExpCallBack(Ref* sender)
@@ -327,6 +377,7 @@ int PlayScene::onTouchBegan(Touch* touch, Event* event)
 	}
 	else
 	{
+
 		return NOT_IN_BOARD;
 	}
 }

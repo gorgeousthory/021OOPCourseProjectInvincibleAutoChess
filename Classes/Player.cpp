@@ -2,7 +2,7 @@
 
 bool Player::init()
 {
-	money = 3;//初始化有3个coin
+	money = 5;//初始化有5个coin
 
 	healthPoint = 30;
 

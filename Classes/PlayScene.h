@@ -47,6 +47,9 @@ public:
 	// 创建可视化商店，position为第一张卡片左下角的锚点坐标
 	void createShop(Vec2 position);
 
+	// 刷新可视化商店
+	void freshPieceCard();
+
 	// 创建可视化棋子卡片
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
 

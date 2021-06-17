@@ -80,7 +80,7 @@ void CsvParser::parseWithFile(const std::string& csvFilename)
 	}
 }
 
-size_t CsvParser::finditem(const std::string& src) const
+size_t CsvParser::findRowOfItem(const std::string& src) const
 {
 	auto csv = *this;
 	for (int i = 0; i < this->getRowCount(); i++) {
@@ -91,6 +91,6 @@ size_t CsvParser::finditem(const std::string& src) const
 			}
 		}
 	}
-
-	return size_t();
+	log("CsvParser::findRowOfItem : can not find the %s", src);
+	return -1;
 }

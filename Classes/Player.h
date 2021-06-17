@@ -58,7 +58,7 @@ public:
 
 private:
 	//人物经验等级（最高为10）
-	int experience;
+	int experience = 1;
 
 	//人物当前排名
 	int rank;

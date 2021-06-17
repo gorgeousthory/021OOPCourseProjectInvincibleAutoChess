@@ -112,7 +112,7 @@ bool ChessPiece::ifDead()
 	return _pieceCrtCondition.healthPoint > 0 ? false : true;
 }
 
-Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2 position)
+Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2 position,int type)
 {
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
@@ -151,10 +151,10 @@ Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2
 	piece->setPosition(position);
 	hpBar->setPosition(position.x + 300, position.y + 1700);
 	mpBar->setPosition(position.x + 300, position.y + 2000);
-
-	piece->addChild(hpBar);
-	piece->addChild(mpBar);
-
+	if (type == 1) {
+		piece->addChild(hpBar);
+		piece->addChild(mpBar);
+	}
 	return piece;
 }
 

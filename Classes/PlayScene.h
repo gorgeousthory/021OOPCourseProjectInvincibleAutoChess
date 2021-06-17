@@ -48,7 +48,7 @@ public:
 	void createShop(Vec2 position);
 
 	// 创建可视化棋子卡片
-	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
+	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback,int tag);
 
 	// 坐标转换函数
 	static PieceCoordinate* coordingrevert(Vec2 realPosition);

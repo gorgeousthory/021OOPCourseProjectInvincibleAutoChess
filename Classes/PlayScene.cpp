@@ -154,11 +154,11 @@ void PlayScene::createShop(Vec2 position)
 	menu->addChild(freshShop);
 
 	// 棋子及装备卡片
-	auto pieceCard1 = PlayScene::createPieceCard("AdvancedMathematics", "/res/Books/AdvancedMathematics.png", position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
-	auto pieceCard2 = PlayScene::createPieceCard("LinearAlgebra", "/res/Books/LinearAlgebra.png", Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
-	auto pieceCard3 = PlayScene::createPieceCard("CollegePhysics", "/res/Books/CollegePhysics.png", Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
-	auto pieceCard4 = PlayScene::createPieceCard("MordernHistory", "/res/Books/MordernHistory.png", Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
-	auto pieceCard5 = PlayScene::createPieceCard("C++PrimerPlus", "/res/Books/C++PrimerPlus.png", Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
+	auto pieceCard1 = PlayScene::createPieceCard("AdvancedMathematics", "/res/Books/AdvancedMathematics.png", position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this),1);
+	auto pieceCard2 = PlayScene::createPieceCard("LinearAlgebra", "/res/Books/LinearAlgebra.png", Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this),2);
+	auto pieceCard3 = PlayScene::createPieceCard("CollegePhysics", "/res/Books/CollegePhysics.png", Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this),3);
+	auto pieceCard4 = PlayScene::createPieceCard("MordernHistory", "/res/Books/MordernHistory.png", Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this),4);
+	auto pieceCard5 = PlayScene::createPieceCard("C++PrimerPlus", "/res/Books/C++PrimerPlus.png", Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this),5);
 	shop.push_back(pieceCard1);
 	shop.push_back(pieceCard2);
 	shop.push_back(pieceCard3);
@@ -186,7 +186,7 @@ Vector<Sprite*> levelStars(const string& value)
 	}
 	return stars;
 }
-MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback)
+MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback,int tag)
 {
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
@@ -251,6 +251,8 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	item->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 	item->setPosition(position);
 
+	item->setTag(tag);
+
 	return item;
 }
 
@@ -278,6 +280,7 @@ void PlayScene::menuPieceCardCallBack1(Ref* sender)
 	// 获取到当前所点击的棋子卡片
 	const unsigned int NUMBER = 0;
 	buyCard(NUMBER);
+	this->removeChildByTag(1);
 }
 
 void PlayScene::menuPieceCardCallBack2(Ref* sender)
@@ -312,6 +315,9 @@ void PlayScene::buyCard(const unsigned int num)
 	//能买
 	if (shopModel->qualification(playerA->getMoney(),playerA->getMaxPieceStorage(),playerA->getOwnPieceNum(),piece->getPiecePerCost()))
 	{
+		playerA->piecePossesion[playerA->getOwnPieceNum()] = piece;
+		playerA->retain();
+		this->addChild(piece->createChessPiece("a", "/res/Books/AdvancedMathematics.png", Vec2(200, 300), 0));
 		CCLOG("BUY");
 	}
 	else {

@@ -23,10 +23,10 @@ ConfigController::~ConfigController()
 {
 }
 
-Vec2* ConfigController::getPx() const
+Vec2* ConfigController::getPx()
 {
-	Vec2* px = &Vec2(Director::getInstance()->getVisibleSize().width / HORIZONTAL_PIXEL_NUM, Director::getInstance()->getVisibleSize().height / VERTICAL_PIXEL_NUM);
-	return px;
+	px = Vec2(Director::getInstance()->getVisibleSize().width / HORIZONTAL_PIXEL_NUM, Director::getInstance()->getVisibleSize().height / VERTICAL_PIXEL_NUM);
+	return &px;
 }
 
 void ConfigController::setScaleAndPosition(Sprite* sprite, int scale, float pos_x, float pos_y)

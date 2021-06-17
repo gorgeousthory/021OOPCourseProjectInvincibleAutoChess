@@ -144,7 +144,7 @@ public:
 	int storageNum = 0;//上方棋子为负数，下方棋子为正数
 
 	//棋子的可视化
-	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position);
+	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position,int type=1);
 
 	//返回一个精灵指针，当精灵已经被当作战斗棋子可视化（即放上棋盘以后），这个精灵指针有一个指向对象，可以通过对指针操作完成动画效果
 	Sprite* getChessPice();

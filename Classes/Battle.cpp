@@ -10,12 +10,10 @@ bool Battle::init()
 {
 	return true;
 }
-
 double Battle::getDistance(PieceCoordinate* start, PieceCoordinate* end)
 {
 	return sqrt(pow((start->getX() - end->getX()), 2) + pow((start->getY() - end->getY()), 2));
 }
-
 void Battle::pieceBattle(ChessPiece &damageMaker, ChessPiece &victim)
 {
 	//进行了攻击
@@ -25,7 +23,7 @@ void Battle::pieceBattle(ChessPiece &damageMaker, ChessPiece &victim)
 ChessPiece* Battle::findEnemy(ChessPiece* damageMaker, Player enemy)
 {
 	double distance = 999;
-	ChessPiece* enemyPiece = nullptr;
+	ChessPiece* enemyPiece;
 	for (int i = 0; i < 7; i++) {
 		if (enemy.pieceBattle[i] == nullptr) {//没棋子了
 			break;
@@ -38,12 +36,7 @@ ChessPiece* Battle::findEnemy(ChessPiece* damageMaker, Player enemy)
 			}
 		}
 	}
-	if (enemyPiece == nullptr) {
-		return nullptr;
-	}
-	else {
-		return enemyPiece;
-	}
+	return enemyPiece;
 }
 
 void Battle::normalTraceTrack(ChessPiece* origin, ChessPiece* destination)

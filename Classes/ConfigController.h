@@ -31,7 +31,7 @@ public:
 	~ConfigController();
 
 	// 获取当前设备单位像素的大小
-	Vec2* getPx() const ;
+	Vec2* getPx();
 
 	/********************************************
 	* 功能：对精灵进行缩放及位置调整
@@ -54,6 +54,7 @@ public:
 
 private:
 	static  ConfigController* instance;
+	Vec2 px;
 };
 
 #endif // !_CONFIGCONTRLLER_H_

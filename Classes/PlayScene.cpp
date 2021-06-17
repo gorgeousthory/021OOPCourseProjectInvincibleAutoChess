@@ -283,24 +283,28 @@ void PlayScene::menuPieceCardCallBack1(Ref* sender)
 	// 获取到当前所点击的棋子卡片
 	const unsigned int NUMBER = 0;
 	buyCard(NUMBER);
+	shop.at(NUMBER)->removeFromParent();
 }
 
 void PlayScene::menuPieceCardCallBack2(Ref* sender)
 {
 	const unsigned int NUMBER = 1;
 	buyCard(NUMBER);
+	shop.at(NUMBER)->removeFromParent();
 }
 
 void PlayScene::menuPieceCardCallBack3(Ref* sender)
 {
 	const unsigned int NUMBER = 2;
 	buyCard(NUMBER);
+	shop.at(NUMBER)->removeFromParent();
 }
 
 void PlayScene::menuPieceCardCallBack4(Ref* sender)
 {
 	const unsigned int NUMBER = 3;
 	buyCard(NUMBER);
+	shop.at(NUMBER)->removeFromParent();
 }
 
 //装备栏 
@@ -308,6 +312,7 @@ void PlayScene::menuPieceCardCallBack5(Ref* sender)
 {
 	const unsigned int NUMBER = 4;
 	buyCard(NUMBER);
+	shop.at(NUMBER)->removeFromParent();
 }
 
 void PlayScene::buyCard(const unsigned int num)
@@ -332,7 +337,7 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 	auto config = ConfigController::getInstance();
 
 	shopModel->refresh();
-	Vec2 position = Vec2(config->getPx()->x * 47.5, config->getPx()->y * 16);
+	Vec2 position = Vec2(-config->getPx()->x * 45, -config->getPx()->y * 45);
 	for (unsigned int i = 0; i < shop.size(); i++)
 	{
 		shop.at(i)->removeFromParent();

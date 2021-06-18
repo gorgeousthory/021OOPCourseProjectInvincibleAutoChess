@@ -24,11 +24,6 @@ public:
 
 	virtual bool init();
 
-	//CREATE_FUNC(ChessBoard);
-
-	// 逻辑坐标与实际坐标的转化,转入的为对战区左下角第一格棋盘对应的精灵
-	PieceCoordinate* coordinateConvert(CoordinateType type, PieceCoordinate* oldPos, PieceCoordinate* newPos, Sprite* sprite);
-
 	// 获取玩家A对战区棋子集合
 	vector<ChessPiece*>* getPlayerA_WarZone_Pieces();
 
@@ -51,11 +46,11 @@ private:
 
 	static int turn;
 
-	vector<ChessPiece*> _prtPlayerA_WarZone_Pieces; // 记录玩家A对战区棋子集合
+	vector<ChessPiece*> _prtPlayerA_WarZone_Pieces[BOARD_SIZE / 2]; // 记录玩家A对战区棋子集合
 
 	vector<ChessPiece*> _prtPlayerA_PreZone_Pieces; // 记录玩家A备战区棋子集合
 
-	vector<ChessPiece*> _prtPlayerB_WarZone_Pieces; // 记录玩家B对战区棋子集合
+	vector<ChessPiece*> _prtPlayerB_WarZone_Pieces[BOARD_SIZE / 2]; // 记录玩家B对战区棋子集合
 
 	vector<ChessPiece*> _prtPlayerB_PreZone_Pieces; // 记录玩家B备战区棋子集合
 

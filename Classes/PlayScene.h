@@ -51,7 +51,7 @@ public:
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
 
 	// 坐标转换函数
-	static PieceCoordinate coordingrevert(Vec2 realPosition);
+	static PieceCoordinate coordingRevert(CoordinateType originType, Vec2 originPosition);
 
 	//更新函数
 	void update(float dt);
@@ -70,7 +70,6 @@ private:
 	// 商店
 	Shop* shopModel;
 	vector<MenuItemSprite*> shop;
-	int shopQualification[5] = { 1,1,1,1,1 };
 
 	// 玩家
 	Player* playerA;
@@ -93,7 +92,7 @@ private:
 	void menuPieceCardCallBack3(Ref* sender);
 	void menuPieceCardCallBack4(Ref* sender);
 	void menuPieceCardCallBack5(Ref* sender);
-	void buyCard(const unsigned int num);
+	void buyCard(const unsigned int num, ChessPiece* piece);
 
 	// 刷新商店的点击事件
 	void menuFreshShopCallBack(Ref* sender);

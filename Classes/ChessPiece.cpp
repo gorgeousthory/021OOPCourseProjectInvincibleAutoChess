@@ -117,7 +117,7 @@ bool ChessPiece::ifDead()
 	return _pieceCrtCondition.healthPoint > 0 ? false : true;
 }
 
-Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2 position,int type)
+/*Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2 position,int type)
 {
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
@@ -136,7 +136,7 @@ Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2
 
 	ProgressTimer* hp, mp;
 	hp = ProgressTimer::create(hpDecreaseBar);*/
-	piece->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+	/*piece->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 	Vec2 originSize = piece->getContentSize();
 	float scale = 50 * config->getPx()->x / originSize.x;
 	piece->setScale(scale);
@@ -145,7 +145,7 @@ Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2
 		piece->addChild(mpBar);
 	}
 	return piece;
-}
+}*/
 
 Sprite* ChessPiece::getChessPice()
 {

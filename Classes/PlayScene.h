@@ -50,6 +50,9 @@ public:
 	// 创建可视化棋子卡片
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
 
+	//棋子的可视化
+	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position, int type = 1);
+
 	// 坐标转换函数
 	static PieceCoordinate coordingRevert(CoordinateType originType, Vec2 originPosition);
 

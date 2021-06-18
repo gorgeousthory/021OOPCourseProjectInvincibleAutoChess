@@ -276,6 +276,36 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	return item;
 }
 
+Sprite* PlayScene::createChessPiece(string pieceName, string piecePicPath, Vec2 position, int type)
+{
+	auto texture = Director::getInstance()->getTextureCache();
+	auto config = ConfigController::getInstance();
+
+	CsvParser csv;
+	csv.parseWithFile("Data/PiecesData.csv");
+
+	auto piece = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
+	auto hpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/HpBar.png"));//生命条
+	auto mpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//蓝条
+	/*auto hpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//灰条
+	auto mpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//灰条
+
+	hpDecreaseBar->setColor(Color3B::BLACK);
+	mpDecreaseBar->setColor(Color3B::BLACK);
+
+	ProgressTimer* hp, mp;
+	hp = ProgressTimer::create(hpDecreaseBar);*/
+	piece->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+	Vec2 originSize = piece->getContentSize();
+	float scale = 50 * config->getPx()->x / originSize.x;
+	piece->setScale(scale);
+	if (type == 1) {
+		piece->addChild(hpBar);
+		piece->addChild(mpBar);
+	}
+	return piece;
+}
+
 PieceCoordinate PlayScene::coordingRevert(CoordinateType originType, Vec2 originPosition)
 {
 	auto config = ConfigController::getInstance();
@@ -409,7 +439,7 @@ void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 	}
 	// 可视化添加
 	PieceCoordinate position = coordingRevert(CoordinateType::logical, Vec2(0, i + 1));
-	chessBoard[0].at(i + 1)->addChild(piece->createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(position.getX(), position.getY()), 0));
+	chessBoard[0].at(i + 1)->addChild(createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(position.getX(), position.getY()), 0));
 	// 数据模型添加
 	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) = piece;
 }

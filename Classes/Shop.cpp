@@ -4,10 +4,9 @@ bool Shop::refresh()
 {
 	//如果已经有棋子，清空
 	if (!pieceList.empty()) {
-		for (auto piece : pieceList) {
-			delete piece;
+		for (auto chess : pieceList) {
+			pieceList.eraseObject(chess);
 		}
-		pieceList.clear();
 	}
 
 	srand(time(NULL));

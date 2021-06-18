@@ -416,15 +416,17 @@ void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 
 void PlayScene::menuFreshShopCallBack(Ref* sender)
 {
-	/*auto config = ConfigController::getInstance();
+	auto config = ConfigController::getInstance();
 
 	shopModel->refresh();
 	Vec2 position = Vec2(-config->getPx()->x * 45, -config->getPx()->y * 45);
-	for (unsigned int i = 0; i < shop.size(); i++)
+	unsigned int i = 0;
+	for (vector<MenuItemSprite*>::iterator it=shop.begin(); it!=shop.end()&&i < shop.size();it++, i++)
 	{
 		/*shop.at(i)->removeFromParentAndCleanup(false);*/
-		/*shop.at(i)->removeFromParent();
-		shop.at(i)->release();
+		shop.at(i)->removeFromParent();
+		shop.erase(it);
+		
 	}
 	shop.clear();
 	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
@@ -440,7 +442,7 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 	for (unsigned int i = 0; i < shop.size(); i++)
 	{
 		menu->addChild(shop.at(i));
-	}*/
+	}
 }
 
 void PlayScene::menuBuyExpCallBack(Ref* sender)

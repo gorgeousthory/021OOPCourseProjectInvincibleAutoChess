@@ -421,12 +421,15 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 	shopModel->refresh();
 	Vec2 position = Vec2(-config->getPx()->x * 45, -config->getPx()->y * 45);
 	unsigned int i = 0;
-	for (vector<MenuItemSprite*>::iterator it=shop.begin(); it!=shop.end()&&i < shop.size();it++, i++)
+	for (vector<MenuItemSprite*>::iterator it=shop.begin(); it!=shop.end()&&i < shop.size();)
 	{
-		/*shop.at(i)->removeFromParentAndCleanup(false);*/
-		shop.at(i)->removeFromParent();
-		shop.erase(it);
+		//shop.at(i)->removeFromParent();
+		(*it)->removeFromParent();
+		it=shop.erase(it);
 		
+	}
+	for (auto chessPtr : shop) {
+
 	}
 	shop.clear();
 	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));

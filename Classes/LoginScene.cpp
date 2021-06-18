@@ -17,9 +17,6 @@ bool LoginScene::init()
 	// 获取屏幕上的各项参数
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
-	
-	//play background music		播放背景音乐
-	_audioBgID = AudioEngine::play2d("/res/Music/musicBgm.mp3", true);
 
 	// LoginScene场景层
 	auto loginLayer = Layer::create();
@@ -46,7 +43,7 @@ bool LoginScene::init()
 	auto animation = Animation::createWithSpriteFrames(images, 1.0f / images.size());
 	auto animate = Animate::create(animation);
 	sprite->runAction(RepeatForever::create(animate)); // 执行动作
-	
+
 	// 添加资源加载进度条
 	auto loadingBarBack = Sprite::create("res/UI/LoginLoadingBarBack.png"); // 进度条的背景
 	originSize = loadingBarBack->getContentSize();
@@ -102,20 +99,20 @@ bool LoginScene::init()
 	originSize = exitButton->getContentSize();
 	exitButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
 	exitButton->setPosition(Vec2(70 * ConfigController::getInstance()->getPx()->y, -35 * ConfigController::getInstance()->getPx()->y));
+	//play background music		播放背景音乐
+	_audioBgID = AudioEngine::play2d("/res/Music/musicBgm.mp3", true);
 	//添加音乐控制按钮
 	auto musicButton = LoginScene::createGameButton("", "/res/UI/MusicNormal.png", "/res/UI/MusicSelected.png", CC_CALLBACK_1(LoginScene::menuMusicCallBack, this));
 	musicButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	originSize = musicButton->getContentSize();
 	musicButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
 	musicButton->setPosition(Vec2(55 * ConfigController::getInstance()->getPx()->y, -35 * ConfigController::getInstance()->getPx()->y));
-	
+
 	// LoginScene菜单
 	auto menu = Menu::create(startButton, exitButton, musicButton, nullptr);
 	loginLayer->addChild(menu, 5);
-
-	// ************可视化部分结束***************
 	
-
+	// ************可视化部分结束***************
 	return true;
 }
 

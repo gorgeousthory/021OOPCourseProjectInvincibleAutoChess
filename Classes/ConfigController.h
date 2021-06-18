@@ -21,13 +21,9 @@ using namespace std;
 #define HORIZONTAL_PIXEL_NUM 160
 #define VERTICAL_PIXEL_NUM 90
 
-class ConfigController : public Ref
+class ConfigController
 {
 public:
-	virtual bool init();
-
-	ConfigController();
-
 	static ConfigController* getInstance();
 
 	static void destroyInstance();
@@ -56,11 +52,8 @@ public:
 
 	Sprite* onTouchEnded(Touch* touch, Event* event);
 
-	CREATE_FUNC(ConfigController);
-
 private:
-	static ConfigController* instance;
-
+	static  ConfigController* instance;
 	Vec2 px;
 };
 

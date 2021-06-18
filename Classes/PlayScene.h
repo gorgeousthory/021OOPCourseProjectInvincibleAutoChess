@@ -35,6 +35,9 @@ using std::vector;
 #define IN_WAR_ZONE			1
 #define IN_READY_ZONE		2
 
+#define MOUSE_LIFT			0
+#define MOUSE_DOWN			1
+
 class PlayScene : public Scene
 {
 public:
@@ -51,8 +54,14 @@ public:
 	// 创建可视化棋子卡片
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
 
+	//棋子的可视化
+	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position, int type = 1);
+
 	// 坐标转换函数
-	static PieceCoordinate coordingrevert(Vec2 realPosition);
+	static PieceCoordinate coordingRevert(CoordinateType originType, Vec2 originPosition);
+
+	//更新函数
+	void update(float dt);
 
 	CREATE_FUNC(PlayScene);
 
@@ -60,6 +69,9 @@ private:
 	// 场景层
 	Layer* playLayer;
 	Menu* menu;
+
+	// 当前鼠标状态
+	int mouseType;
 
 	// 棋盘
 	ChessBoard* chessBoardModel;
@@ -72,8 +84,23 @@ private:
 	// 玩家
 	Player* playerA;
 
-	//背景音乐
+	//计时器
+	float timeRemaining = 61.0f;
+	Label* timeLabel = Label::createWithSystemFont("60", "Arial", 60);
+
+	//背景音乐编号
 	unsigned int _audioBgID;
+
+	//当前金币数量标签
+	Label* GoldLabel = Label::createWithTTF("00", "/fonts/Marker Felt.ttf", 45);
+	//当前经验按钮
+	Label* ExLabel = Label::createWithTTF("Lv.1(00%)", "/fonts/Marker Felt.ttf", 45);
+
+	// 资源加载进度条
+	ProgressTimer* loadingBar;
+
+	// 进度条行为
+	ProgressFromTo* barAction;
 
 	// 退出按钮的点击事件
 	void menuExitCallBack(Ref* sender);
@@ -86,7 +113,7 @@ private:
 	void menuPieceCardCallBack3(Ref* sender);
 	void menuPieceCardCallBack4(Ref* sender);
 	void menuPieceCardCallBack5(Ref* sender);
-	void buyCard(const unsigned int num);
+	void buyCard(const unsigned int num, ChessPiece* piece);
 
 	// 刷新商店的点击事件
 	void menuFreshShopCallBack(Ref* sender);
@@ -102,6 +129,7 @@ private:
 
 	// 移动回调
 	void onMouseMove(Event* event);
+
 };
 
 #endif

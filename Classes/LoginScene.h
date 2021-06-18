@@ -60,7 +60,7 @@ private:
 	unsigned int resTotal; // 需要加载的资源总量
 
 	list<string> dataPathList; // 需要加载的资源路径表
-	
+
 	unsigned int _audioBgID;	//背景音乐编号
 
 	// 开始按钮的点击事件
@@ -71,8 +71,6 @@ private:
 
 	//	声音按钮的点击事件
 	void menuMusicCallBack(Ref* sender);
-
-
 };
 
 #endif

@@ -2,13 +2,11 @@
 
 bool Shop::refresh()
 {
-	//如果已经有棋子，清空
-	if (!pieceList.empty()) {
-		for (auto piece : pieceList) {
-			delete piece;
-		}
-		pieceList.clear();
+	for (int i = 0; i < pieceList.size(); i++)
+	{
+		pieceList.erase(pieceList.begin() + i);
 	}
+	pieceList.clear();
 
 	srand(time(NULL));
 	//增添棋子
@@ -17,20 +15,35 @@ bool Shop::refresh()
 		switch (figure)
 		{
 		case 0:
-			pieceList.pushBack(new tank);
+		{
+			tank* tankPtr = tank::create();
+			pieceList.pushBack(tankPtr);
 			break;
+		}
 		case 1:
-			pieceList.pushBack(new mage);
+		{
+			mage* magePtr = mage::create();
+			pieceList.pushBack(magePtr);
 			break;
+		}
 		case 2:
-			pieceList.pushBack(new shooter);
+		{
+			shooter* shooterPtr = shooter::create();
+			pieceList.pushBack(shooterPtr);
 			break;
+		}
 		case 3:
-			pieceList.pushBack(new therapist);
+		{
+			therapist* therapistPtr = therapist::create();
+			pieceList.pushBack(therapistPtr);
 			break;
+		}
 		case 4:
-			pieceList.pushBack(new stalker);
+		{
+			stalker* stalkerPtr = stalker::create();
+			pieceList.pushBack(stalkerPtr);
 			break;
+		}
 		}
 	}
 

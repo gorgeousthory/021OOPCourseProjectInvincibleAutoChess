@@ -42,7 +42,7 @@ public:
 	
 private:
 	//用于出售的棋子
-	Vector<ChessPiece*> pieceList;
+	Vector<ChessPiece*>pieceList;
 
 	//用于出售的装备
 	int gear=-1;

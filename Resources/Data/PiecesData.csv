@@ -11,6 +11,6 @@ ID/棋子编号,NameByEng/英文名,NameByChi/中文名,path/路径,cost/学分,hpLevel/生命等
 41,MordernHistory,Sleeper,/res/Books/MordernHistory.png,3,1,850,60,2,72,1,30,0.6,2,0.25,2
 42,/,/,/res/Books/MordernHistory.png,/,/,1530,60,/,89,/,30,0.6,2,0.25,2
 43,/,/,/res/Books/MordernHistory.png,/,/,2754,60,/,174,/,30,0.6,2,0.25,2
-51,C++PrimerPlus,C++PP,/res/Books/C++Primer.png,4,3,1000,80,2,78,2,50,0.4,1,0.25,2
-52,/,/,/res/Books/C++Primer.png,/,/,2010,80,/,121,/,50,0.4,1,0.25,2
-53,/,/,/res/Books/C++Primer.png,/,/,3504,80,/,204,/,50,0.4,1,0.25,2
+51,C++PrimerPlus,C++PP,/res/Books/C++PrimerPlus.png,4,3,1000,80,2,78,2,50,0.4,1,0.25,2
+52,/,/,/res/Books/C++PrimerPlus.png,/,/,2010,80,/,121,/,50,0.4,1,0.25,2
+53,/,/,/res/Books/C++PrimerPlus.png,/,/,3504,80,/,204,/,50,0.4,1,0.25,2

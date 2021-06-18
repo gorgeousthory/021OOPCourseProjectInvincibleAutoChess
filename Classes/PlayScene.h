@@ -34,6 +34,9 @@ using std::vector;
 #define IN_WAR_ZONE			1
 #define IN_READY_ZONE		2
 
+#define MOUSE_LIFT			0
+#define MOUSE_DOWN			1
+
 class PlayScene : public Scene
 {
 public:
@@ -50,6 +53,9 @@ public:
 	// 创建可视化棋子卡片
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
 
+	//棋子的可视化
+	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position, int type = 1);
+
 	// 坐标转换函数
 	static PieceCoordinate coordingRevert(CoordinateType originType, Vec2 originPosition);
 
@@ -62,6 +68,9 @@ private:
 	// 场景层
 	Layer* playLayer;
 	Menu* menu;
+
+	// 当前鼠标状态
+	int mouseType;
 
 	// 棋盘
 	ChessBoard* chessBoardModel;
@@ -80,6 +89,7 @@ private:
 
 	// 资源加载进度条
 	ProgressTimer* loadingBar;
+
 	// 进度条行为
 	ProgressFromTo* barAction;
 
@@ -92,7 +102,7 @@ private:
 	void menuPieceCardCallBack3(Ref* sender);
 	void menuPieceCardCallBack4(Ref* sender);
 	void menuPieceCardCallBack5(Ref* sender);
-	void buyCard(const unsigned int num);
+	void buyCard(const unsigned int num, ChessPiece* piece);
 
 	// 刷新商店的点击事件
 	void menuFreshShopCallBack(Ref* sender);

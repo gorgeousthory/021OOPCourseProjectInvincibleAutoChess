@@ -1,15 +1,5 @@
 #include "PlayScene.h"
 
-inline cocos2d::Sprite* ourCreate(const string & path)
-{
-	/*auto texture = Director::getInstance()->getTextureCache();
-	auto tmpSprite= Sprite::createWithTexture(texture->getTextureForKey(path));*/
-
-	auto tmpSprite = Sprite::create(path);
-
-	return tmpSprite;
-}
-
 Scene* PlayScene::createScene()
 {
 	return PlayScene::create();
@@ -214,7 +204,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	auto config = ConfigController::getInstance();
 
 	// 创建卡片精灵
-	auto cardBack = ourCreate(("/res/UI/ShoppingCard.png"));
+	auto cardBack = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/ShoppingCard.png"));
 
 	// 创建一个精灵菜单项
 	auto item = MenuItemSprite::create(cardBack, cardBack, callback);
@@ -223,10 +213,10 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	CsvParser csv;
 	csv.parseWithFile("Data/PiecesData.csv");
 	auto rowPosition = csv.findRowOfItem(pieceName);
-	auto sprite = ourCreate((piecePicPath));
-	auto Healthicon = ourCreate(("/res/Icons/Health.png"));	//the Health icon（生命）
-	auto Attackicon = ourCreate(("/res/Icons/Attack.png"));	//the Attack icon(攻击)
-	auto Armoricon = ourCreate(("/res/Icons/Armor.png"));		//the Armor icon(防御)
+	auto sprite = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
+	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png"));	//the Health icon（生命）
+	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png"));	//the Attack icon(攻击)
+	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png"));		//the Armor icon(防御)
 	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);	//the name of book 棋子名称
 
 
@@ -276,6 +266,38 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	return item;
 }
 
+Sprite* PlayScene::createChessPiece(string pieceName, string piecePicPath, Vec2 position, int type)
+{
+	auto texture = Director::getInstance()->getTextureCache();
+	auto config = ConfigController::getInstance();
+
+	CsvParser csv;
+	csv.parseWithFile("Data/PiecesData.csv");
+
+	auto piece = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
+	auto hpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/HpBar.png"));//生命条
+	auto mpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//蓝条
+	/*auto hpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//灰条
+	auto mpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//灰条
+
+	hpDecreaseBar->setColor(Color3B::BLACK);
+	mpDecreaseBar->setColor(Color3B::BLACK);
+
+	ProgressTimer* hp, mp;
+	hp = ProgressTimer::create(hpDecreaseBar);*/
+	int tag = static_cast<int>(100 + 10 * position.x + position.y);
+	piece->setTag(tag);
+	piece->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+	Vec2 originSize = piece->getContentSize();
+	float scale = 50 * config->getPx()->x / originSize.x;
+	piece->setScale(scale);
+	if (type == 1) {
+		piece->addChild(hpBar);
+		piece->addChild(mpBar);
+	}
+	return piece;
+}
+
 PieceCoordinate PlayScene::coordingRevert(CoordinateType originType, Vec2 originPosition)
 {
 	auto config = ConfigController::getInstance();
@@ -287,8 +309,8 @@ PieceCoordinate PlayScene::coordingRevert(CoordinateType originType, Vec2 origin
 		originPosition.y -= config->getPx()->y * 16;
 
 		PieceCoordinate logPosition;
-		logPosition.setX(static_cast<int>(originPosition.x) % static_cast<int>(perLength));
-		logPosition.setY(static_cast<int>(originPosition.y) % static_cast<int>(perLength));
+		logPosition.setX(static_cast<int>(originPosition.x / perLength));
+		logPosition.setY(static_cast<int>(originPosition.y / perLength));
 		return logPosition;
 	}
 	else
@@ -330,66 +352,87 @@ void PlayScene::menuPieceCardCallBack1(Ref* sender)
 {
 	// 获取到当前所点击的棋子卡片
 	const int NUMBER = 0;
-	buyCard(NUMBER);
-	shop.at(NUMBER)->setVisible(false);
+	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
+	//能买
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	{
+		buyCard(NUMBER, piece);
+		shop.at(NUMBER)->setVisible(false);
+		shop.at(NUMBER)->setEnabled(false);
+	}
 }
 
 void PlayScene::menuPieceCardCallBack2(Ref* sender)
 {
 	const unsigned int NUMBER = 1;
-	buyCard(NUMBER);
-	shop.at(NUMBER)->setVisible(false);
+	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
+	//能买
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	{
+		buyCard(NUMBER, piece);
+		shop.at(NUMBER)->setVisible(false);
+		shop.at(NUMBER)->setEnabled(false);
+	}
 }
 
 void PlayScene::menuPieceCardCallBack3(Ref* sender)
 {
 	const unsigned int NUMBER = 2;
-	buyCard(NUMBER);
-	shop.at(NUMBER)->setVisible(false);
+	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
+	//能买
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	{
+		buyCard(NUMBER, piece);
+		shop.at(NUMBER)->setVisible(false);
+		shop.at(NUMBER)->setEnabled(false);
+	}
 }
 
 void PlayScene::menuPieceCardCallBack4(Ref* sender)
 {
 	const unsigned int NUMBER = 3;
-	buyCard(NUMBER);
-	shop.at(NUMBER)->setVisible(false);
+	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
+	//能买
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	{
+		buyCard(NUMBER, piece);
+		shop.at(NUMBER)->setVisible(false);
+		shop.at(NUMBER)->setEnabled(false);
+	}
 }
 
 //装备栏 
 void PlayScene::menuPieceCardCallBack5(Ref* sender)
 {
 	const unsigned int NUMBER = 4;
-	buyCard(NUMBER);
-	shop.at(NUMBER)->setVisible(false);
+	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
+	//能买
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	{
+		buyCard(NUMBER, piece);
+		shop.at(NUMBER)->setVisible(false);
+		shop.at(NUMBER)->setEnabled(false);
+	}
 }
 
-void PlayScene::buyCard(const unsigned int num)
+void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 {
-	ChessPiece* piece = shopModel->getPieceList()->at(num);
-
 	// 能买
-	if (shopModel->qualification(playerA->getMoney(),playerA->getMaxPieceStorage(),playerA->getOwnPieceNum(),piece->getPiecePerCost()))
+	playerA->piecePossesion[playerA->getOwnPieceNum()] = piece;
+	playerA->retain();
+	// 计算出应该放置在备战区的哪个位置
+	int i = 0;
+	for (i; i < 8; i++)
 	{
-		playerA->piecePossesion[playerA->getOwnPieceNum()] = piece;
-		playerA->retain();
-		// 计算出应该放置在备战区的哪个位置
-		int i = 0;
-		for (i; i < 8; i++)
+		if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) == nullptr)
 		{
-			if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) == nullptr)
-			{
-				break;
-			}
+			break;
 		}
-		// 可视化添加
-		PieceCoordinate position = coordingRevert(CoordinateType::logical, Vec2(0, i + 1));
-		chessBoard[0].at(i + 1)->addChild(piece->createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(position.getX(), position.getY()), 0));
-		// 数据模型添加
-		chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) = piece;
 	}
-	else {
-		CCLOG("UNAFFORDABLE");
-	}
+	// 可视化添加
+	chessBoard[0].at(i + 1)->addChild(createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(0, i + 1), 0));
+	// 数据模型添加
+	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) = piece;
 }
 
 void PlayScene::menuFreshShopCallBack(Ref* sender)
@@ -398,11 +441,16 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 
 	shopModel->refresh();
 	Vec2 position = Vec2(-config->getPx()->x * 45, -config->getPx()->y * 45);
-	for (unsigned int i = 0; i < shop.size(); i++)
+	unsigned int i = 0;
+	for (vector<MenuItemSprite*>::iterator it=shop.begin(); it!=shop.end()&&i < shop.size();)
 	{
-		/*shop.at(i)->removeFromParentAndCleanup(false);*/
-		shop.at(i)->removeFromParent();
-		shop.at(i)->release();
+		//shop.at(i)->removeFromParent();
+		(*it)->removeFromParent();
+		it=shop.erase(it);
+		
+	}
+	for (auto chessPtr : shop) {
+
 	}
 	shop.clear();
 	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
@@ -450,27 +498,28 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 	Vec2 position = touch->getLocation();
 	PieceCoordinate logPosition = coordingRevert(CoordinateType::real, position);
 
-	/*int clickType = PlayScene::onTouchBegan(touch, event);
+	int clickType = PlayScene::onTouchBegan(touch, event);
 	switch (clickType)
 	{
 		case IN_WAR_ZONE:
 			if (chessBoardModel->getPlayerA_WarZone_Pieces()[logPosition.getX()][logPosition.getY()] != nullptr)
 			{
-				
+				int tag = 100 + 10 * logPosition.getX() + logPosition.getY();
+				chessBoard[logPosition.getX()][logPosition.getY()]->getChildByTag(tag)->setOpacity(70);
 			}
 			break;
 
 		case IN_READY_ZONE:
-			if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX()) != nullptr)
+			if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) != nullptr)
 			{
-				
+				int tag = 100 + logPosition.getX();
+				chessBoard[0][logPosition.getX()]->getChildByTag(tag)->setOpacity(70);
 			}
 			break;
 
 		default:
 			break;
-	}*/
-
+	}
 }
 
 void PlayScene::onMouseMove(Event* event)

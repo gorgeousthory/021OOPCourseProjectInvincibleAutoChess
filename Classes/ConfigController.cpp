@@ -1,14 +1,6 @@
 #include "ConfigController.h"
 
 ConfigController* ConfigController::instance = nullptr;
-bool ConfigController::init()
-{
-	return true;
-}
-ConfigController::ConfigController()
-{
-	
-}
 ConfigController* ConfigController::getInstance()
 {
 	if (instance == nullptr)

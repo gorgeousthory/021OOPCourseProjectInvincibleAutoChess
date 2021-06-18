@@ -76,15 +76,13 @@ Vector<ChessPiece*>* Shop::getPieceList()
 	return &pieceList;
 }
 
-int Shop::getgear()
-{
-	return gear;
-}
-
-template<class ClassName>
-int Shop::pieceOut(ClassName piece)
+int Shop::pieceOut(ChessPiece* piece)
 {
 	int price = 0;//棋子的价格
-	price = static_cast<int>(piece.getPieceLevel());
+	price = piece->getPiecePerCost()*0.8;
+
+	//消除对应棋子实例
+	delete piece;
+
 	return price;
 }

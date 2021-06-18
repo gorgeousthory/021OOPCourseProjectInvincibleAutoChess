@@ -162,3 +162,55 @@ bool Player::giveOneEquip(int which, ChessPiece& object)
 	else
 		return false;
 }
+
+bool Player::getOnePiece(ChessPiece* object)
+{ 
+	int total = getOwnPieceNum();
+	if (total < maxPieceStorage)
+	{
+		piecePossesion[total] = object;
+		return true;
+	}
+	else
+		return false;
+}
+
+ChessPiece* Player::saleOnePiece(int which)
+{
+	if (which <= getOwnPieceNum())
+	{
+		ChessPiece* result = piecePossesion[which - 1];
+		piecePossesion[which - 1] = 0;//c++中空指针最好用0表示
+		int total = getOwnPieceNum();
+
+		//去掉对应棋子后整理数组
+		for (int i1 = 0; i1 <= total; i1++)
+		{
+			if (piecePossesion[i1] == NULL)
+			{
+				ChessPiece* temp;
+				temp = piecePossesion[i1 + 1];
+				piecePossesion[i1 + 1] = piecePossesion[i1];
+				piecePossesion[i1] = temp;
+			}
+		}
+		return result;
+	}
+	else
+	{
+		ChessPiece* result = 0;
+		return result;
+	}
+}
+
+bool Player::saleOneEquip(int which)
+{
+	if (which <= myEquip.size())
+	{
+		money++;
+		myEquip.erase(myEquip.begin() + which, myEquip.begin() + which - 1);
+		return true;
+	}
+	else
+		return false;
+}

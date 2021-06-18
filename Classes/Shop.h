@@ -31,14 +31,14 @@ public:
 
 	template<class ClassName>
 	ClassName pieceIn(ClassName* A);//买棋子
+	int pieceOut(ChessPiece* piece);//卖棋子
 
 	int pieceInEquip();//买装备
-
-	template<class ClassName>
-	int pieceOut(ClassName piece);//卖棋子/装备
+	//int pieceOutEquip();装备不需要真的卖出，因为不需要销毁
+	//所以这里买装备仅为简单的接口函数，直接无卖装备函数，具体行为由Player类实现
+	//玩家买棋子也类似，所以这部分主要实现应该由玩家类实现
 
 	Vector<ChessPiece*>* getPieceList();
-	int getgear();
 	
 private:
 	//用于出售的棋子

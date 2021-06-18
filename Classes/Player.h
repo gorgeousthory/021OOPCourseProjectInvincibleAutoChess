@@ -65,6 +65,21 @@ public:
 	//返回值表示给予棋子装备是否成功
 	//当人物对应栏位没有装备时，给予失败
 	bool giveOneEquip(int which,ChessPiece& object);
+	
+	//卖出一个装备
+	//返回值表示行为是否成功
+	//栏位从1开始
+	bool saleOneEquip(int which);
+
+	//参数为得到的枚棋子
+	//搭配商店函数调用使用,参数从商店的方法获取
+	bool getOnePiece(ChessPiece* object); 
+
+	//卖出一枚棋子
+	//购买失败时返回空指针
+	//搭配商店函数调用使用,为商店卖出棋子函数提供参数
+	//商店对应函数的返回值是卖出获得钱数
+	ChessPiece* saleOnePiece(int which);
 
 private:
 	//人物经验等级（最高为10）

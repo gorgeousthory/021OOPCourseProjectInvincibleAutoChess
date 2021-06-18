@@ -88,6 +88,9 @@ public:
 	// 获取棋子名称
 	const string getPieceName();
 
+	// 获取棋子路径
+	const string getPicPath();
+
 	// 获取当前棋子数值
 	const PieceInfo* getCrtPieceCondition();
 
@@ -144,7 +147,7 @@ public:
 	int storageNum = 0;//上方棋子为负数，下方棋子为正数
 
 	//棋子的可视化
-	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position);
+	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position,int type=1);
 
 	//返回一个精灵指针，当精灵已经被当作战斗棋子可视化（即放上棋盘以后），这个精灵指针有一个指向对象，可以通过对指针操作完成动画效果
 	Sprite* getChessPice();
@@ -154,8 +157,17 @@ public:
 
 	Vec2 getVec2();
 	
+	//获得每个棋子的价格
+	int getPiecePerCost();
 
+	//棋子装备获得装备
+	void getOneEquip(int type);
+
+	//棋子扫描自身装备获得对应属性
+	void readEquip();
 protected:
+	Equip _pieceEquip;//装备
+
 	string _pieceName; // 名称
 	
 	string _piecePicPath; // 模型图片相对路径
@@ -190,7 +202,7 @@ public:
 	//获得棋子类别
 	string getTag();
 	//初始化函数
-	//virtual bool init();
+	virtual bool init();
 	tank();
 	//析构函数
 	//~tank();

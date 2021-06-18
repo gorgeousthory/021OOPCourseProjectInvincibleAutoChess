@@ -15,12 +15,13 @@
 #define attackscopeL 13//攻击距离对应列
 #define criticalchanceL 14//暴击几率对应列
 #define criticaldamageL 15//暴击伤害对应列
+
 bool ChessPiece::init(int id)
 {
 
 	// 初始化各项数据
 	//_pieceName = ConfigController::getDataByID(id).asString();
-	_piecePicPath = "Resources/Sprite/";
+	_piecePicPath = "Resources/Books/";
 	_piecePicPath += _pieceName;
 
 	// 后续数据的初始化待文件结构完善后再行添加，预计在1.4.0版本之前完成
@@ -96,6 +97,11 @@ const string ChessPiece::getPieceName()
 	return _pieceName;
 }
 
+const string ChessPiece::getPicPath()
+{
+	return _piecePicPath;
+}
+
 const PieceInfo* ChessPiece::getCrtPieceCondition()
 {
 	return &_pieceCrtCondition;
@@ -111,7 +117,7 @@ bool ChessPiece::ifDead()
 	return _pieceCrtCondition.healthPoint > 0 ? false : true;
 }
 
-Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2 position)
+Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2 position,int type)
 {
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
@@ -150,10 +156,10 @@ Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2
 	piece->setPosition(position);
 	hpBar->setPosition(position.x + 300, position.y + 1700);
 	mpBar->setPosition(position.x + 300, position.y + 2000);
-
-	piece->addChild(hpBar);
-	piece->addChild(mpBar);
-
+	if (type == 1) {
+		piece->addChild(hpBar);
+		piece->addChild(mpBar);
+	}
 	return piece;
 }
 
@@ -175,6 +181,11 @@ Vec2 ChessPiece::getVec2()
 	position.x = _realCoordinate.getX();
 	position.y = _realCoordinate.getY();
 	return position;
+}
+
+int ChessPiece::getPiecePerCost()
+{
+	return _piecePerCost;
 }
 
 
@@ -223,7 +234,7 @@ int ChessPiece::myAttack()
 {
 	srand(time(NULL));
 	int rate = rand() % 100 + 1;
-	if (rate >= _pieceCrtCondition.criticalChance) {//暴击了
+	if (rate <= _pieceCrtCondition.criticalChance) {//暴击了
 		return 2 * _pieceCrtCondition.attack;
 	}
 	else {//没暴击
@@ -1255,6 +1266,41 @@ vector<ChessPiece*>  shooter::promoteRank(vector<ChessPiece*> piece)
 	return result;
 }
 
+bool tank::init()
+{
+	CsvParser csv;
+	csv.parseWithFile("Data/PiecesData.csv");
+	Value a = Value(csv[C_][nameL].c_str());
+	_pieceName = a.asString();
+	a = Value(csv[C_][pathL].c_str());
+	_piecePicPath = a.asString();
+	_pieceLevel = Level::level1;
+	a = Value(csv[C_][costL].c_str());
+	_piecePerCost = a.asInt();
+	_logCoordinate.setX(0); _logCoordinate.setY(0);
+	_realCoordinate.setX(0); _realCoordinate.setY(0);
+	//以下是棋子数值初始化
+	a = Value(csv[C_][hpL].c_str());
+	_pieceCrtCondition.healthPoint = a.asDouble();
+	_pieceCrtCondition.healthPointM = a.asDouble();
+	a = Value(csv[C_][mpL].c_str());
+	_pieceCrtCondition.magicPoint = a.asDouble();
+	_pieceCrtCondition.magicPointM = a.asDouble();
+	a = Value(csv[C_][attackL].c_str());
+	_pieceCrtCondition.bAttack = a.asDouble();
+	a = Value(csv[C_][defenceL].c_str());
+	_pieceCrtCondition.bDefence = a.asDouble();
+	a = Value(csv[C_][attackspeedL].c_str());
+	_pieceCrtCondition.bAttackSpeed = a.asDouble();
+	a = Value(csv[C_][attackscopeL].c_str());
+	_pieceCrtCondition.attackScope = a.asDouble();
+	a = Value(csv[C_][criticalchanceL].c_str());
+	_pieceCrtCondition.criticalChance = a.asDouble();
+	a = Value(csv[C_][criticaldamageL].c_str());
+	_pieceCrtCondition.criticalDamage = a.asDouble();
+	return true;
+}
+
 /**********************************以下为各类棋子数据初始化函数***************************************/
 tank::tank()
 {
@@ -1426,4 +1472,41 @@ stalker::stalker()
 	_pieceCrtCondition.criticalDamage = a.asDouble();
 }
 
+/*装备与整数对应表*/
+/* 1 yataghan 攻击力*/
+/*2 bow 攻击速度*/
+/*3 dagger  暴击几率*/
+/*4 ammoue 防御力*/
+/*5 gem 生命值*/
+/*给予装备后该函数会自动读取装备*/
+/*棋子即可获得对应装备属性*/
+void ChessPiece::getOneEquip(int type)
+{
+	switch (type)
+	{
+	case 1:
+		_pieceEquip.give_yataghan(1);
+		break;
+	case 2:
+		_pieceEquip.give_bow(1);
+		break;
+	case 3:
+		_pieceEquip.give_dagger(1);
+		break;
+	case 4:
+		_pieceEquip.give_ammoue(1);
+	case 5:
+		_pieceEquip.give_gem(1);
+	}
+	readEquip();
+}
+
+void ChessPiece::readEquip()
+{
+	_pieceCrtCondition.equipAttack = _pieceEquip.get_yataghan()*10+ _pieceCrtCondition.bAttack;
+	_pieceCrtCondition.equipAttackSpeed = _pieceEquip.get_bow() * 0.08 + _pieceCrtCondition.bAttackSpeed;
+	_pieceCrtCondition.criticalChance = _pieceEquip.get_dagger() * 10;
+	_pieceCrtCondition.equpiDefence = _pieceEquip.get_ammoue() * 8 + _pieceCrtCondition.bDefence;
+	_pieceCrtCondition.healthPointM = _pieceEquip.get_gem() * 150 + _pieceCrtCondition.healthPointM;
+}
 

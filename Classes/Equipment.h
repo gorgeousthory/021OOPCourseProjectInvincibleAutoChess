@@ -14,33 +14,44 @@ USING_NS_CC;
 
 
 
-class Equipment : public Ref
-{
+class Equip {
+	int yataghan = 0;//长剑，每装备一把加固定攻击力
+	int bow = 0;//弓，每装备一把加攻击速度
+	int dagger = 0;//短剑，加暴击几率
+	int ammoue = 0;//甲，加防御力
+	int gem = 0;//宝石，加生命值
+	//在这里的变量既表示基础装备的数量，也可以用来表示一件装备的属性数值。
+
+	int used_yataghan = 0;//长剑，每装备一把加固定攻击力
+	int used_bow = 0;//弓，每装备一把加攻击速度
+	int used_dagger = 0;//短剑，加暴击几率
+	int used_ammoue = 0;//甲，加防御力
+	int used_gem = 0;//宝石，加生命值
 public:
+	void give_yataghan(int m1) ;
+	int get_yataghan() ;
+	int get_t_yataghan() ;
 
-	//修改装备数值
-	void changeData(int ATK, int DEF, int crit, int hasteScale);
+	void give_bow(int m1) ;
+	int get_bow() ;
+	int get_t_bow() ;
 
-	//获取装备数值
-	int getATK();//攻击力
-	int getDEF();//防御
-	int getCrit();//暴击率
-	int getHasteScale();//急速or攻击速度
+	void give_dagger(int m1) ;
+	int get_dagger() ;
+	int get_t_dagger() ;
 
-private:
+	void  give_ammoue(int m1) ;
+	int get_ammoue() ;
+	int get_t_ammoue() ;
 
-	//攻击力
-	int attack;
+	void  give_gem(int m1) ;
+	int get_gem() ;
+	int get_t_gem() ;
 
-	//防御
-	int defence;
-
-	//暴击率
-	int critical;
-
-	//攻击速度
-	int hasteScale;
-};
+	//该类在使用中也只需要简单的接口函数即可
+};//give函数参数的意义均为给予数量(减少填负数即可)
+//装备被装备之后无法减少，所以这里的减少是指的未合成的基础装备数量减少
+//而人物装备的总装备数量不会改变,返回的数量也是总的基础装备数量
 
 #endif // !_EQUIPMENT_
 

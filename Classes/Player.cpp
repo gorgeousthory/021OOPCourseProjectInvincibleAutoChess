@@ -8,7 +8,7 @@ bool Player::init()
 
 	experience = 1;
 
-	maxPieceStorage = 5;//初始可拥有最大棋子个数
+	maxPieceStorage = 8;//初始可拥有最大棋子个数
 
 	maxPieceBattle = 3;//初始可放最大棋子个数
 

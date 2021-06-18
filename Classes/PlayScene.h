@@ -51,7 +51,7 @@ public:
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
 
 	// 坐标转换函数
-	static PieceCoordinate coordingrevert(Vec2 realPosition);
+	static PieceCoordinate coordingRevert(CoordinateType originType, Vec2 originPosition);
 
 	//更新函数
 	void update(float dt);

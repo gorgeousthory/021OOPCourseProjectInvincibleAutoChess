@@ -64,6 +64,7 @@ bool PlayScene::init()
 
 	// 创建棋盘
 	chessBoardModel = ChessBoard::create();
+	chessBoardModel->retain();
 	createBoard(Vec2(config->getPx()->x * 47.5, config->getPx()->y * 16));
 
 	// 添加计时器
@@ -82,7 +83,6 @@ bool PlayScene::init()
 	playLayer->addChild(loadingBarBack, 3);
 	playLayer->addChild(loadingBar, 3);
 
-
 	// 创建玩家
 	playerA = Player::create();
 	playerA->retain();
@@ -98,7 +98,7 @@ bool PlayScene::init()
 	playLayer->addChild(menu, 5);
 
 	timeLabel->setPosition(300, 700);
-	playLayer->addChild(timeLabel);
+	playLayer->addChild(timeLabel, 6);
 	
 	this->scheduleUpdate();
 
@@ -207,6 +207,7 @@ Vector<Sprite*> levelStars(const string& value)
 	}
 	return stars;
 }
+
 MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback)
 {
 	auto texture = Director::getInstance()->getTextureCache();
@@ -275,18 +276,31 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	return item;
 }
 
-PieceCoordinate PlayScene::coordingrevert(Vec2 realPosition)
+PieceCoordinate PlayScene::coordingRevert(CoordinateType originType, Vec2 originPosition)
 {
 	auto config = ConfigController::getInstance();
-	realPosition.x -= config->getPx()->x * 47.5;
-	realPosition.y -= config->getPx()->y * 16;
 
-	PieceCoordinate logPosition;
 	float perLength = 6.5 * config->getPx()->x;
-	logPosition.setX(static_cast<int>(realPosition.x) % static_cast<int>(perLength));
-	logPosition.setY(static_cast<int>(realPosition.y) % static_cast<int>(perLength));
+	if (originType == CoordinateType::real)
+	{
+		originPosition.x -= config->getPx()->x * 47.5;
+		originPosition.y -= config->getPx()->y * 16;
 
-	return logPosition;
+		PieceCoordinate logPosition;
+		logPosition.setX(static_cast<int>(originPosition.x) % static_cast<int>(perLength));
+		logPosition.setY(static_cast<int>(originPosition.y) % static_cast<int>(perLength));
+		return logPosition;
+	}
+	else
+	{
+		originPosition.x = originPosition.x * perLength + config->getPx()->x * 47.5;
+		originPosition.y = originPosition.y * perLength + config->getPx()->y * 16;
+
+		PieceCoordinate realPosition;
+		realPosition.setX(static_cast<int>(originPosition.x));
+		realPosition.setY(static_cast<int>(originPosition.y));
+		return realPosition;
+	}
 }
 
 void PlayScene::update(float dt)
@@ -308,6 +322,7 @@ void PlayScene::update(float dt)
 
 void PlayScene::menuExitCallBack(Ref* sender)
 {
+	Director::getInstance()->getTextureCache()->removeAllTextures();
 	Director::getInstance()->end();
 }
 
@@ -316,28 +331,28 @@ void PlayScene::menuPieceCardCallBack1(Ref* sender)
 	// 获取到当前所点击的棋子卡片
 	const int NUMBER = 0;
 	buyCard(NUMBER);
-	shop.at(NUMBER)->removeFromParent();
+	shop.at(NUMBER)->setVisible(false);
 }
 
 void PlayScene::menuPieceCardCallBack2(Ref* sender)
 {
 	const unsigned int NUMBER = 1;
 	buyCard(NUMBER);
-	shop.at(NUMBER)->removeFromParent();
+	shop.at(NUMBER)->setVisible(false);
 }
 
 void PlayScene::menuPieceCardCallBack3(Ref* sender)
 {
 	const unsigned int NUMBER = 2;
 	buyCard(NUMBER);
-	shop.at(NUMBER)->removeFromParent();
+	shop.at(NUMBER)->setVisible(false);
 }
 
 void PlayScene::menuPieceCardCallBack4(Ref* sender)
 {
 	const unsigned int NUMBER = 3;
 	buyCard(NUMBER);
-	shop.at(NUMBER)->removeFromParent();
+	shop.at(NUMBER)->setVisible(false);
 }
 
 //装备栏 
@@ -345,20 +360,32 @@ void PlayScene::menuPieceCardCallBack5(Ref* sender)
 {
 	const unsigned int NUMBER = 4;
 	buyCard(NUMBER);
-	shop.at(NUMBER)->removeFromParent();
+	shop.at(NUMBER)->setVisible(false);
 }
 
 void PlayScene::buyCard(const unsigned int num)
 {
 	ChessPiece* piece = shopModel->getPieceList()->at(num);
 
-	//能买
+	// 能买
 	if (shopModel->qualification(playerA->getMoney(),playerA->getMaxPieceStorage(),playerA->getOwnPieceNum(),piece->getPiecePerCost()))
 	{
 		playerA->piecePossesion[playerA->getOwnPieceNum()] = piece;
 		playerA->retain();
-		this->addChild(piece->createChessPiece("a", "/res/Books/AdvancedMathematics.png", Vec2(200, 300), 0));
-		CCLOG("BUY");
+		// 计算出应该放置在备战区的哪个位置
+		int i = 0;
+		for (i; i < 8; i++)
+		{
+			if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) == nullptr)
+			{
+				break;
+			}
+		}
+		// 可视化添加
+		PieceCoordinate position = coordingRevert(CoordinateType::logical, Vec2(0, i + 1));
+		chessBoard[0].at(i + 1)->addChild(piece->createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(position.getX(), position.getY()), 0));
+		// 数据模型添加
+		chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) = piece;
 	}
 	else {
 		CCLOG("UNAFFORDABLE");
@@ -373,6 +400,7 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 	Vec2 position = Vec2(-config->getPx()->x * 45, -config->getPx()->y * 45);
 	for (unsigned int i = 0; i < shop.size(); i++)
 	{
+		/*shop.at(i)->removeFromParentAndCleanup(false);*/
 		shop.at(i)->removeFromParent();
 		shop.at(i)->release();
 	}
@@ -404,18 +432,15 @@ int PlayScene::onTouchBegan(Touch* touch, Event* event)
 	if (position.x > chessBoard[1][1]->getPositionX() && position.x < chessBoard[1][9]->getPositionX() && 
 		position.y > chessBoard[1][1]->getPositionY() && position.y < chessBoard[5][1]->getPositionY()) // 鼠标在棋盘战斗区
 	{
-		CCLOG("WAR");
 		return IN_WAR_ZONE;
 	}
 	else if (position.x > chessBoard[0][1]->getPosition().x && position.x < chessBoard[0][9]->getPosition().x &&
 			 position.y > chessBoard[0][1]->getPosition().y && position.y < chessBoard[1][1]->getPosition().y)
 	{
-		CCLOG("READY");
 		return IN_READY_ZONE;
 	}
 	else
 	{
-
 		return NOT_IN_BOARD;
 	}
 }
@@ -423,22 +448,22 @@ int PlayScene::onTouchBegan(Touch* touch, Event* event)
 void PlayScene::onTouchEnded(Touch* touch, Event* event)
 {
 	Vec2 position = touch->getLocation();
-	PieceCoordinate logPosition = coordingrevert(position);
+	PieceCoordinate logPosition = coordingRevert(CoordinateType::real, position);
 
-	// int clickType = PlayScene::onTouchBegan(touch, event);
-	/*switch (clickType)
+	/*int clickType = PlayScene::onTouchBegan(touch, event);
+	switch (clickType)
 	{
 		case IN_WAR_ZONE:
-			if (board->getPlayerA_WarZone_Pieces()[logPosition->getX()][logPosition->getY()] != nullptr)
+			if (chessBoardModel->getPlayerA_WarZone_Pieces()[logPosition.getX()][logPosition.getY()] != nullptr)
 			{
-				chessBoard[logPosition->getY() + 1][logPosition->getX()]->setOpacity(50);
+				
 			}
 			break;
 
 		case IN_READY_ZONE:
-			if (board->getPlayerA_PreZone_Pieces()->at(logPosition->getX()) != nullptr)
+			if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX()) != nullptr)
 			{
-				chessBoard[0][logPosition->getX()]->setOpacity(50);
+				
 			}
 			break;
 

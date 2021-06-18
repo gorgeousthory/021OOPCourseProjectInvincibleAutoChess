@@ -102,7 +102,6 @@ private:
 
 	// ÒÆ¶¯»Øµ÷
 	void onMouseMove(Event* event);
-
 };
 
 #endif

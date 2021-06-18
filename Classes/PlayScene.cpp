@@ -11,8 +11,6 @@ bool PlayScene::init()
 	if (!Scene::init()) // 对父类init方法的判断
 		return false;
 
-
-
 	// 需要用到的单例工具
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
@@ -205,26 +203,34 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	csv.parseWithFile("Data/PiecesData.csv");
 	auto rowPosition = csv.findRowOfItem(pieceName);
 	auto sprite = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
+	auto Goldicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Coin.png"));		//the gold coin icon（金币图标）
 	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png"));	//the Health icon（生命）
 	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png"));	//the Attack icon(攻击)
 	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png"));		//the Armor icon(防御)
 	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);	//the name of book 棋子名称
 
-
-	//adjust the comparing position of the icons and values 调整对应图标和数值在卡片中的相对位置
+	//adjust the comparing position of the icons and values 调整对应图片和名称在卡片中的相对位置
 	Vec2 originSize = item->getContentSize();
 	sprite->setScale(0.5);
 	sprite->setPosition(Vec2(450, 800));
 	item->addChild(sprite);
 
-	Name->setPosition(Vec2(450,100));
+	Name->setPosition(Vec2(450, 100));
 	Name->setColor(Color3B::BLACK);
 	item->addChild(Name);
 
 	const int
 		x1 = 1150, y1 = 50,		//the stars position compared to the feature icon	星星相对于属性图标的位置
-		x2 = 1200, y2 = 700, dy = 400;	//the middle fearture position compared to the card, the height difference 中间的属性条相对于卡片的位置，和属性条之间的高度差
-	const float s1 = 0.8, s2 = 0.4;	//the stars scale, the feature scale	星星缩放比例，属性条缩放比例
+		x2 = 1200, y2 = 600, dy = 400;	//the middle fearture position compared to the card, the height difference 中间的属性条相对于卡片的位置，和属性条之间的高度差
+	const float s1 = 0.8, s2 = 0.4, s3 = 4;	//the stars scale, the feature scale,the coin scale	星星缩放比例，属性条缩放比例,金币图标缩放比例
+	/*花费所需的金币数量*/
+	auto Cost = Label::createWithTTF(csv[rowPosition][D_COST].c_str(), "/fonts/Marker Felt.ttf", 45);
+	Cost->setColor(Color3B::BLACK);
+	Cost->setPosition(Vec2(70, 15));
+	Goldicon->addChild(Cost);
+	Goldicon->setScale(4);
+	Goldicon->setPosition(Vec2(x2 + 50, y2 + dy * 1 + 250));
+	item->addChild(Goldicon);
 	/*Health feature 生命属性*/
 	auto Healthvalue = levelStars(csv[rowPosition][D_HP_LEVEL]).at(0);
 	Healthvalue->setPosition(Vec2(x1, y1));
@@ -362,7 +368,6 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 {
 	//play effect music of button	播放按钮音效
 	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
-
 	auto config = ConfigController::getInstance();
 
 	shopModel->refresh();
@@ -370,7 +375,7 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 	for (unsigned int i = 0; i < shop.size(); i++)
 	{
 		shop.at(i)->removeFromParent();
-		shop.at(i)->release();
+		//shop.at(i)->release();
 	}
 	shop.clear();
 	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));

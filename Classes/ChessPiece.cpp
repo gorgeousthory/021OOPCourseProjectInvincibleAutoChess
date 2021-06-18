@@ -21,7 +21,7 @@ bool ChessPiece::init(int id)
 
 	// 初始化各项数据
 	//_pieceName = ConfigController::getDataByID(id).asString();
-	_piecePicPath = "Resources/Sprite/";
+	_piecePicPath = "Resources/Books/";
 	_piecePicPath += _pieceName;
 
 	// 后续数据的初始化待文件结构完善后再行添加，预计在1.4.0版本之前完成
@@ -136,26 +136,10 @@ Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2
 
 	ProgressTimer* hp, mp;
 	hp = ProgressTimer::create(hpDecreaseBar);*/
-	Vec2 originSize1 = piece->getContentSize();
-	Vec2 originSize2 = hpBar->getContentSize();
-	Vec2 originSize3 = mpBar->getContentSize();
-	float scale1 = 4 * config->getPx()->x / originSize1.x;
-	float scale2 = 2;
-	float scale3 = 2;
-
-	piece->setScale(scale1);
-	hpBar->setScale(scale2);
-	mpBar->setScale(scale3);
-
-	hpBar->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-	mpBar->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-
-	hpBar->setScale(0.7, 2);
-	mpBar->setScale(0.7, 3);
-
-	piece->setPosition(position);
-	hpBar->setPosition(position.x + 300, position.y + 1700);
-	mpBar->setPosition(position.x + 300, position.y + 2000);
+	piece->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+	Vec2 originSize = piece->getContentSize();
+	float scale = 50 * config->getPx()->x / originSize.x;
+	piece->setScale(scale);
 	if (type == 1) {
 		piece->addChild(hpBar);
 		piece->addChild(mpBar);
@@ -1471,5 +1455,3 @@ stalker::stalker()
 	a = Value(csv[Physics][criticaldamageL].c_str());
 	_pieceCrtCondition.criticalDamage = a.asDouble();
 }
-
-

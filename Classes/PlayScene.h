@@ -15,7 +15,7 @@ USING_NS_CC;
 
 #include "ui/CocosGUI.h" 
 using namespace ui;
-#include "audio/include/AudioEngine.h"
+#include "audio/include/AudioEngine.h"//声音引擎
 
 #include <vector>
 using std::vector;
@@ -31,12 +31,16 @@ using std::vector;
 #define ROW_BOARD			10
 #define COL_BOARD			10
 
-#define NOT_IN_BOARD		0
+// 鼠标事件相关宏
+#define NOT_IN_BOARD		100
 #define IN_WAR_ZONE			1
 #define IN_READY_ZONE		2
-
-#define MOUSE_LIFT			0
-#define MOUSE_DOWN			1
+#define READY_TO_WAR		3
+#define WAR_TO_WAR			4
+#define READY_TO_READY		5
+#define WAR_TO_READY		6
+#define NO_LIFT_CLICK_WAR	10
+#define NO_LIFT_CLICK_READY 11
 
 class PlayScene : public Scene
 {
@@ -71,11 +75,12 @@ private:
 	Menu* menu;
 
 	// 当前鼠标状态
-	int mouseType;
+	Sprite* mouseLiftPiece;
 
 	// 棋盘
 	ChessBoard* chessBoardModel;
 	vector<Sprite*> chessBoard[ROW_BOARD];
+	vector<Sprite*> pieceBoard[ROW_BOARD];
 
 	// 商店
 	Shop* shopModel;
@@ -86,7 +91,7 @@ private:
 
 	//计时器
 	float timeRemaining = 61.0f;
-	Label* timeLabel = Label::createWithSystemFont("60", "Arial", 60);
+	Label* timeLabel = Label::createWithSystemFont("Time:60", "Arial", 60);
 
 	//背景音乐编号
 	unsigned int _audioBgID;
@@ -104,8 +109,12 @@ private:
 
 	// 退出按钮的点击事件
 	void menuExitCallBack(Ref* sender);
-	//	声音按钮的点击事件
+	//声音按钮的点击事件
 	void menuMusicCallBack(Ref* sender);
+	//交流按钮的点击事件
+	void menuTalkCallBack(Ref* sender);
+	//准备按钮的点击事件
+	void menuReadyCallBack(Ref* sender);
 
 	// 购买卡片的点击事件
 	void menuPieceCardCallBack1(Ref* sender);

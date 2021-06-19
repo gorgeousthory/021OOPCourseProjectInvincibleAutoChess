@@ -17,7 +17,7 @@ bool LoginScene::init()
 	// 获取屏幕上的各项参数
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
-
+	
 	// LoginScene场景层
 	auto loginLayer = Layer::create();
 	loginLayer->setPosition(origin);
@@ -43,7 +43,7 @@ bool LoginScene::init()
 	auto animation = Animation::createWithSpriteFrames(images, 1.0f / images.size());
 	auto animate = Animate::create(animation);
 	sprite->runAction(RepeatForever::create(animate)); // 执行动作
-
+	
 	// 添加资源加载进度条
 	auto loadingBarBack = Sprite::create("res/UI/LoginLoadingBarBack.png"); // 进度条的背景
 	originSize = loadingBarBack->getContentSize();
@@ -111,8 +111,10 @@ bool LoginScene::init()
 	// LoginScene菜单
 	auto menu = Menu::create(startButton, exitButton, musicButton, nullptr);
 	loginLayer->addChild(menu, 5);
-	
+
 	// ************可视化部分结束***************
+	
+
 	return true;
 }
 

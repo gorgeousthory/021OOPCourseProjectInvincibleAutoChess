@@ -22,7 +22,7 @@ USING_NS_CC;
 
 #include "ui/CocosGUI.h" 
 using namespace ui;
-#include "audio/include/AudioEngine.h"
+#include "audio/include/AudioEngine.h"//ÉùÒôÒıÇæ
 
 #include <list>
 #include <string>

@@ -10,6 +10,8 @@ bool PlayScene::init()
 	if (!Scene::init()) // 对父类init方法的判断
 		return false;
 
+	mouseLiftPiece = nullptr;
+
 	// 需要用到的单例工具
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
@@ -18,6 +20,12 @@ bool PlayScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	auto buttonPositiony = visibleSize.height / 3;	//	The y position of two buttons
+
+	// 添加背景层
+	playLayer = Layer::create();
+	playLayer->setPosition(origin);
+	playLayer->setContentSize(visibleSize);
+	this->addChild(playLayer);
 
 	// 创建单点事件监听器
 	auto clickListener = EventListenerTouchOneByOne::create();
@@ -31,12 +39,6 @@ bool PlayScene::init()
 	moveListener->onMouseMove = CC_CALLBACK_1(PlayScene::onMouseMove, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(moveListener, this);
 
-	// 添加背景层
-	playLayer = Layer::create();
-	playLayer->setPosition(origin);
-	playLayer->setContentSize(visibleSize);
-	this->addChild(playLayer);
-
 	// 添加背景图片
 	auto backGround = Sprite::createWithTexture(texture->getTextureForKey("/res/Background/PlaySceneBackground.png"));
 	backGround->setPosition(visibleSize / 2);
@@ -44,24 +46,39 @@ bool PlayScene::init()
 	backGround->setScale(visibleSize.height / originSize.y);
 	playLayer->addChild(backGround, 1);
 
-	// 添加退出按钮
-	auto exitButton = LoginScene::createGameButton("Exit!", "/res/UI/ExitNormal.png", "/res/UI/ExitSelected.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
-	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-	originSize = exitButton->getContentSize();
-	exitButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
-	exitButton->setPosition(Vec2(70 * ConfigController::getInstance()->getPx()->y, -35 * ConfigController::getInstance()->getPx()->y));
+	/****以下为右侧玩家点击的按钮菜单的创建		create the buttons on the right****/
+	/*以退出按钮为基准，所有按钮ui的图片大小都应相同	based on the exitButton,all the pics of Buttons should be the same*/
+	auto exitButton = LoginScene::createGameButton("", "/res/UI/ExitNormal.png", "/res/UI/ExitSelected.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
 	menu = Menu::create(exitButton, nullptr);
-
+	originSize = exitButton->getContentSize();
+	const float xButtons = 65 * ConfigController::getInstance()->getPx()->y, yButtons = -35 * ConfigController::getInstance()->getPx()->y,//退出按钮的摆放位置	the position of Exit button
+		dyButtons = 10 * ConfigController::getInstance()->getPx()->y,	//按钮的高度差	the height difference
+		sButtons = 8 * ConfigController::getInstance()->getPx()->x / originSize.x;//按钮的缩放比例	the scale of buttons
+// 添加退出按钮
+	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	exitButton->setScale(sButtons);
+	exitButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 0));
 	//播放音乐
 	_audioBgID = AudioEngine::play2d("/res/Music/musicBgm.mp3", true);
 	//添加音乐按钮
 	auto musicButton = LoginScene::createGameButton("", "/res/UI/MusicNormal.png", "/res/UI/MusicSelected.png", CC_CALLBACK_1(PlayScene::menuMusicCallBack, this));
 	musicButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-	musicButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-	originSize = musicButton->getContentSize();
-	musicButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
-	musicButton->setPosition(Vec2(70 * ConfigController::getInstance()->getPx()->y, -15 * ConfigController::getInstance()->getPx()->y));
+	musicButton->setScale(sButtons);
+	musicButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 1));
 	menu->addChild(musicButton);
+	//添加聊天按钮
+	auto talkButton = LoginScene::createGameButton("", "/res/UI/TalkNormal.png", "/res/UI/TalkSelected.png", CC_CALLBACK_1(PlayScene::menuTalkCallBack, this));
+	talkButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	talkButton->setScale(sButtons);
+	talkButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 2));
+	menu->addChild(talkButton);
+	//添加准备按钮
+	auto readyButton = LoginScene::createGameButton("", "/res/UI/PlayNormal.png", "/res/UI/PlaySelected.png", CC_CALLBACK_1(PlayScene::menuTalkCallBack, this));
+	readyButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	readyButton->setScale(sButtons);
+	readyButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 3));
+	menu->addChild(readyButton);
+	/****按钮群创建结束		end creating the buttons on the right****/
 
 	// 创建棋盘
 	chessBoardModel = ChessBoard::create();
@@ -70,21 +87,25 @@ bool PlayScene::init()
 
 	// 添加计时器
 	auto loadingBarBack = Sprite::create("res/UI/TimeBar1.png"); // 进度条的背景
-	originSize = loadingBarBack->getContentSize();
-	loadingBarBack->setScale(30 * ConfigController::getInstance()->getPx()->x / originSize.x);
-	loadingBarBack->setPosition(200, 600);//进度条背景的位置
 	auto loadingBarFront = Sprite::create("res/UI/TimeBar2.png"); // 进度条的前景
+	originSize = loadingBarBack->getContentSize();
+	const float xTimeBar = visibleSize.width / 2, yTimeBar = visibleSize.height,	//时间进度条的位置，屏幕中间最上方	the position of timeBar
+		sTimeBar = 50 * ConfigController::getInstance()->getPx()->x / originSize.x;	//时间进度条的缩放比例
 	loadingBar = ProgressTimer::create(loadingBarFront);
 	loadingBar->setBarChangeRate(Vec2(1, 0));
-	loadingBar->setType(ProgressTimer::Type::BAR);// 设置进度条类型
-	loadingBar->setMidpoint(Vec2(0, 1));//设置运动方向
-	loadingBar->setPosition(200, 600);//进度条的位置
-	loadingBar->setScale(30 * ConfigController::getInstance()->getPx()->x / originSize.x);
-	loadingBar->setPercentage(0);//设置初始值为0
+	loadingBar->setType(ProgressTimer::Type::BAR);	// 设置进度条类型
+	loadingBar->setMidpoint(Vec2(0, 1));	//设置运动方向
+	loadingBar->setPercentage(0);	//设置初始值为0
+	loadingBarBack->setAnchorPoint(Vec2(0.5, 1));
+	loadingBar->setAnchorPoint(Vec2(0.5, 1));
+	loadingBarBack->setScale(sTimeBar);
+	loadingBar->setScale(sTimeBar);
+	//loadingBarBack->setPosition(200, 600); loadingBar->setPosition(200, 600);//进度条的位置
+	loadingBarBack->setPosition(Size(xTimeBar, yTimeBar));	//进度条背景的位置	
+	loadingBar->setPosition(Size(xTimeBar, yTimeBar));		//进度条的位置
 	playLayer->addChild(loadingBarBack, 3);
 	playLayer->addChild(loadingBar, 3);
-	timeLabel->setPosition(300, 700);
-	playLayer->addChild(timeLabel, 6);
+	playLayer->addChild(timeLabel);
 
 	// 创建玩家
 	playerA = Player::create();
@@ -93,13 +114,12 @@ bool PlayScene::init()
 	// 创建商店
 	shopModel = Shop::create();
 	shopModel->retain();
-	createShop(Vec2(-45 * config->getPx()->x, -45 * config->getPx()->y));
+	createShop(Vec2(-55 * config->getPx()->x, -45 * config->getPx()->y));//商店摆放位置在下方偏左
 	for (int i = 0; i < 5; i++)
 	{
 		menu->addChild(shop.at(i));
 	}
 	playLayer->addChild(menu, 5);
-
 	
 	this->scheduleUpdate();
 
@@ -126,10 +146,12 @@ void PlayScene::createBoard(Vec2 position)
 			if (i == 0 || i == ROW_BOARD - 1 || j == 0 || j == COL_BOARD - 1)
 			{
 				chessBoard[i].push_back(Sprite::createWithTexture(texture->getTextureForKey("/res/Background/ReadyZone.png")));
+				pieceBoard[i].push_back(nullptr);
 			}
 			else
 			{
 				chessBoard[i].push_back(Sprite::createWithTexture(texture->getTextureForKey("/res/Background/BoardPiece.png")));
+				pieceBoard[i].push_back(nullptr);
 			}
 			chessBoard[i][j]->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 			chessBoard[i][j]->setScale(scale);
@@ -151,12 +173,12 @@ void PlayScene::createShop(Vec2 position)
 	const Vec2 originSize = shopMore->getContentSize();
 	const float scale = 16.9 * config->getPx()->x / originSize.x;	//获取理论缩放比例	obtain the reasonable sacle	
 	const Vec2 tmpVec2 = Vec2(position.x + 80 * config->getPx()->x, position.y + 45 * config->getPx()->y);	//获取理论位置 obtain the reasonable positon
-	const float singleX = shopMore->getContentSize().width * 0.01 * scale, 
-				singleY = shopMore->getContentSize().height * 0.01 * scale;	//获取理论单位长度，横轴与纵轴	obtain reasonable lenth
+	const float singleX = shopMore->getContentSize().width * 0.01 * scale,
+		singleY = shopMore->getContentSize().height * 0.01 * scale;	//获取理论单位长度，横轴与纵轴	obtain reasonable lenth
 	const float x1 = -5.560 * singleX, y1 = 4.561 * singleY, //x1，y1对应按钮相对背景卡的位置，在默认窗口大小时，实际值应接近-8，8	x1,y1 refer to the position compared to the bgcard	
-				dy = 38.773 * singleY;						//dy对应两张卡片的高度差，在默认窗口大小时，实际值应接近68	dy refers to the height difference between two buttons	
+		dy = 38.773 * singleY;						//dy对应两张卡片的高度差，在默认窗口大小时，实际值应接近68	dy refers to the height difference between two buttons	
 
-	//创建升级和刷新按钮	create the buttons upgrade and fresh
+//创建升级和刷新按钮	create the buttons upgrade and fresh
 	auto buyExp = LoginScene::createGameButton("", "/res/UI/UpgradeNormal.png", "/res/UI/UpgradeSelected.png", CC_CALLBACK_1(PlayScene::menuBuyExpCallBack, this));
 	auto freshShop = LoginScene::createGameButton("", "/res/UI/RefreshNormal.png", "/res/UI/RefreshSelected.png", CC_CALLBACK_1(PlayScene::menuFreshShopCallBack, this));
 	//调整背景图片两个菜单项（升级和刷新）除了相对位置之外其余皆同步	adjust the bgcard the two buttons(upgrade and fresh)//adjust the scale	调整大小
@@ -184,7 +206,7 @@ void PlayScene::createShop(Vec2 position)
 	GoldLabel->setColor(Color3B::BLACK);	//设置字体颜色
 	ExLabel->setColor(Color3B::BLACK);		//`
 	GoldLabel->setPosition(Vec2(70, 15));	//金币标签相对于金币图标的位置	the position of GoldLabel comparing to the gold coin icon
-	ExLabel->setPosition(Vec2(210, 15));		//`经验标签相对于金币图标的位置	the position of Exlabel as same above
+	ExLabel->setPosition(Vec2(210, 15));	//`经验标签相对于金币图标的位置	the position of Exlabel as same above
 	Goldicon->addChild(GoldLabel);	//标签添加至图标的字节点
 	Goldicon->addChild(ExLabel);	//`
 	Goldicon->setScale(4);		//金币图标的缩放比例，金币标签和经验标签与之同步
@@ -224,6 +246,7 @@ Vector<Sprite*> levelStars(const string& value)
 	}
 	return stars;
 }
+
 MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback)
 {
 	auto texture = Director::getInstance()->getTextureCache();
@@ -244,7 +267,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png"));	//the Health icon（生命）
 	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png"));	//the Attack icon(攻击)
 	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png"));		//the Armor icon(防御)
-	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);	//the name of book 棋子名称
+	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);		//the name of book 棋子名称
 
 
 	//adjust the comparing position of the icons and values 调整对应图标和数值在卡片中的相对位置
@@ -253,7 +276,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	sprite->setPosition(Vec2(450, 800));
 	item->addChild(sprite);
 
-	Name->setPosition(Vec2(450,100));
+	Name->setPosition(Vec2(450, 100));
 	Name->setColor(Color3B::BLACK);
 	item->addChild(Name);
 
@@ -324,8 +347,10 @@ Sprite* PlayScene::createChessPiece(string pieceName, string piecePicPath, Vec2 
 	piece->setTag(tag);
 	piece->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 	Vec2 originSize = piece->getContentSize();
-	float scale = 50 * config->getPx()->x / originSize.x;
+	float scale = 5 * config->getPx()->x / originSize.x;
 	piece->setScale(scale);
+	PieceCoordinate realPosition = coordingRevert(CoordinateType::logical, position);
+	piece->setPosition(realPosition.getX(), realPosition.getY());
 	if (type == 1) {
 		piece->addChild(hpBar);
 		piece->addChild(mpBar);
@@ -397,6 +422,15 @@ void PlayScene::menuMusicCallBack(Ref* sender)
 	}
 }
 
+void PlayScene::menuTalkCallBack(Ref* sender)
+{
+
+}
+
+void PlayScene::menuReadyCallBack(Ref* sender)
+{
+}
+
 void PlayScene::menuPieceCardCallBack1(Ref* sender)
 {
 	//play effect music of button	播放按钮音效
@@ -419,7 +453,6 @@ void PlayScene::menuPieceCardCallBack2(Ref* sender)
 	//play effect music of button	播放按钮音效
 	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
 
-
 	const unsigned int NUMBER = 1;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
 	//能买
@@ -436,7 +469,6 @@ void PlayScene::menuPieceCardCallBack3(Ref* sender)
 	//play effect music of button	播放按钮音效
 	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
 
-
 	const unsigned int NUMBER = 2;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
 	//能买
@@ -452,7 +484,6 @@ void PlayScene::menuPieceCardCallBack4(Ref* sender)
 {
 	//play effect music of button	播放按钮音效
 	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
-
 
 	const unsigned int NUMBER = 3;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
@@ -497,7 +528,9 @@ void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 		}
 	}
 	// 可视化添加
-	chessBoard[0].at(i + 1)->addChild(createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(0, i + 1), 0));
+	auto visiblePiece = createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(i + 1, 0), 0);
+	pieceBoard[0][i + 1] = visiblePiece;
+	playLayer->addChild(pieceBoard[0][i + 1], 7);
 	// 数据模型添加
 	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) = piece;
 }
@@ -510,9 +543,9 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 	auto config = ConfigController::getInstance();
 
 	shopModel->refresh();
-	Vec2 position = Vec2(-config->getPx()->x * 45, -config->getPx()->y * 45);
+	Vec2 position = Vec2(-config->getPx()->x * 55, -config->getPx()->y * 45);
 	unsigned int i = 0;
-	for (vector<MenuItemSprite*>::iterator it=shop.begin(); it!=shop.end()&&i < shop.size();)
+	for (vector<MenuItemSprite*>::iterator it=shop.begin(); it != shop.end() && i < shop.size();)
 	{
 		//shop.at(i)->removeFromParent();
 		(*it)->removeFromParent();
@@ -541,20 +574,46 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 
 void PlayScene::menuBuyExpCallBack(Ref* sender)
 {
+	//play effect music of button	播放按钮音效
+	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
 
 }
 
 int PlayScene::onTouchBegan(Touch* touch, Event* event)
 {
 	Vec2 position = touch->getLocation();
-	if (position.x > chessBoard[1][1]->getPositionX() && position.x < chessBoard[1][9]->getPositionX() && 
+	if (position.x > chessBoard[1][1]->getPositionX() && position.x < chessBoard[1][9]->getPositionX() &&
 		position.y > chessBoard[1][1]->getPositionY() && position.y < chessBoard[5][1]->getPositionY()) // 鼠标在棋盘战斗区
 	{
+		if (mouseLiftPiece != nullptr && mouseLiftPiece->getTag() % 10 == 0) // 已经提起的是备战区棋子
+		{
+			return READY_TO_WAR;
+		}
+		else if (mouseLiftPiece != nullptr && mouseLiftPiece->getTag() % 10 != 0) // 已经提起的是战斗区棋子
+		{
+			return WAR_TO_WAR;
+		}
+		else // 未提起棋子
+		{
+			return NO_LIFT_CLICK_WAR;
+		}
 		return IN_WAR_ZONE;
 	}
 	else if (position.x > chessBoard[0][1]->getPosition().x && position.x < chessBoard[0][9]->getPosition().x &&
 			 position.y > chessBoard[0][1]->getPosition().y && position.y < chessBoard[1][1]->getPosition().y)
 	{
+		if (mouseLiftPiece != nullptr && mouseLiftPiece->getTag() % 10 == 0) // 已经提起的是备战区棋子
+		{
+			return READY_TO_READY;
+		}
+		else if (mouseLiftPiece != nullptr && mouseLiftPiece->getTag() % 10 != 0) // 已经提起的是战斗区棋子
+		{
+			return WAR_TO_READY;
+		}
+		else // 未提起棋子
+		{
+			return NO_LIFT_CLICK_READY;
+		}
 		return IN_READY_ZONE;
 	}
 	else
@@ -565,28 +624,111 @@ int PlayScene::onTouchBegan(Touch* touch, Event* event)
 
 void PlayScene::onTouchEnded(Touch* touch, Event* event)
 {
+	int clickType = PlayScene::onTouchBegan(touch, event);
 	Vec2 position = touch->getLocation();
 	PieceCoordinate logPosition = coordingRevert(CoordinateType::real, position);
-
-	int clickType = PlayScene::onTouchBegan(touch, event);
+	
 	switch (clickType)
 	{
-		case IN_WAR_ZONE:
-			if (chessBoardModel->getPlayerA_WarZone_Pieces()[logPosition.getX()][logPosition.getY()] != nullptr)
+		case NO_LIFT_CLICK_WAR:
+			if (chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) != nullptr && mouseLiftPiece == nullptr)
 			{
-				int tag = 100 + 10 * logPosition.getX() + logPosition.getY();
-				chessBoard[logPosition.getX()][logPosition.getY()]->getChildByTag(tag)->setOpacity(70);
+				int tag = 100 + 10 * logPosition.getY() + logPosition.getX();
+				mouseLiftPiece = pieceBoard[logPosition.getY()][logPosition.getX()];
+				mouseLiftPiece->setOpacity(70);
 			}
 			break;
-
-		case IN_READY_ZONE:
-			if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) != nullptr)
+		case NO_LIFT_CLICK_READY:
+			if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) != nullptr && mouseLiftPiece == nullptr)
 			{
 				int tag = 100 + logPosition.getX();
-				chessBoard[0][logPosition.getX()]->getChildByTag(tag)->setOpacity(70);
+				mouseLiftPiece = pieceBoard[0][logPosition.getX()];
+				mouseLiftPiece->setOpacity(70);
 			}
 			break;
-
+		case WAR_TO_WAR:
+			if (chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) == nullptr && mouseLiftPiece != nullptr)
+			{
+				PieceCoordinate originPosition;
+				originPosition.setX((mouseLiftPiece->getTag() - 100) / 10);
+				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
+				// 数据模型移动
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) = chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1);
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->retain();
+				chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1) = nullptr;
+				// 可视化移动
+				ChessPiece* visiblePiece = chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1);
+				pieceBoard[originPosition.getY()][originPosition.getX()]->removeFromParent();
+				pieceBoard[logPosition.getY()][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), 1);
+				playLayer->addChild(pieceBoard[logPosition.getY()][logPosition.getX()], 7);
+				mouseLiftPiece = nullptr;
+				pieceBoard[originPosition.getY()][originPosition.getX()] = nullptr;
+			}
+			break;
+		case WAR_TO_READY:
+			if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) == nullptr && mouseLiftPiece != nullptr)
+			{
+				PieceCoordinate originPosition;
+				originPosition.setX((mouseLiftPiece->getTag() - 100) / 10);
+				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
+				// 数据模型移动
+				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) = chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1);
+				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1)->retain();
+				chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1) = nullptr;
+				// 可视化移动
+				ChessPiece* visiblePiece = chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1);
+				pieceBoard[originPosition.getY()][originPosition.getX()]->removeFromParent();
+				pieceBoard[0][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), 0);
+				playLayer->addChild(pieceBoard[0][logPosition.getX()], 7);
+				mouseLiftPiece = nullptr;
+				pieceBoard[originPosition.getY()][originPosition.getX()] = nullptr;
+			}
+			break;
+		case READY_TO_READY:
+			if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) == nullptr && mouseLiftPiece != nullptr)
+			{
+				PieceCoordinate originPosition;
+				originPosition.setX((mouseLiftPiece->getTag() - 100) / 10);
+				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
+				// 数据模型移动
+				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) = chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1);
+				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1)->retain();
+				chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1) = nullptr;
+				// 可视化移动
+				ChessPiece* visiblePiece = chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1);
+				pieceBoard[0][originPosition.getX()]->removeFromParent();
+				pieceBoard[0][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), 0);
+				playLayer->addChild(pieceBoard[0][logPosition.getX()], 7);
+				mouseLiftPiece = nullptr;
+				pieceBoard[0][originPosition.getX()] = nullptr;
+			}
+			break;
+		case READY_TO_WAR:
+			if (chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) == nullptr && mouseLiftPiece != nullptr)
+			{
+				PieceCoordinate originPosition;
+				originPosition.setX((mouseLiftPiece->getTag() - 100) / 10);
+				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
+				// 数据模型移动
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) = chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1);
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->retain();
+				chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1) = nullptr;
+				// 可视化移动
+				ChessPiece* visiblePiece = chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1);
+				pieceBoard[originPosition.getY()][originPosition.getX()]->removeFromParent();
+				pieceBoard[logPosition.getY()][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), 1);
+				playLayer->addChild(pieceBoard[logPosition.getY()][logPosition.getX()], 7);
+				mouseLiftPiece = nullptr;
+				pieceBoard[originPosition.getY()][originPosition.getX()] = nullptr;
+			}
+			break;
+		case NOT_IN_BOARD:
+			if (mouseLiftPiece != nullptr)
+			{
+				mouseLiftPiece->setOpacity(250);
+				mouseLiftPiece = nullptr;
+			}
+			break;
 		default:
 			break;
 	}

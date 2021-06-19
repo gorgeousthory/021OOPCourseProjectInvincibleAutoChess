@@ -46,13 +46,41 @@ bool PlayScene::init()
 	backGround->setScale(visibleSize.height / originSize.y);
 	playLayer->addChild(backGround, 1);
 
-	// 添加退出按钮
-	auto exitButton = LoginScene::createGameButton("Exit!", "/res/UI/ExitNormal.png", "/res/UI/ExitSelected.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
-	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-	originSize = exitButton->getContentSize();
-	exitButton->setScale(10 * ConfigController::getInstance()->getPx()->x / originSize.x);
-	exitButton->setPosition(Vec2(70 * ConfigController::getInstance()->getPx()->y, -35 * ConfigController::getInstance()->getPx()->y));
+	/****以下为右侧玩家点击的按钮菜单的创建		create the buttons on the right****/
+	/*以退出按钮为基准，所有按钮ui的图片大小都应相同	based on the exitButton,all the pics of Buttons should be the same*/
+	auto exitButton = LoginScene::createGameButton("", "/res/UI/ExitNormal.png", "/res/UI/ExitSelected.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
 	menu = Menu::create(exitButton, nullptr);
+	originSize = exitButton->getContentSize();
+	const float xButtons = 65 * ConfigController::getInstance()->getPx()->y, yButtons = -35 * ConfigController::getInstance()->getPx()->y,//退出按钮的摆放位置	the position of Exit button
+		dyButtons = 10 * ConfigController::getInstance()->getPx()->y,	//按钮的高度差	the height difference
+		sButtons = 8 * ConfigController::getInstance()->getPx()->x / originSize.x;//按钮的缩放比例	the scale of buttons
+
+    // 添加退出按钮
+	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	exitButton->setScale(sButtons);
+	exitButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 0));
+	//播放音乐
+	_audioBgID = AudioEngine::play2d("/res/Music/musicBgm.mp3", true);
+	//添加音乐按钮
+	auto musicButton = LoginScene::createGameButton("", "/res/UI/MusicNormal.png", "/res/UI/MusicSelected.png", CC_CALLBACK_1(PlayScene::menuMusicCallBack, this));
+	musicButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	musicButton->setScale(sButtons);
+	musicButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 1));
+	menu->addChild(musicButton);
+	//添加聊天按钮
+	auto talkButton = LoginScene::createGameButton("", "/res/UI/TalkNormal.png", "/res/UI/TalkSelected.png", CC_CALLBACK_1(PlayScene::menuTalkCallBack, this));
+	talkButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	talkButton->setScale(sButtons);
+	talkButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 2));
+	menu->addChild(talkButton);
+	//添加准备按钮
+	auto readyButton = LoginScene::createGameButton("", "/res/UI/PlayNormal.png", "/res/UI/PlaySelected.png", CC_CALLBACK_1(PlayScene::menuTalkCallBack, this));
+	readyButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	readyButton->setScale(sButtons);
+	readyButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 3));
+	menu->addChild(readyButton);
+
+	/****按钮群创建结束		end creating the buttons on the right****/
 
 	// 创建棋盘
 	chessBoardModel = ChessBoard::create();
@@ -60,37 +88,46 @@ bool PlayScene::init()
 	createBoard(Vec2(config->getPx()->x * 47.5, config->getPx()->y * 16));
 
 	// 添加计时器
-	auto loadingBarBack = Sprite::create("res/UI/LoginLoadingBarBack.png"); // 进度条的背景
+	auto loadingBarBack = Sprite::create("res/UI/TimeBar1.png"); // 进度条的背景
+	auto loadingBarFront = Sprite::create("res/UI/TimeBar2.png"); // 进度条的前景
 	originSize = loadingBarBack->getContentSize();
-	loadingBarBack->setScale(30 * ConfigController::getInstance()->getPx()->x / originSize.x);
-	loadingBarBack->setPosition(200, 600);//进度条背景的位置
-	auto loadingBarFront = Sprite::create("res/UI/LoginLoadingBarFront.png"); // 进度条的前景
+	const float xTimeBar = visibleSize.width / 2, yTimeBar = visibleSize.height,	//时间进度条的位置，屏幕中间最上方	the position of timeBar
+		sTimeBar = 50 * ConfigController::getInstance()->getPx()->x / originSize.x;	//时间进度条的缩放比例
 	loadingBar = ProgressTimer::create(loadingBarFront);
 	loadingBar->setBarChangeRate(Vec2(1, 0));
-	loadingBar->setType(ProgressTimer::Type::BAR);// 设置进度条类型
-	loadingBar->setMidpoint(Vec2(0, 1));//设置运动方向
-	loadingBar->setPosition(200, 600);//进度条的位置
-	loadingBar->setScale(30 * ConfigController::getInstance()->getPx()->x / originSize.x);
-	loadingBar->setPercentage(0);//设置初始值为0
+	loadingBar->setType(ProgressTimer::Type::BAR);	// 设置进度条类型
+	loadingBar->setMidpoint(Vec2(0, 1));	//设置运动方向
+	loadingBar->setPercentage(0);	//设置初始值为0
+	loadingBarBack->setAnchorPoint(Vec2(0.5, 1));
+	loadingBar->setAnchorPoint(Vec2(0.5, 1));
+	loadingBarBack->setScale(sTimeBar);
+	loadingBar->setScale(sTimeBar);
+	//loadingBarBack->setPosition(200, 600); loadingBar->setPosition(200, 600);//进度条的位置
+	loadingBarBack->setPosition(Size(xTimeBar, yTimeBar));	//进度条背景的位置	
+	loadingBar->setPosition(Size(xTimeBar, yTimeBar));		//进度条的位置
 	playLayer->addChild(loadingBarBack, 3);
 	playLayer->addChild(loadingBar, 3);
+	playLayer->addChild(timeLabel);
 
 	// 创建玩家
 	playerA = Player::create();
+	playerB = Player::create();
 	playerA->retain();
+	playerB->retain();
 
 	// 创建商店
 	shopModel = Shop::create();
+	GoldLabel = Label::createWithTTF(Value(playerA->getMoney()).asString(), "/fonts/Marker Felt.ttf", 45);
+	ExLabel = Label::createWithTTF("Lv.1", "/fonts/Marker Felt.ttf", 45);
 	shopModel->retain();
-	createShop(Vec2(-45 * config->getPx()->x, -45 * config->getPx()->y));
+	createShop(Vec2(-55 * config->getPx()->x, -45 * config->getPx()->y));//商店摆放位置在下方偏左
 	for (int i = 0; i < 5; i++)
 	{
 		menu->addChild(shop.at(i));
 	}
 	playLayer->addChild(menu, 5);
 
-	timeLabel->setPosition(300, 700);
-	playLayer->addChild(timeLabel, 6);
+	playerBInitRound1();
 	
 	this->scheduleUpdate();
 
@@ -139,19 +176,20 @@ void PlayScene::createShop(Vec2 position)
 	auto config = ConfigController::getInstance();
 	auto texture = Director::getInstance()->getTextureCache();
 
-	// preparations	加载操作UI前的相关准备
+	//preparations	加载操作UI前的相关准备
 	auto shopMore = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/ShoppingMore.png"));
+	const Vec2 originSize = shopMore->getContentSize();
+	const float scale = 16.9 * config->getPx()->x / originSize.x;	//获取理论缩放比例	obtain the reasonable sacle	
+	const Vec2 tmpVec2 = Vec2(position.x + 80 * config->getPx()->x, position.y + 45 * config->getPx()->y);	//获取理论位置 obtain the reasonable positon
+	const float singleX = shopMore->getContentSize().width * 0.01 * scale,
+		singleY = shopMore->getContentSize().height * 0.01 * scale;	//获取理论单位长度，横轴与纵轴	obtain reasonable lenth
+	const float x1 = -5.560 * singleX, y1 = 4.561 * singleY, //x1，y1对应按钮相对背景卡的位置，在默认窗口大小时，实际值应接近-8，8	x1,y1 refer to the position compared to the bgcard	
+		dy = 38.773 * singleY;						//dy对应两张卡片的高度差，在默认窗口大小时，实际值应接近68	dy refers to the height difference between two buttons	
+
+	//创建升级和刷新按钮	create the buttons upgrade and fresh
 	auto buyExp = LoginScene::createGameButton("", "/res/UI/UpgradeNormal.png", "/res/UI/UpgradeSelected.png", CC_CALLBACK_1(PlayScene::menuBuyExpCallBack, this));
 	auto freshShop = LoginScene::createGameButton("", "/res/UI/RefreshNormal.png", "/res/UI/RefreshSelected.png", CC_CALLBACK_1(PlayScene::menuFreshShopCallBack, this));
-	const Vec2 originSize = shopMore->getContentSize();
-	const float scale = 16.9 * config->getPx()->x / originSize.x;	//obtain the reasonable sacle	获取理论缩放比例
-	const Vec2 tmpVec2 = Vec2(position.x + 80 * config->getPx()->x, position.y + 45 * config->getPx()->y);	//obtain the reasonable positon	获取理论位置
-	const float singleX = shopMore->getContentSize().width * 0.01 * scale, singleY = shopMore->getContentSize().height * 0.01 * scale;	//obtain reasonable lenth	获取理论单位长度，横轴与纵轴
-	const float x1 = -5.560 * singleX, y1 = 4.561 * singleY, //x1,y1 refer to the position compared to the bgcard	x1，y1对应按钮相对背景卡的位置，在默认窗口大小时，实际值应接近-8，8
-				dy = 38.773 * singleY;						//dy refers to the height difference between two buttons	dy对应两张卡片的高度差，在默认窗口大小时，实际值应接近68
-
-	//adjust the bgcard the two buttons(upgrade and fresh)	调整背景图片两个菜单项（升级和刷新）除了相对位置之外其余皆同步
-	//adjust the scale	调整大小
+	//调整背景图片两个菜单项（升级和刷新）除了相对位置之外其余皆同步	adjust the bgcard the two buttons(upgrade and fresh)//adjust the scale	调整大小
 	shopMore->setScale(scale);
 	buyExp->setScale(scale);
 	freshShop->setScale(scale);
@@ -161,12 +199,27 @@ void PlayScene::createShop(Vec2 position)
 	freshShop->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
 	//adjust the Position	调整相对大小
 	shopMore->setPosition(tmpVec2);
-	buyExp->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 1) + Vec2(- 80 * config->getPx()->x, -45 * config->getPx()->y));
+	buyExp->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 1) + Vec2(-80 * config->getPx()->x, -45 * config->getPx()->y));
 	freshShop->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 0) + Vec2(-80 * config->getPx()->x, -45 * config->getPx()->y));
 	//add the parent node	添加父节点
 	playLayer->addChild(shopMore, 5);
 	menu->addChild(buyExp);
 	menu->addChild(freshShop);
+
+	const float x2 = 130, y2 = 1600;	//金币图片所在的位置（相对于底层卡片）	the position of Gold coin icon
+	//添加当前角色所拥有的金币数量
+	auto Goldicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Coin.png"));		//the gold coin icon（金币图标）
+	//auto GoldLabel = Label::createWithTTF("00", "/fonts/Marker Felt.ttf", 45);	//the label of the count of gold coins（金币数量标签）
+	//auto ExLabel = Label::createWithTTF("Lv.01(00%)", "/fonts/Marker Felt.ttf", 45);	//the label of Experience（经验标签，百分比表示当前经验值，满99升级）
+	GoldLabel->setColor(Color3B::BLACK);	//设置字体颜色
+	ExLabel->setColor(Color3B::BLACK);		//`
+	GoldLabel->setPosition(Vec2(70, 15));	//金币标签相对于金币图标的位置	the position of GoldLabel comparing to the gold coin icon
+	ExLabel->setPosition(Vec2(210, 15));	//`经验标签相对于金币图标的位置	the position of Exlabel as same above
+	Goldicon->addChild(GoldLabel);	//标签添加至图标的字节点
+	Goldicon->addChild(ExLabel);	//`
+	Goldicon->setScale(4);		//金币图标的缩放比例，金币标签和经验标签与之同步
+	Goldicon->setPosition(x2, y2);	//金币图标相对于底层卡片的位置，具体参数见代码表头
+	shopMore->addChild(Goldicon);	//添加至卡片
 
 	// 棋子及装备卡片
 	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
@@ -218,10 +271,11 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	csv.parseWithFile("Data/PiecesData.csv");
 	auto rowPosition = csv.findRowOfItem(pieceName);
 	auto sprite = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
+	auto Goldicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Coin.png"));		//the gold coin icon（金币图标）
 	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png"));	//the Health icon（生命）
 	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png"));	//the Attack icon(攻击)
 	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png"));		//the Armor icon(防御)
-	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);	//the name of book 棋子名称
+	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);		//the name of book 棋子名称
 
 
 	//adjust the comparing position of the icons and values 调整对应图标和数值在卡片中的相对位置
@@ -230,7 +284,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	sprite->setPosition(Vec2(450, 800));
 	item->addChild(sprite);
 
-	Name->setPosition(Vec2(450,100));
+	Name->setPosition(Vec2(450, 100));
 	Name->setColor(Color3B::BLACK);
 	item->addChild(Name);
 
@@ -238,6 +292,14 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 		x1 = 1150, y1 = 50,		//the stars position compared to the feature icon	星星相对于属性图标的位置
 		x2 = 1200, y2 = 700, dy = 400;	//the middle fearture position compared to the card, the height difference 中间的属性条相对于卡片的位置，和属性条之间的高度差
 	const float s1 = 0.8, s2 = 0.4;	//the stars scale, the feature scale	星星缩放比例，属性条缩放比例
+	/*花费所需的金币数量*/
+	auto Cost = Label::createWithTTF(csv[rowPosition][D_COST].c_str(), "/fonts/Marker Felt.ttf", 45);
+	Cost->setColor(Color3B::BLACK);
+	Cost->setPosition(Vec2(70, 15));
+	Goldicon->addChild(Cost);
+	Goldicon->setScale(4);
+	Goldicon->setPosition(Vec2(x2 + 50, y2 + dy * 1 + 220));//金币花费的相对位置	comparing position of cost
+	item->addChild(Goldicon);
 	/*Health feature 生命属性*/
 	auto Healthvalue = levelStars(csv[rowPosition][D_HP_LEVEL]).at(0);
 	Healthvalue->setPosition(Vec2(x1, y1));
@@ -348,14 +410,59 @@ void PlayScene::update(float dt)
 	//}
 }
 
+void PlayScene::playerBInitRound1()
+{
+	// 数据模型
+	ChessPiece* crtPiece = shopModel->getPieceList()->at(1);
+	playerB->setExperience(1);
+	playerB->getPlayerPieceBattle()->pushBack(crtPiece);
+	chessBoardModel->getPlayerB_WarZone_Pieces()->push_back(crtPiece);
+	PieceCoordinate coordinate;
+	coordinate.setX(7);
+	coordinate.setY(7);
+	crtPiece->setPrtCoordinate(&coordinate);
+	crtPiece->setOriginCoordinate(7, 7);
+	chessBoardModel->getWarZonePieces(7)->at(7) = crtPiece;
+	
+	// 可视化
+	pieceBoard[8][8] = createChessPiece(crtPiece->getPieceName(), crtPiece->getPicPath(), Vec2(8, 8), 1);
+	playLayer->addChild(pieceBoard[8][8], 7);
+}
+
 void PlayScene::menuExitCallBack(Ref* sender)
 {
+	AudioEngine::stop(_audioBgID);//结束播放背景音乐
+
 	Director::getInstance()->getTextureCache()->removeAllTextures();
 	Director::getInstance()->end();
 }
 
+void PlayScene::menuMusicCallBack(Ref* sender)
+{
+	if (AudioEngine::getState(_audioBgID) == AudioEngine::AudioState::PLAYING)
+	{
+		AudioEngine::pause(_audioBgID);
+	}
+	else if (AudioEngine::getState(_audioBgID) == AudioEngine::AudioState::PAUSED)
+	{
+		AudioEngine::resume(_audioBgID);
+	}
+}
+
+void PlayScene::menuTalkCallBack(Ref* sender)
+{
+
+}
+
+void PlayScene::menuReadyCallBack(Ref* sender)
+{
+}
+
 void PlayScene::menuPieceCardCallBack1(Ref* sender)
 {
+	//play effect music of button	播放按钮音效
+	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
+
 	// 获取到当前所点击的棋子卡片
 	const int NUMBER = 0;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
@@ -370,6 +477,9 @@ void PlayScene::menuPieceCardCallBack1(Ref* sender)
 
 void PlayScene::menuPieceCardCallBack2(Ref* sender)
 {
+	//play effect music of button	播放按钮音效
+	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
+
 	const unsigned int NUMBER = 1;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
 	//能买
@@ -383,6 +493,9 @@ void PlayScene::menuPieceCardCallBack2(Ref* sender)
 
 void PlayScene::menuPieceCardCallBack3(Ref* sender)
 {
+	//play effect music of button	播放按钮音效
+	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
+
 	const unsigned int NUMBER = 2;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
 	//能买
@@ -396,6 +509,9 @@ void PlayScene::menuPieceCardCallBack3(Ref* sender)
 
 void PlayScene::menuPieceCardCallBack4(Ref* sender)
 {
+	//play effect music of button	播放按钮音效
+	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
+
 	const unsigned int NUMBER = 3;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
 	//能买
@@ -410,6 +526,9 @@ void PlayScene::menuPieceCardCallBack4(Ref* sender)
 //装备栏 
 void PlayScene::menuPieceCardCallBack5(Ref* sender)
 {
+	//play effect music of button	播放按钮音效
+	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
+
 	const unsigned int NUMBER = 4;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
 	//能买
@@ -438,6 +557,21 @@ void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 	coordinate.setX(i + 1);
 	coordinate.setY(0);
 	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->setPrtCoordinate(&coordinate);
+	// 判断棋子升级
+	//Vector<ChessPiece*> piecesTemp{ chessBoardModel->getPlayerA_PreZone_Pieces()->at(0) };
+	//Map<string, Vector<ChessPiece*>> temp;
+	//temp.insert(chessBoardModel->getPlayerA_PreZone_Pieces()->at(0)->getTag(), piecesTemp);
+	//for (int i = 1; i < chessBoardModel->getPlayerA_PreZone_Pieces()->size(); i++)
+	//{
+	//	for (int j = 0; j < temp.size(); j++)
+	//	{
+	//		if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->getTag() == temp.keys().at(j))
+	//		{
+	//			// 如果tag匹配
+
+	//		}
+	//	}
+	//}
 	// 给玩家信息更新
 	playerA->addToPiecePossesion(piece);
 	playerA->setMoney(-1 * piece->getPiecePerCost());
@@ -446,6 +580,7 @@ void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 	auto visiblePiece = createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(i + 1, 0), 0);
 	pieceBoard[0][i + 1] = visiblePiece;
 	playLayer->addChild(pieceBoard[0][i + 1], 7);
+	GoldLabel->setString(Value(playerA->getMoney()).asString());
 }
 
 void PlayScene::menuFreshShopCallBack(Ref* sender)
@@ -459,7 +594,7 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 		shopModel->refresh();
 
 		// 可视化更新
-		Vec2 position = Vec2(-config->getPx()->x * 45, -config->getPx()->y * 45);
+		Vec2 position = Vec2(-config->getPx()->x * 55, -config->getPx()->y * 45);
 		unsigned int i = 0;
 		for (vector<MenuItemSprite*>::iterator it = shop.begin(); it != shop.end() && i < shop.size();)
 		{
@@ -491,9 +626,14 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 
 void PlayScene::menuBuyExpCallBack(Ref* sender)
 {
-	// 数据模型更新
-	playerA->promote();
-	// 可视化更新
+	if (playerA->getMoney() >= 4)
+	{
+		// 数据模型更新
+		playerA->promote();
+		// 可视化更新
+		string str = "Lv." + Value(playerA->getExperience()).asString();
+		ExLabel->setString(str);
+	}
 }
 
 int PlayScene::onTouchBegan(Touch* touch, Event* event)
@@ -571,6 +711,7 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
 				// 数据模型移动
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) = chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1);
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->setOriginCoordinate(logPosition.getX() - 1, logPosition.getY() - 1);
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1) = nullptr;
 				// 玩家信息更新
@@ -653,6 +794,7 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
 				// 数据模型移动
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) = chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1);
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->setOriginCoordinate(logPosition.getX() - 1, logPosition.getY() - 1);
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1) = nullptr;
 				// 玩家信息更新

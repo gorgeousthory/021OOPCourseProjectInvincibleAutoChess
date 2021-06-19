@@ -62,25 +62,36 @@ void Battle::findEnemy(ChessPiece* damageMaker,int type)
 void Battle::findDstPosition()
 {
 	vector<ChessPiece*>::iterator itA = battleBoard->getPlayerA_WarZone_Pieces()->begin();
+	vector<ChessPiece*>::iterator itB = battleBoard->getPlayerB_WarZone_Pieces()->begin();
 	for (; itA != battleBoard->getPlayerA_WarZone_Pieces()->end(); itA++) {
 		ChessPiece* dstPtr = (*itA)->enemyPtr;
 
 		if (dstPtr->enemyPtr == (*itA)) {
 			//说明两者互为攻击目标,不考虑棋子是否死了的原因是在findEnemy中已经考虑了这个问题
 			//调用计算坐标的函数
+			calculatePosi((*itA), dstPtr);
 			dstPtr->findEnemy = true;
 			(*itA)->findEnemy = true;
 
 		}
 	}
 	
-	//此时，互相为攻击对象的棋子已经找到了自己的攻击对象
+	//此时，互相为攻击对象的棋子已经找到了自己的攻击对象,并且计算好了自己的位置
 	//只需计算其余棋子的终点坐标
 	//计算距离的函数可以根据findEnemy的类型来决定采用/2还是进入战斗范围
 	//在目标死亡以后需要重新寻找
 	for (itA = battleBoard->getPlayerA_WarZone_Pieces()->begin(); itA != battleBoard->getPlayerA_WarZone_Pieces()->end(); itA++) {
 		if (!(*itA)->findEnemy) {
 			//把计算距离的函数在这里调用
+			calculatePosi((*itA), (*itA)->enemyPtr);
+			(*itA)->findEnemy = true;
+		}
+	}
+
+	for (; itB != battleBoard->getPlayerB_WarZone_Pieces()->end(); itB++) {
+		if (!(*itA)->findEnemy) {
+			calculatePosi((*itB), (*itB)->enemyPtr);
+			(*itB)->findEnemy = true;
 		}
 	}
 

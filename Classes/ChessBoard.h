@@ -37,7 +37,7 @@ public:
 	vector<ChessPiece*>* getPlayerB_PreZone_Pieces();
 
 	// 获取对战区棋子集合
-	vector<ChessPiece*>* getWarZonePieces();
+	vector<ChessPiece*>* getWarZonePieces(int col);
 
 	//设置棋盘上的棋子表示这里有棋子不能再放置了
 	//bool setBoard(ChessPiece &piece);

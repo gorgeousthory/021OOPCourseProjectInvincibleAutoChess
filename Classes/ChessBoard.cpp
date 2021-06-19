@@ -44,9 +44,9 @@ vector<ChessPiece*>* ChessBoard::getPlayerB_PreZone_Pieces()
 	return &_prtPlayerB_PreZone_Pieces;
 }
 
-vector<ChessPiece*>* ChessBoard::getWarZonePieces()
+vector<ChessPiece*>* ChessBoard::getWarZonePieces(int col)
 {
-	return &_prt_WarZone_Pieces[BOARD_SIZE];
+	return &_prt_WarZone_Pieces[col];
 }
 
 /*

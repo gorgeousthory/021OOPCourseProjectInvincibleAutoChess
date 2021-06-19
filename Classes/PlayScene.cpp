@@ -450,7 +450,7 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 	shopModel->refresh();
 	Vec2 position = Vec2(-config->getPx()->x * 45, -config->getPx()->y * 45);
 	unsigned int i = 0;
-	for (vector<MenuItemSprite*>::iterator it=shop.begin(); it!=shop.end()&&i < shop.size();)
+	for (vector<MenuItemSprite*>::iterator it=shop.begin(); it != shop.end() && i < shop.size();)
 	{
 		//shop.at(i)->removeFromParent();
 		(*it)->removeFromParent();
@@ -557,6 +557,7 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
 				// 数据模型移动
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) = chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1);
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1) = nullptr;
 				// 可视化移动
 				ChessPiece* visiblePiece = chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1);
@@ -575,6 +576,7 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
 				// 数据模型移动
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) = chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1);
+				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1) = nullptr;
 				// 可视化移动
 				ChessPiece* visiblePiece = chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1);
@@ -593,6 +595,7 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
 				// 数据模型移动
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) = chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1);
+				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1) = nullptr;
 				// 可视化移动
 				ChessPiece* visiblePiece = chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1);
@@ -611,6 +614,7 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
 				// 数据模型移动
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) = chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1);
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1) = nullptr;
 				// 可视化移动
 				ChessPiece* visiblePiece = chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1);

@@ -2,12 +2,11 @@
 
 bool Shop::refresh()
 {
-	//如果已经有棋子，清空
-	if (!pieceList.empty()) {
-		for (auto chess : pieceList) {
-			pieceList.eraseObject(chess);
-		}
+	for (int i = 0; i < pieceList.size(); i++)
+	{
+		pieceList.erase(pieceList.begin() + i);
 	}
+	pieceList.clear();
 
 	srand(time(NULL));
 	//增添棋子

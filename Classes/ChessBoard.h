@@ -36,6 +36,9 @@ public:
 	// 获取玩家B备战区棋子集合
 	vector<ChessPiece*>* getPlayerB_PreZone_Pieces();
 
+	// 获取对战区棋子集合
+	vector<ChessPiece*>* getWarZonePieces(int col);
+
 	//设置棋盘上的棋子表示这里有棋子不能再放置了
 	//bool setBoard(ChessPiece &piece);
 
@@ -46,17 +49,18 @@ private:
 
 	static int turn;
 
-	vector<ChessPiece*> _prtPlayerA_WarZone_Pieces[BOARD_SIZE / 2]; // 记录玩家A对战区棋子集合
+	//直接遍历上场战斗的棋子
+	vector<ChessPiece*> _prtPlayerA_WarZone_Pieces{}; // 记录玩家A对战区棋子集合
 
 	vector<ChessPiece*> _prtPlayerA_PreZone_Pieces; // 记录玩家A备战区棋子集合
 
-	vector<ChessPiece*> _prtPlayerB_WarZone_Pieces[BOARD_SIZE / 2]; // 记录玩家B对战区棋子集合
+	//直接遍历上场战斗的棋子
+	vector<ChessPiece*> _prtPlayerB_WarZone_Pieces{}; // 记录玩家B对战区棋子集合
 
 	vector<ChessPiece*> _prtPlayerB_PreZone_Pieces; // 记录玩家B备战区棋子集合
 
-	//记录棋盘上哪里为空哪里有棋子
-	//仅用来确定是否可以移动，无法确定具体位置的具体棋子是什么
-	vector<Sprite*>board[BOARD_SIZE];
+	//起到作用：查看目标位置是否可放置
+	vector<ChessPiece*> _prt_WarZone_Pieces[BOARD_SIZE]; // 记录所有战斗区棋子
 
 };
 

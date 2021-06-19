@@ -160,6 +160,9 @@ public:
 	//获得每个棋子的价格
 	int getPiecePerCost();
 
+	bool findEnemy = false;//标志着是否找到攻击对象，如果为false代表坐标还没有设置好，true代表坐标已经设置好
+
+	ChessPiece* enemyPtr = nullptr;//攻击目标的指针
 protected:
 	string _pieceName; // 名称
 	

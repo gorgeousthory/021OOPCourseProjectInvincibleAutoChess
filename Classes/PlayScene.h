@@ -30,9 +30,16 @@ using std::vector;
 #define ROW_BOARD			10
 #define COL_BOARD			10
 
-#define NOT_IN_BOARD		0
+// 鼠标事件相关宏
+#define NOT_IN_BOARD		100
 #define IN_WAR_ZONE			1
 #define IN_READY_ZONE		2
+#define READY_TO_WAR		3
+#define WAR_TO_WAR			4
+#define READY_TO_READY		5
+#define WAR_TO_READY		6
+#define NO_LIFT_CLICK_WAR	10
+#define NO_LIFT_CLICK_READY 11
 
 class PlayScene : public Scene
 {
@@ -66,9 +73,13 @@ private:
 	Layer* playLayer;
 	Menu* menu;
 
+	// 当前鼠标状态
+	Sprite* mouseLiftPiece;
+
 	// 棋盘
 	ChessBoard* chessBoardModel;
 	vector<Sprite*> chessBoard[ROW_BOARD];
+	vector<Sprite*> pieceBoard[ROW_BOARD];
 
 	// 商店
 	Shop* shopModel;
@@ -83,6 +94,7 @@ private:
 
 	// 资源加载进度条
 	ProgressTimer* loadingBar;
+
 	// 进度条行为
 	ProgressFromTo* barAction;
 

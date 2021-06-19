@@ -15,6 +15,7 @@ USING_NS_CC;
 
 #include "ui/CocosGUI.h" 
 using namespace ui;
+#include "audio/include/AudioEngine.h"//声音引擎
 
 #include <vector>
 using std::vector;
@@ -92,6 +93,14 @@ private:
 	float timeRemaining = 61.0f;
 	Label* timeLabel = Label::createWithSystemFont("Time:60", "Arial", 60);
 
+	//背景音乐编号
+	unsigned int _audioBgID;
+
+	//当前金币数量标签
+	Label* GoldLabel = Label::createWithTTF("00", "/fonts/Marker Felt.ttf", 45);
+	//当前经验按钮
+	Label* ExLabel = Label::createWithTTF("Lv.1(00%)", "/fonts/Marker Felt.ttf", 45);
+
 	// 资源加载进度条
 	ProgressTimer* loadingBar;
 
@@ -100,6 +109,12 @@ private:
 
 	// 退出按钮的点击事件
 	void menuExitCallBack(Ref* sender);
+	//声音按钮的点击事件
+	void menuMusicCallBack(Ref* sender);
+	//交流按钮的点击事件
+	void menuTalkCallBack(Ref* sender);
+	//准备按钮的点击事件
+	void menuReadyCallBack(Ref* sender);
 
 	// 购买卡片的点击事件
 	void menuPieceCardCallBack1(Ref* sender);

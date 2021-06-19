@@ -49,17 +49,14 @@ private:
 
 	static int turn;
 
-	//直接遍历上场战斗的棋子
 	vector<ChessPiece*> _prtPlayerA_WarZone_Pieces{}; // 记录玩家A对战区棋子集合
 
 	vector<ChessPiece*> _prtPlayerA_PreZone_Pieces; // 记录玩家A备战区棋子集合
 
-	//直接遍历上场战斗的棋子
 	vector<ChessPiece*> _prtPlayerB_WarZone_Pieces{}; // 记录玩家B对战区棋子集合
 
 	vector<ChessPiece*> _prtPlayerB_PreZone_Pieces; // 记录玩家B备战区棋子集合
 
-	//起到作用：查看目标位置是否可放置
 	vector<ChessPiece*> _prt_WarZone_Pieces[BOARD_SIZE]; // 记录所有战斗区棋子
 
 };

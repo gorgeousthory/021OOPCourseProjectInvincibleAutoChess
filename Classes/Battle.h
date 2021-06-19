@@ -20,7 +20,7 @@ public:
 	//CREATE_FUNC(Battle);
 
 	//º∆À„æ‡¿Î
-	double getDistance(PieceCoordinate* start, PieceCoordinate* end);
+	double getDistance(PieceCoordinate start, PieceCoordinate end);
 
 	void pieceBattle(ChessPiece *damageMaker, ChessPiece *victim);
 

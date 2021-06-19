@@ -10,9 +10,9 @@ bool Battle::init()
 {
 	return true;
 }
-double Battle::getDistance(PieceCoordinate* start, PieceCoordinate* end)
+double Battle::getDistance(PieceCoordinate start, PieceCoordinate end)
 {
-	return sqrt(pow((start->getX() - end->getX()), 2) + pow((start->getY() - end->getY()), 2));
+	return sqrt(pow((start.getX() - end.getX()), 2) + pow((start.getY() - end.getY()), 2));
 }
 void Battle::pieceBattle(ChessPiece *damageMaker, ChessPiece *victim)
 {
@@ -31,7 +31,7 @@ void Battle::findEnemy(ChessPiece* damageMaker,int type)
 			}
 			else {
 				double temp = 0;
-				temp = getDistance(damageMaker->getPrtCoordinateByType(CoordinateType::logical), battleBoard->getPlayerB_WarZone_Pieces()->at(i)->getPrtCoordinateByType(CoordinateType::logical));
+				temp = getDistance(damageMaker->getPrtCoordinate(), battleBoard->getPlayerB_WarZone_Pieces()->at(i)->getPrtCoordinate());
 				if (temp < distance) {
 					if (battleBoard->getPlayerB_WarZone_Pieces()->at(i)->ifDead()) {
 						enemyPiece = battleBoard->getPlayerB_WarZone_Pieces()->at(i);
@@ -46,7 +46,7 @@ void Battle::findEnemy(ChessPiece* damageMaker,int type)
 			}
 			else {
 				double temp = 0;
-				temp = getDistance(damageMaker->getPrtCoordinateByType(CoordinateType::logical), battleBoard->getPlayerA_WarZone_Pieces()->at(i)->getPrtCoordinateByType(CoordinateType::logical));
+				temp = getDistance(damageMaker->getPrtCoordinate(), battleBoard->getPlayerA_WarZone_Pieces()->at(i)->getPrtCoordinate());
 				if (temp < distance) {
 					if (battleBoard->getPlayerA_WarZone_Pieces()->at(i)->ifDead()) {
 						enemyPiece = battleBoard->getPlayerA_WarZone_Pieces()->at(i);
@@ -102,8 +102,8 @@ void Battle::calculatePosi(ChessPiece* a,ChessPiece* b)
 	double X = 0, Y = 0;
 	int xSum = 0, ySum = 0;
 	int ax = 0, ay = 0, bx = 0, by = 0;
-	PieceCoordinate* aCoordinate = a->getPrtCoordinateByType(CoordinateType::logical);
-	PieceCoordinate* bCoordinate = b->getPrtCoordinateByType(CoordinateType::logical);
+	PieceCoordinate* aCoordinate = &(a->getPrtCoordinate());
+	PieceCoordinate* bCoordinate = &(b->getPrtCoordinate());
 	if (!a->findEnemy && !b->findEnemy) {//两人都还没找到战斗对象
 		xSum = aCoordinate->getX() + bCoordinate->getX();
 		ySum = aCoordinate->getY() + bCoordinate->getY();
@@ -299,8 +299,8 @@ void Battle::calculatePosi(ChessPiece* a,ChessPiece* b)
 		//enumerate 里是包含changeWarZonePtr的
 		enumerate(ax, ay, a);
 		//a就被放好了
-		ax = a->getPrtCoordinateByType(CoordinateType::logical)->getX();
-		ay = a->getPrtCoordinateByType(CoordinateType::logical)->getY();
+		ax = a->getPrtCoordinate().getX();
+		ay = a->getPrtCoordinate().getY();
 		b->retain();
 		enumerate(ax, ay, b);
 	}
@@ -310,12 +310,12 @@ void Battle::calculatePosi(ChessPiece* a,ChessPiece* b)
 void Battle::changeWarZonePtr(int x, int y, ChessPiece* a)
 {
 	//目标地点放a的指针，原地址给换成空指针
-	PieceCoordinate* aCoordinate = a->getPrtCoordinateByType(CoordinateType::logical);
+	PieceCoordinate* aCoordinate = &(a->getPrtCoordinate());
 	battleBoard->getWarZonePieces(y)->at(x) = a;
 	battleBoard->getWarZonePieces(aCoordinate->getY())->at(aCoordinate->getX()) = nullptr;
 	//修改了a的逻辑坐标，但是真实坐标目前没有修改
-	a->getPrtCoordinateByType(CoordinateType::logical)->setX(x);
-	a->getPrtCoordinateByType(CoordinateType::logical)->setY(y);
+	a->getPrtCoordinate().setX(x);
+	a->getPrtCoordinate().setY(y);
 }
 
 void Battle::enumerate(int x, int y, ChessPiece* a)

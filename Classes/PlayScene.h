@@ -61,6 +61,9 @@ public:
 	//棋子的可视化
 	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position, int type = 1);
 
+	/*返回多个星星的图标,参数代表星星的个数，以向量中的第一个为父节点*/
+	Vector<Sprite*> levelStars(const string& value);
+
 	// 坐标转换函数
 	static PieceCoordinate coordingRevert(CoordinateType originType, Vec2 originPosition);
 
@@ -132,7 +135,7 @@ private:
 	void menuPieceCardCallBack3(Ref* sender);
 
 	void menuPieceCardCallBack4(Ref* sender);
-
+	// 装备栏
 	void menuPieceCardCallBack5(Ref* sender);
 
 	void buyCard(const unsigned int num, ChessPiece* piece);

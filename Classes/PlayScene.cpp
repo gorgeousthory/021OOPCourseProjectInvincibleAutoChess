@@ -234,27 +234,6 @@ void PlayScene::createShop(Vec2 position)
 	shop.push_back(pieceCard5);
 }
 
-/*返回多个星星的图标,参数代表星星的个数，以向量中的第一个为父节点*/
-Vector<Sprite*> levelStars(const string& value)
-{
-	Vector<Sprite*> stars;	//the vector contains the stars;
-	int num = 0;
-	Vec2 tmp = {};
-	for (int i = 0; i < Value(value).asInt(); i++)
-	{
-		stars.pushBack(Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("/res/Icons/Star.png")));	//the star icon	
-		num = stars.size() - 1;
-		stars.at(num)->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-		tmp.x += stars.at(0)->getContentSize().width;
-		if (0 != num)
-		{
-			stars.at(num)->setPosition(tmp);
-			stars.at(0)->addChild(stars.at(num));
-		}
-	}
-	return stars;
-}
-
 MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback)
 {
 	auto texture = Director::getInstance()->getTextureCache();
@@ -364,6 +343,26 @@ Sprite* PlayScene::createChessPiece(string pieceName, string piecePicPath, Vec2 
 		piece->addChild(mpBar);
 	}
 	return piece;
+}
+
+Vector<Sprite*> PlayScene::levelStars(const string& value)
+{
+	Vector<Sprite*> stars;	//the vector contains the stars;
+	int num = 0;
+	Vec2 tmp = {};
+	for (int i = 0; i < Value(value).asInt(); i++)
+	{
+		stars.pushBack(Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("/res/Icons/Star.png")));	//the star icon	
+		num = stars.size() - 1;
+		stars.at(num)->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+		tmp.x += stars.at(0)->getContentSize().width;
+		if (0 != num)
+		{
+			stars.at(num)->setPosition(tmp);
+			stars.at(0)->addChild(stars.at(num));
+		}
+	}
+	return stars;
 }
 
 PieceCoordinate PlayScene::coordingRevert(CoordinateType originType, Vec2 originPosition)
@@ -522,8 +521,7 @@ void PlayScene::menuPieceCardCallBack4(Ref* sender)
 		shop.at(NUMBER)->setEnabled(false);
 	}
 }
-
-//装备栏 
+ 
 void PlayScene::menuPieceCardCallBack5(Ref* sender)
 {
 	//play effect music of button	播放按钮音效
@@ -557,21 +555,8 @@ void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 	coordinate.setX(i + 1);
 	coordinate.setY(0);
 	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->setPrtCoordinate(&coordinate);
-	// 判断棋子升级
-	//Vector<ChessPiece*> piecesTemp{ chessBoardModel->getPlayerA_PreZone_Pieces()->at(0) };
-	//Map<string, Vector<ChessPiece*>> temp;
-	//temp.insert(chessBoardModel->getPlayerA_PreZone_Pieces()->at(0)->getTag(), piecesTemp);
-	//for (int i = 1; i < chessBoardModel->getPlayerA_PreZone_Pieces()->size(); i++)
-	//{
-	//	for (int j = 0; j < temp.size(); j++)
-	//	{
-	//		if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->getTag() == temp.keys().at(j))
-	//		{
-	//			// 如果tag匹配
-
-	//		}
-	//	}
-	//}
+	// chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->IncreaseOne();
+	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->promoteRank();
 	// 给玩家信息更新
 	playerA->addToPiecePossesion(piece);
 	playerA->setMoney(-1 * piece->getPiecePerCost());
@@ -594,6 +579,7 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 		shopModel->refresh();
 
 		// 可视化更新
+		GoldLabel->setString(Value(playerA->getMoney()).asString());
 		Vec2 position = Vec2(-config->getPx()->x * 55, -config->getPx()->y * 45);
 		unsigned int i = 0;
 		for (vector<MenuItemSprite*>::iterator it = shop.begin(); it != shop.end() && i < shop.size();)
@@ -633,6 +619,7 @@ void PlayScene::menuBuyExpCallBack(Ref* sender)
 		// 可视化更新
 		string str = "Lv." + Value(playerA->getExperience()).asString();
 		ExLabel->setString(str);
+		GoldLabel->setString(Value(playerA->getMoney()).asString());
 	}
 }
 
@@ -740,12 +727,25 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				// 数据模型移动
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) = chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1);
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1)->retain();
+				for (int i = 0; i < chessBoardModel->getPlayerA_WarZone_Pieces()->size(); i++)
+				{
+					PieceCoordinate originCoordinate;
+					originCoordinate.setX(originPosition.getX() - 1);
+					originCoordinate.setY(originPosition.getY() - 1);
+					if (chessBoardModel->getPlayerA_WarZone_Pieces()->at(i)->getOriginCoordin() == originCoordinate)
+					{
+						chessBoardModel->deleteFromWarZoneByID(i);
+					}
+				}
 				chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1) = nullptr;
 				// 玩家信息更新
 				playerA->addToPiecePossesion(chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1));
 				for (int i = 0; i < playerA->getPlayerPieceBattle()->size(); i++)
 				{
-					if (playerA->getPlayerPieceBattle()->at(i)->getPrtCoordinate() == originPosition)
+					PieceCoordinate originCoordinate;
+					originCoordinate.setX(originPosition.getX() - 1);
+					originCoordinate.setY(originPosition.getY() - 1);
+					if (playerA->getPlayerPieceBattle()->at(i)->getPrtCoordinate() == originCoordinate)
 					{
 						playerA->deleteFromBattleByID(i);
 					}
@@ -772,7 +772,10 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				// 玩家信息更新
 				for (int i = 0; i < playerA->getPlayerPiecePossesion()->size(); i++)
 				{
-					if (playerA->getPlayerPiecePossesion()->at(i)->getPrtCoordinate() == originPosition)
+					PieceCoordinate originCoordinate;
+					originCoordinate.setX(originPosition.getX() - 1);
+					originCoordinate.setY(originPosition.getY() - 1);
+					if (playerA->getPlayerPiecePossesion()->at(i)->getPrtCoordinate() == originCoordinate)
 					{
 						playerA->getPlayerPiecePossesion()->at(i)->setPrtCoordinate(&logPosition);
 					}
@@ -796,12 +799,16 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) = chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1);
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->setOriginCoordinate(logPosition.getX() - 1, logPosition.getY() - 1);
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->retain();
+				chessBoardModel->getPlayerA_WarZone_Pieces()->push_back(chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1));
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1) = nullptr;
 				// 玩家信息更新
 				playerA->addToPieceBattle(chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1));
 				for (int i = 0; i < playerA->getPlayerPiecePossesion()->size(); i++)
 				{
-					if (playerA->getPlayerPiecePossesion()->at(i)->getPrtCoordinate() == originPosition)
+					PieceCoordinate originCoordinate;
+					originCoordinate.setX(originPosition.getX() - 1);
+					originCoordinate.setY(originPosition.getY() - 1);
+					if (playerA->getPlayerPiecePossesion()->at(i)->getPrtCoordinate() == originCoordinate)
 					{
 						playerA->deleteFromPossesionByID(i);
 					}

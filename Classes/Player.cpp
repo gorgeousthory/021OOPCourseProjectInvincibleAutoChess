@@ -2,7 +2,7 @@
 
 bool Player::init()
 {
-	money = 5;//初始化有5个coin
+	money = 5000000;//初始化有5个coin
 
 	healthPoint = 30;
 
@@ -61,10 +61,10 @@ int Player::getHp()
 	return healthPoint;
 }
 
-ChessPiece** Player::getPieceBattle()
-{
-	return pieceBattle;
-}
+//ChessPiece** Player::getPieceBattle()
+//{
+//	return pieceBattle;
+//}
 
 int Player::getExperience()
 {
@@ -95,7 +95,7 @@ int Player::getMoney()
 
 void Player::setMoney(int coin)
 {
-	money = coin;
+	money += coin;
 }
 
 int Player::getMaxPieceStorage()
@@ -122,7 +122,7 @@ int Player::getOwnPieceNum()
 {
 	int pieceNum = 0;
 	for (int i = 0; i < 8; i++) {
-		if (piecePossesion[i] != nullptr) {
+		if (piecePossesion.at(i) != nullptr) {
 			pieceNum++;
 		}
 		else {
@@ -130,4 +130,36 @@ int Player::getOwnPieceNum()
 		}
 	}
 	return pieceNum;
+}
+
+void Player::addToPiecePossesion(ChessPiece* piece)
+{
+	if (piecePossesion.size() < maxPieceStorage)
+	{
+		piecePossesion.pushBack(piece);
+	}
+}
+
+void Player::deleteFromPossesionByID(int id)
+{
+	if (piecePossesion.size() >= id)
+	{
+		piecePossesion.erase(piecePossesion.begin() + id);
+	}
+}
+
+void Player::addToPieceBattle(ChessPiece* piece)
+{
+	if (pieceBattle.size() < maxPieceBattle)
+	{
+		pieceBattle.pushBack(piece);
+	}
+}
+
+void Player::deleteFromBattleByID(int id)
+{
+	if (pieceBattle.size() >= id)
+	{
+		pieceBattle.erase(pieceBattle.begin() + id);
+	}
 }

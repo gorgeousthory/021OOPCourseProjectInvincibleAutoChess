@@ -28,7 +28,7 @@ struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 	double equipAttack;//装备+初始
 	
 	double defence; // 实时防御力
-	double bDefence;//人物基础防御力
+	double bDefence; //人物基础防御力
 	double equpiDefence;//装备+初始
 
 	double attackSpeed; // 实时攻击速度
@@ -61,6 +61,12 @@ public:
 	// 设置棋子纵坐标
 	void setY(const int y);
 
+	bool operator == (PieceCoordinate& coordinate);
+
+	bool findEnemy = false; // 是否找到攻击对象
+
+	ChessPiece* enemyPtr = nullptr; // 攻击目标的指针
+
 private:
 	int _x; // 横坐标
 
@@ -76,14 +82,7 @@ class ChessPiece : public Ref
 {
 public:
 	// 初始化棋子状态
-	virtual bool init(int id);
 	virtual bool init();
-
-	// 初始化棋子状态
-	void initPieceIfo(int id);
-
-	// 更新棋子状态
-	bool updatePieceInfo(const double damage, PieceCoordinate* newRealCoordinate);
 
 	// 获取棋子名称
 	const string getPieceName();
@@ -94,12 +93,13 @@ public:
 	// 获取当前棋子数值
 	const PieceInfo* getCrtPieceCondition();
 
-
 	// 获取当前棋子星级
 	const Level getPieceLevel();
 
 	// 获取当前棋子位置
-	PieceCoordinate* getPrtCoordinateByType(CoordinateType type);
+	PieceCoordinate getPrtCoordinate();
+
+	void setPrtCoordinate(PieceCoordinate* coordinate);
 
 	// 设置当前棋子星级
 	void setPieceLevel(const Level newLevel);

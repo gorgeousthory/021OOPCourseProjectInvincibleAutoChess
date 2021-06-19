@@ -360,7 +360,7 @@ void PlayScene::menuPieceCardCallBack1(Ref* sender)
 	const int NUMBER = 0;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
 	//能买
-	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getPlayerPiecePossesion()->size(), piece->getPiecePerCost()))
 	{
 		buyCard(NUMBER, piece);
 		shop.at(NUMBER)->setVisible(false);
@@ -373,7 +373,7 @@ void PlayScene::menuPieceCardCallBack2(Ref* sender)
 	const unsigned int NUMBER = 1;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
 	//能买
-	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getPlayerPiecePossesion()->size(), piece->getPiecePerCost()))
 	{
 		buyCard(NUMBER, piece);
 		shop.at(NUMBER)->setVisible(false);
@@ -386,7 +386,7 @@ void PlayScene::menuPieceCardCallBack3(Ref* sender)
 	const unsigned int NUMBER = 2;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
 	//能买
-	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getPlayerPiecePossesion()->size(), piece->getPiecePerCost()))
 	{
 		buyCard(NUMBER, piece);
 		shop.at(NUMBER)->setVisible(false);
@@ -399,7 +399,7 @@ void PlayScene::menuPieceCardCallBack4(Ref* sender)
 	const unsigned int NUMBER = 3;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
 	//能买
-	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getPlayerPiecePossesion()->size(), piece->getPiecePerCost()))
 	{
 		buyCard(NUMBER, piece);
 		shop.at(NUMBER)->setVisible(false);
@@ -413,7 +413,7 @@ void PlayScene::menuPieceCardCallBack5(Ref* sender)
 	const unsigned int NUMBER = 4;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
 	//能买
-	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getPlayerPiecePossesion()->size(), piece->getPiecePerCost()))
 	{
 		buyCard(NUMBER, piece);
 		shop.at(NUMBER)->setVisible(false);
@@ -423,9 +423,6 @@ void PlayScene::menuPieceCardCallBack5(Ref* sender)
 
 void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 {
-	// 能买
-	playerA->piecePossesion[playerA->getOwnPieceNum()] = piece;
-	playerA->retain();
 	// 计算出应该放置在备战区的哪个位置
 	int i = 0;
 	for (i; i < 8; i++)
@@ -435,12 +432,20 @@ void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 			break;
 		}
 	}
+	// 数据模型添加
+	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) = piece;
+	PieceCoordinate coordinate;
+	coordinate.setX(i + 1);
+	coordinate.setY(0);
+	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->setPrtCoordinate(&coordinate);
+	// 给玩家信息更新
+	playerA->addToPiecePossesion(piece);
+	playerA->setMoney(-1 * piece->getPiecePerCost());
+	playerA->retain();
 	// 可视化添加
 	auto visiblePiece = createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(i + 1, 0), 0);
 	pieceBoard[0][i + 1] = visiblePiece;
 	playLayer->addChild(pieceBoard[0][i + 1], 7);
-	// 数据模型添加
-	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) = piece;
 }
 
 void PlayScene::menuFreshShopCallBack(Ref* sender)
@@ -559,6 +564,14 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) = chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1);
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1) = nullptr;
+				// 玩家信息更新
+				for (int i = 0; i < playerA->getPlayerPieceBattle()->size(); i++)
+				{
+					if (playerA->getPlayerPieceBattle()->at(i)->getPrtCoordinate() == originPosition)
+					{
+						playerA->getPlayerPieceBattle()->at(i)->setPrtCoordinate(&logPosition);
+					}
+				}
 				// 可视化移动
 				ChessPiece* visiblePiece = chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1);
 				pieceBoard[originPosition.getY()][originPosition.getX()]->removeFromParent();
@@ -578,6 +591,15 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) = chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1);
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1) = nullptr;
+				// 玩家信息更新
+				playerA->addToPiecePossesion(chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1));
+				for (int i = 0; i < playerA->getPlayerPieceBattle()->size(); i++)
+				{
+					if (playerA->getPlayerPieceBattle()->at(i)->getPrtCoordinate() == originPosition)
+					{
+						playerA->deleteFromBattleByID(i);
+					}
+				}
 				// 可视化移动
 				ChessPiece* visiblePiece = chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1);
 				pieceBoard[originPosition.getY()][originPosition.getX()]->removeFromParent();
@@ -597,6 +619,14 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) = chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1);
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1) = nullptr;
+				// 玩家信息更新
+				for (int i = 0; i < playerA->getPlayerPiecePossesion()->size(); i++)
+				{
+					if (playerA->getPlayerPiecePossesion()->at(i)->getPrtCoordinate() == originPosition)
+					{
+						playerA->getPlayerPiecePossesion()->at(i)->setPrtCoordinate(&logPosition);
+					}
+				}
 				// 可视化移动
 				ChessPiece* visiblePiece = chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1);
 				pieceBoard[0][originPosition.getX()]->removeFromParent();
@@ -607,7 +637,7 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 			}
 			break;
 		case READY_TO_WAR:
-			if (chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) == nullptr && mouseLiftPiece != nullptr)
+			if (chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) == nullptr && mouseLiftPiece != nullptr && playerA->getPlayerPieceBattle()->size() < playerA->getMaxPieceBattle())
 			{
 				PieceCoordinate originPosition;
 				originPosition.setX((mouseLiftPiece->getTag() - 100) / 10);
@@ -616,6 +646,15 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) = chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1);
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1) = nullptr;
+				// 玩家信息更新
+				playerA->addToPieceBattle(chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1));
+				for (int i = 0; i < playerA->getPlayerPiecePossesion()->size(); i++)
+				{
+					if (playerA->getPlayerPiecePossesion()->at(i)->getPrtCoordinate() == originPosition)
+					{
+						playerA->deleteFromPossesionByID(i);
+					}
+				}
 				// 可视化移动
 				ChessPiece* visiblePiece = chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1);
 				pieceBoard[originPosition.getY()][originPosition.getX()]->removeFromParent();

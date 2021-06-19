@@ -30,12 +30,9 @@ using std::vector;
 #define ROW_BOARD			10
 #define COL_BOARD			10
 
-#define NOT_IN_BOARD		0
+#define NOT_IN_BOARD		10
 #define IN_WAR_ZONE			1
 #define IN_READY_ZONE		2
-
-#define MOUSE_LIFT			0
-#define MOUSE_DOWN			1
 
 class PlayScene : public Scene
 {
@@ -70,11 +67,12 @@ private:
 	Menu* menu;
 
 	// 当前鼠标状态
-	int mouseType;
+	Sprite* mouseLiftPiece;
 
 	// 棋盘
 	ChessBoard* chessBoardModel;
 	vector<Sprite*> chessBoard[ROW_BOARD];
+	vector<Sprite*> pieceBoard[ROW_BOARD];
 
 	// 商店
 	Shop* shopModel;

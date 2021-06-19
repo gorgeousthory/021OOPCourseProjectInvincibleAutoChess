@@ -10,6 +10,8 @@ bool PlayScene::init()
 	if (!Scene::init()) // 对父类init方法的判断
 		return false;
 
+	mouseLiftPiece = nullptr;
+
 	// 需要用到的单例工具
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
@@ -18,6 +20,12 @@ bool PlayScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	auto buttonPositiony = visibleSize.height / 3;	//	The y position of two buttons
+
+	// 添加背景层
+	playLayer = Layer::create();
+	playLayer->setPosition(origin);
+	playLayer->setContentSize(visibleSize);
+	this->addChild(playLayer);
 
 	// 创建单点事件监听器
 	auto clickListener = EventListenerTouchOneByOne::create();
@@ -30,12 +38,6 @@ bool PlayScene::init()
 	auto moveListener = EventListenerMouse::create();
 	moveListener->onMouseMove = CC_CALLBACK_1(PlayScene::onMouseMove, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(moveListener, this);
-
-	// 添加背景层
-	playLayer = Layer::create();
-	playLayer->setPosition(origin);
-	playLayer->setContentSize(visibleSize);
-	this->addChild(playLayer);
 
 	// 添加背景图片
 	auto backGround = Sprite::createWithTexture(texture->getTextureForKey("/res/Background/PlaySceneBackground.png"));
@@ -115,10 +117,12 @@ void PlayScene::createBoard(Vec2 position)
 			if (i == 0 || i == ROW_BOARD - 1 || j == 0 || j == COL_BOARD - 1)
 			{
 				chessBoard[i].push_back(Sprite::createWithTexture(texture->getTextureForKey("/res/Background/ReadyZone.png")));
+				pieceBoard[i].push_back(nullptr);
 			}
 			else
 			{
 				chessBoard[i].push_back(Sprite::createWithTexture(texture->getTextureForKey("/res/Background/BoardPiece.png")));
+				pieceBoard[i].push_back(nullptr);
 			}
 			chessBoard[i][j]->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 			chessBoard[i][j]->setScale(scale);
@@ -289,8 +293,10 @@ Sprite* PlayScene::createChessPiece(string pieceName, string piecePicPath, Vec2 
 	piece->setTag(tag);
 	piece->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 	Vec2 originSize = piece->getContentSize();
-	float scale = 50 * config->getPx()->x / originSize.x;
+	float scale = 5 * config->getPx()->x / originSize.x;
 	piece->setScale(scale);
+	PieceCoordinate realPosition = coordingRevert(CoordinateType::logical, position);
+	piece->setPosition(realPosition.getX(), realPosition.getY());
 	if (type == 1) {
 		piece->addChild(hpBar);
 		piece->addChild(mpBar);
@@ -430,7 +436,9 @@ void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 		}
 	}
 	// 可视化添加
-	chessBoard[0].at(i + 1)->addChild(createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(0, i + 1), 0));
+	auto visiblePiece = createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(i + 1, 0), 0);
+	pieceBoard[0][i + 1] = visiblePiece;
+	playLayer->addChild(pieceBoard[0][i + 1], 7);
 	// 数据模型添加
 	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) = piece;
 }
@@ -477,7 +485,7 @@ void PlayScene::menuBuyExpCallBack(Ref* sender)
 int PlayScene::onTouchBegan(Touch* touch, Event* event)
 {
 	Vec2 position = touch->getLocation();
-	if (position.x > chessBoard[1][1]->getPositionX() && position.x < chessBoard[1][9]->getPositionX() && 
+	if (position.x > chessBoard[1][1]->getPositionX() && position.x < chessBoard[1][9]->getPositionX() &&
 		position.y > chessBoard[1][1]->getPositionY() && position.y < chessBoard[5][1]->getPositionY()) // 鼠标在棋盘战斗区
 	{
 		return IN_WAR_ZONE;
@@ -495,28 +503,65 @@ int PlayScene::onTouchBegan(Touch* touch, Event* event)
 
 void PlayScene::onTouchEnded(Touch* touch, Event* event)
 {
+	int clickType = PlayScene::onTouchBegan(touch, event);
 	Vec2 position = touch->getLocation();
 	PieceCoordinate logPosition = coordingRevert(CoordinateType::real, position);
-
-	int clickType = PlayScene::onTouchBegan(touch, event);
+	
 	switch (clickType)
 	{
 		case IN_WAR_ZONE:
-			if (chessBoardModel->getPlayerA_WarZone_Pieces()[logPosition.getX()][logPosition.getY()] != nullptr)
+			if (chessBoardModel->getPlayerA_WarZone_Pieces()[logPosition.getX()][logPosition.getY()] != nullptr && mouseLiftPiece == nullptr)
 			{
-				int tag = 100 + 10 * logPosition.getX() + logPosition.getY();
-				chessBoard[logPosition.getX()][logPosition.getY()]->getChildByTag(tag)->setOpacity(70);
+				int tag = 100 + 10 * logPosition.getY() + logPosition.getX();
+				mouseLiftPiece = pieceBoard[logPosition.getX()][logPosition.getY()];
+				mouseLiftPiece->setOpacity(70);
+			}
+			else if (chessBoardModel->getPlayerA_WarZone_Pieces()[logPosition.getX()][logPosition.getY() - 1] == nullptr && mouseLiftPiece != nullptr)
+			{
+				PieceCoordinate originPosition = coordingRevert(CoordinateType::real, mouseLiftPiece->getPosition());
+				// 数据模型移动
+				chessBoardModel->getPlayerA_WarZone_Pieces()[logPosition.getY() + 1][logPosition.getX() - 1] = chessBoardModel->getPlayerA_WarZone_Pieces()[originPosition.getY() + 1][originPosition.getX() - 1];
+				chessBoardModel->getPlayerA_WarZone_Pieces()[originPosition.getY() + 1][originPosition.getX() - 1] = nullptr;
+				// 可视化移动
+				ChessPiece* visiblePiece = chessBoardModel->getPlayerA_WarZone_Pieces()[logPosition.getY() + 1][logPosition.getX() - 1];
+				pieceBoard[logPosition.getY()][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), 1);
+				playLayer->addChild(pieceBoard[logPosition.getY()][logPosition.getX()]);
+				mouseLiftPiece = nullptr;
+				pieceBoard[originPosition.getY()][originPosition.getX()] = nullptr;
 			}
 			break;
 
 		case IN_READY_ZONE:
-			if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) != nullptr)
+			if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) != nullptr && mouseLiftPiece == nullptr)
 			{
 				int tag = 100 + logPosition.getX();
-				chessBoard[0][logPosition.getX()]->getChildByTag(tag)->setOpacity(70);
+				mouseLiftPiece = pieceBoard[0][logPosition.getX()];
+				mouseLiftPiece->setOpacity(70);
+			}
+			else if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) == nullptr && mouseLiftPiece != nullptr)
+			{
+				PieceCoordinate originPosition = coordingRevert(CoordinateType::real, mouseLiftPiece->getPosition());
+				originPosition.setX((mouseLiftPiece->getTag() - 100) / 10);
+				originPosition.setY((mouseLiftPiece->getTag() - 100) & 10);
+				// 数据模型移动
+				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) = chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1);
+				chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1) = nullptr;
+				// 可视化移动
+				ChessPiece* visiblePiece = chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1);
+				pieceBoard[0][originPosition.getX()]->removeFromParent();
+				pieceBoard[0][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), 0);
+				playLayer->addChild(pieceBoard[0][logPosition.getX()], 7);
+				mouseLiftPiece = nullptr;
+				pieceBoard[0][originPosition.getX()] = nullptr;
 			}
 			break;
-
+		case NOT_IN_BOARD:
+			if (mouseLiftPiece != nullptr)
+			{
+				mouseLiftPiece->setOpacity(250);
+				mouseLiftPiece = nullptr;
+			}
+			break;
 		default:
 			break;
 	}

@@ -63,10 +63,6 @@ public:
 
 	bool operator == (PieceCoordinate& coordinate);
 
-	bool findEnemy = false; // 是否找到攻击对象
-
-	ChessPiece* enemyPtr = nullptr; // 攻击目标的指针
-
 private:
 	int _x; // 横坐标
 
@@ -159,6 +155,10 @@ public:
 	
 	//获得每个棋子的价格
 	int getPiecePerCost();
+
+	bool findEnemy = false; // 是否找到攻击对象
+
+	ChessPiece* enemyPtr = nullptr; // 攻击目标的指针
 
 protected:
 	string _pieceName; // 名称

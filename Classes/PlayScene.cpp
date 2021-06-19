@@ -452,39 +452,48 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 {
 	auto config = ConfigController::getInstance();
 
-	shopModel->refresh();
-	Vec2 position = Vec2(-config->getPx()->x * 45, -config->getPx()->y * 45);
-	unsigned int i = 0;
-	for (vector<MenuItemSprite*>::iterator it=shop.begin(); it != shop.end() && i < shop.size();)
+	if (playerA->getMoney() >= 2) // 如果可以刷新
 	{
-		//shop.at(i)->removeFromParent();
-		(*it)->removeFromParent();
-		it=shop.erase(it);
-		
-	}
-	for (auto chessPtr : shop) {
+		// 数据模型更新
+		playerA->setMoney(-2);
+		shopModel->refresh();
 
-	}
-	shop.clear();
-	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
-	auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1)->getPieceName(), shopModel->getPieceList()->at(1)->getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
-	auto pieceCard3 = PlayScene::createPieceCard(shopModel->getPieceList()->at(2)->getPieceName(), shopModel->getPieceList()->at(2)->getPicPath(), Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
-	auto pieceCard4 = PlayScene::createPieceCard(shopModel->getPieceList()->at(3)->getPieceName(), shopModel->getPieceList()->at(3)->getPicPath(), Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
-	auto pieceCard5 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
-	shop.push_back(pieceCard1);
-	shop.push_back(pieceCard2);
-	shop.push_back(pieceCard3);
-	shop.push_back(pieceCard4);
-	shop.push_back(pieceCard5);
-	for (unsigned int i = 0; i < shop.size(); i++)
-	{
-		menu->addChild(shop.at(i));
+		// 可视化更新
+		Vec2 position = Vec2(-config->getPx()->x * 45, -config->getPx()->y * 45);
+		unsigned int i = 0;
+		for (vector<MenuItemSprite*>::iterator it = shop.begin(); it != shop.end() && i < shop.size();)
+		{
+			//shop.at(i)->removeFromParent();
+			(*it)->removeFromParent();
+			it = shop.erase(it);
+
+		}
+		for (auto chessPtr : shop) {
+
+		}
+		shop.clear();
+		auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
+		auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1)->getPieceName(), shopModel->getPieceList()->at(1)->getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
+		auto pieceCard3 = PlayScene::createPieceCard(shopModel->getPieceList()->at(2)->getPieceName(), shopModel->getPieceList()->at(2)->getPicPath(), Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
+		auto pieceCard4 = PlayScene::createPieceCard(shopModel->getPieceList()->at(3)->getPieceName(), shopModel->getPieceList()->at(3)->getPicPath(), Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
+		auto pieceCard5 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
+		shop.push_back(pieceCard1);
+		shop.push_back(pieceCard2);
+		shop.push_back(pieceCard3);
+		shop.push_back(pieceCard4);
+		shop.push_back(pieceCard5);
+		for (unsigned int i = 0; i < shop.size(); i++)
+		{
+			menu->addChild(shop.at(i));
+		}
 	}
 }
 
 void PlayScene::menuBuyExpCallBack(Ref* sender)
 {
-
+	// 数据模型更新
+	playerA->promote();
+	// 可视化更新
 }
 
 int PlayScene::onTouchBegan(Touch* touch, Event* event)

@@ -62,36 +62,6 @@ bool ChessPiece::ifDead()
 	return _pieceCrtCondition.healthPoint > 0 ? false : true;
 }
 
-/*Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2 position,int type)
-{
-	auto texture = Director::getInstance()->getTextureCache();
-	auto config = ConfigController::getInstance();
-
-	CsvParser csv;
-	csv.parseWithFile("Data/PiecesData.csv");
-
-	auto piece = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
-	auto hpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/HpBar.png"));//生命条
-	auto mpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//蓝条
-	/*auto hpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//灰条
-	auto mpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//灰条
-
-	hpDecreaseBar->setColor(Color3B::BLACK);
-	mpDecreaseBar->setColor(Color3B::BLACK);
-
-	ProgressTimer* hp, mp;
-	hp = ProgressTimer::create(hpDecreaseBar);*/
-	/*piece->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-	Vec2 originSize = piece->getContentSize();
-	float scale = 50 * config->getPx()->x / originSize.x;
-	piece->setScale(scale);
-	if (type == 1) {
-		piece->addChild(hpBar);
-		piece->addChild(mpBar);
-	}
-	return piece;
-}*/
-
 Sprite* ChessPiece::getChessPice()
 {
 	return imagePiece;

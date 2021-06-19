@@ -39,7 +39,6 @@ void Player::promote()
 
 	//到达相应等级
 	if (3 == experience || 6 == experience || 10 == experience) {
-		maxPieceStorage++;
 		maxPieceBattle++;
 	}
 }

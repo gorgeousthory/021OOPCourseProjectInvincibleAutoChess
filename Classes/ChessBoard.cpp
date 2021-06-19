@@ -12,12 +12,11 @@ bool ChessBoard::init()
 		_prtPlayerA_PreZone_Pieces.push_back(nullptr);
 		_prtPlayerB_PreZone_Pieces.push_back(nullptr);
 	}
-	for (int i = 0; i < BOARD_SIZE / 2; i++)
+	for (int i = 0; i < BOARD_SIZE; i++)
 	{
 		for (int j = 0; j < BOARD_SIZE; j++)
 		{
-			_prtPlayerA_WarZone_Pieces[i].push_back(nullptr);
-			_prtPlayerB_WarZone_Pieces[i].push_back(nullptr);
+			_prt_WarZone_Pieces[i].push_back(nullptr);
 		}
 	}
 
@@ -25,15 +24,9 @@ bool ChessBoard::init()
 	return true;
 }
 
-/*
-* 第一个参数为real时表示从逻辑转换为真实
-* 最后一个参数应当固定传入棋盘战斗区最左
-* 下角一小格
-*/
-
 vector<ChessPiece*>* ChessBoard::getPlayerA_WarZone_Pieces()
 {
-	return &_prtPlayerA_WarZone_Pieces[BOARD_SIZE / 2];
+	return &_prtPlayerA_WarZone_Pieces;
 }
 
 vector<ChessPiece*>* ChessBoard::getPlayerA_PreZone_Pieces()
@@ -43,12 +36,17 @@ vector<ChessPiece*>* ChessBoard::getPlayerA_PreZone_Pieces()
 
 vector<ChessPiece*>* ChessBoard::getPlayerB_WarZone_Pieces()
 {
-	return &_prtPlayerB_WarZone_Pieces[BOARD_SIZE / 2];
+	return &_prtPlayerB_WarZone_Pieces;
 }
 
 vector<ChessPiece*>* ChessBoard::getPlayerB_PreZone_Pieces()
 {
 	return &_prtPlayerB_PreZone_Pieces;
+}
+
+vector<ChessPiece*>* ChessBoard::getWarZonePieces()
+{
+	return &_prt_WarZone_Pieces[BOARD_SIZE];
 }
 
 /*

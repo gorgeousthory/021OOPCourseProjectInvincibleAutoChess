@@ -30,13 +30,7 @@ public:
 	//获得hp
 	int getHp();
 
-	ChessPiece** getPieceBattle();//返回指针数组的指针，即地址
-
-	//人物所拥有棋子(每人最多同时持有8枚棋子),初始最大值为5
-	ChessPiece* piecePossesion[8]{};
-
-	//当前上场战斗棋子(每人满级后最多上场7个棋子)，初始最大值为3
-	ChessPiece* pieceBattle[7]{};
+	// ChessPiece** getPieceBattle();//返回指针数组的指针，即地址
 
 	//获取、设定privated的数据
 	int getExperience();
@@ -56,6 +50,18 @@ public:
 
 	int getOwnPieceNum();
 
+	Vector<ChessPiece*>* getPlayerPiecePossesion() { return &piecePossesion; }
+
+	void addToPiecePossesion(ChessPiece* piece);
+
+	void deleteFromPossesionByID(int id);
+
+	Vector<ChessPiece*>* getPlayerPieceBattle() { return & pieceBattle; }
+
+	void addToPieceBattle(ChessPiece* piece);
+
+	void deleteFromBattleByID(int id);
+
 	//根据给出的整数使玩家获得一个装备
 	//返回值表示获取是否成功
 	//失败表示无效整数或超出上限
@@ -64,19 +70,15 @@ public:
 	//根据给出的数字决定给予装备栏的哪一项
 	//返回值表示给予棋子装备是否成功
 	//当人物对应栏位没有装备时，给予失败
-	bool giveOneEquip(int which,ChessPiece& object);
-	
+	bool giveOneEquip(int which, ChessPiece* object);
+
 	//卖出一个装备
 	//返回值表示行为是否成功
 	//栏位从1开始
 	bool saleOneEquip(int which);
 
-	//参数为得到的枚棋子
-	//搭配商店函数调用使用,参数从商店的方法获取
-	bool getOnePiece(ChessPiece* object); 
-
 	//卖出一枚棋子
-	//购买失败时返回空指针
+	//卖出失败时返回空指针
 	//搭配商店函数调用使用,为商店卖出棋子函数提供参数
 	//商店对应函数的返回值是卖出获得钱数
 	ChessPiece* saleOnePiece(int which);
@@ -99,6 +101,12 @@ private:
 
 	//人物血量
 	int healthPoint;
+
+	//人物所拥有棋子(每人最多同时持有8枚棋子),初始最大值为5
+	Vector<ChessPiece*> piecePossesion{};
+
+	//当前上场战斗棋子(每人满级后最多上场7个棋子)，初始最大值为3
+	Vector<ChessPiece*> pieceBattle{};
 
 	//人物持有装备
 	vector<int> myEquip;

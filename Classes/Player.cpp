@@ -3,13 +3,13 @@
 
 bool Player::init()
 {
-	money = 5;//初始化有5个coin
+	money = 5000000;//初始化有5个coin
 
 	healthPoint = 30;
 
 	experience = 1;
 
-	maxPieceStorage = 5;//初始可拥有最大棋子个数
+	maxPieceStorage = 8;//初始可拥有最大棋子个数
 
 	maxPieceBattle = 3;//初始可放最大棋子个数
 
@@ -40,7 +40,6 @@ void Player::promote()
 
 	//到达相应等级
 	if (3 == experience || 6 == experience || 10 == experience) {
-		maxPieceStorage++;
 		maxPieceBattle++;
 	}
 }
@@ -62,10 +61,10 @@ int Player::getHp()
 	return healthPoint;
 }
 
-ChessPiece** Player::getPieceBattle()
-{
-	return pieceBattle;
-}
+//ChessPiece** Player::getPieceBattle()
+//{
+//	return pieceBattle;
+//}
 
 int Player::getExperience()
 {
@@ -96,7 +95,7 @@ int Player::getMoney()
 
 void Player::setMoney(int coin)
 {
-	money = coin;
+	money += coin;
 }
 
 int Player::getMaxPieceStorage()
@@ -123,7 +122,7 @@ int Player::getOwnPieceNum()
 {
 	int pieceNum = 0;
 	for (int i = 0; i < 8; i++) {
-		if (piecePossesion[i] != nullptr) {
+		if (piecePossesion.at(i) != nullptr) {
 			pieceNum++;
 		}
 		else {
@@ -133,15 +132,43 @@ int Player::getOwnPieceNum()
 	return pieceNum;
 }
 
+void Player::addToPiecePossesion(ChessPiece* piece)
+{
+	if (piecePossesion.size() < maxPieceStorage)
+	{
+		piecePossesion.pushBack(piece);
+	}
+}
+
+void Player::deleteFromPossesionByID(int id)
+{
+	if (piecePossesion.size() >= id)
+	{
+		piecePossesion.erase(piecePossesion.begin() + id);
+	}
+}
+
+void Player::addToPieceBattle(ChessPiece* piece)
+{
+	if (pieceBattle.size() < maxPieceBattle)
+	{
+		pieceBattle.pushBack(piece);
+	}
+}
+
+void Player::deleteFromBattleByID(int id)
+{
+	if (pieceBattle.size() >= id)
+	{
+		pieceBattle.erase(pieceBattle.begin() + id);
+	}
+}
+
+
 /*装备与整数对应表*/
-/* 1 yataghan 攻击力*/
-/*2 bow 攻击速度*/
-/*3 dagger  暴击几率*/
-/*4 ammoue 防御力*/
-/*5 gem 生命值*/
 bool Player::getOneEquip(int type)
 {
-	if (type <= 5 && type >= 1 && myEquip.size() < maxEquip)
+	if (type <=4 && type >= 0 && myEquip.size() < maxEquip)
 	{
 		myEquip.push_back(type);
 		return true;
@@ -151,64 +178,14 @@ bool Player::getOneEquip(int type)
 }
 
 //给予对应棋子一个装备
-bool Player::giveOneEquip(int which, ChessPiece& object)
+//第一个参数表示你所持有的第几件装备
+//第二个参数表示要给予的棋子
+bool Player::giveOneEquip(int which, ChessPiece* object)
 {
 	if (which <= myEquip.size())
 	{
-		object.getOneEquip(myEquip[which - 1]);
+		object->getOneEquip(myEquip[which - 1]);
 		myEquip.erase(myEquip.begin() + which - 1, myEquip.begin() + which);
-		return true;
-	}
-	else
-		return false;
-}
-
-bool Player::getOnePiece(ChessPiece* object)
-{ 
-	int total = getOwnPieceNum();
-	if (total < maxPieceStorage)
-	{
-		piecePossesion[total] = object;
-		return true;
-	}
-	else
-		return false;
-}
-
-ChessPiece* Player::saleOnePiece(int which)
-{
-	if (which <= getOwnPieceNum())
-	{
-		ChessPiece* result = piecePossesion[which - 1];
-		piecePossesion[which - 1] = 0;//c++中空指针最好用0表示
-		int total = getOwnPieceNum();
-
-		//去掉对应棋子后整理数组
-		for (int i1 = 0; i1 <= total; i1++)
-		{
-			if (piecePossesion[i1] == NULL)
-			{
-				ChessPiece* temp;
-				temp = piecePossesion[i1 + 1];
-				piecePossesion[i1 + 1] = piecePossesion[i1];
-				piecePossesion[i1] = temp;
-			}
-		}
-		return result;
-	}
-	else
-	{
-		ChessPiece* result = 0;
-		return result;
-	}
-}
-
-bool Player::saleOneEquip(int which)
-{
-	if (which <= myEquip.size())
-	{
-		money++;
-		myEquip.erase(myEquip.begin() + which, myEquip.begin() + which - 1);
 		return true;
 	}
 	else

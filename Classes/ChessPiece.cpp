@@ -1,95 +1,40 @@
 #include "ChessPiece.h"
-#define AdvancedM 0//一级高数对应行，射手
-#define Linear 3//一级线代对应行，辅助
-#define Physics 6//一级大物对应行，刺客
-#define History 9 //一级近纲对应行，法师
-#define C_ 12//一级c++对应行，坦克
-#define nameL 2//中文名字对应列
-#define pathL 3//图片路径对应列
-#define costL 4//花销对应列
-#define hpL 6//生命值对应列
-#define mpL 7//魔法值对应列
-#define attackL 9//攻击力对应列
-#define defenceL 11//防御力对应列
-#define attackspeedL 12//攻速对应列
-#define attackscopeL 13//攻击距离对应列
+#define AdvancedM		0//一级高数对应行，射手
+#define Linear			3//一级线代对应行，辅助
+#define Physics			6//一级大物对应行，刺客
+#define History			9 //一级近纲对应行，法师
+#define C_				12//一级c++对应行，坦克
+#define nameL			2//中文名字对应列
+#define pathL			3//图片路径对应列
+#define costL			4//花销对应列
+#define hpL				6//生命值对应列
+#define mpL				7//魔法值对应列
+#define attackL			9//攻击力对应列
+#define defenceL		11//防御力对应列
+#define attackspeedL	12//攻速对应列
+#define attackscopeL	13//攻击距离对应列
 #define criticalchanceL 14//暴击几率对应列
-#define criticaldamageL 15//暴击伤害对应列
-
-bool ChessPiece::init(int id)
-{
-
-	// 初始化各项数据
-	//_pieceName = ConfigController::getDataByID(id).asString();
-	_piecePicPath = "Resources/Books/";
-	_piecePicPath += _pieceName;
-
-	// 后续数据的初始化待文件结构完善后再行添加，预计在1.4.0版本之前完成
-
-
-	return true;
-}
+#define criticaldamageL	15//暴击伤害对应列
 
 bool ChessPiece::init()
 {
 	return true;
 }
 
-void ChessPiece::initPieceIfo(int id)
+PieceCoordinate ChessPiece::getPrtCoordinate()
 {
-	//// 初始化各项数据
-	//_pieceName = ConfigController::getDataByID(id).asString();
-	//_piecePicPath = "Resources/Sprite/";
-	//_piecePicPath += _pieceName;
-
-	// 后续数据的初始化待文件结构完善后再行添加，预计在1.4.0版本之前完成
+	return _logCoordinate;
 }
 
-PieceCoordinate* ChessPiece::getPrtCoordinateByType(CoordinateType type)
+void ChessPiece::setPrtCoordinate(PieceCoordinate* coordinate)
 {
-	if (type == CoordinateType::logical)
-	{
-		return &_logCoordinate;
-	}
-	else
-	{
-		return &_realCoordinate;
-	}
+	_logCoordinate.setX(coordinate->getX());
+	_logCoordinate.setY(coordinate->getY());
 }
 
 void ChessPiece::setPieceLevel(const Level newLevel)
 {
 	_pieceLevel = newLevel;
-}
-
-
-
-
-
-
-bool ChessPiece::updatePieceInfo(const double damage, PieceCoordinate* newRealCoordinate)
-{
-	/***********************************************
-	* 更新棋子当前数值时需要考虑当前装备效果的时机有
-	* 1.每场对局首次创建该棋子时（在初始化时考虑）
-	* 2.为该棋子添加装备后（我认为这部分放在装备那块考虑？）
-	* 注意：每次收到伤害后更新信息不考虑装备效果
-	************************************************/
-
-	// 更新生命值
-	_pieceCrtCondition.healthPoint -= (damage - _pieceCrtCondition.defence);
-	if (_pieceCrtCondition.healthPoint < 0)
-	{
-		return false; // 更新失败，棋子阵亡直接退出
-	}
-
-	// 更新棋子位置
-	const int MOVESPEED = 3; // 移动速度，单位：秒每单位像素
-	//auto distance = ChessBoard::getDistance(&_realCoordinate, newRealCoordinate);
-	//auto time = static_cast<float>(distance / MOVESPEED);
-
-	// 动画应该在PlayScene中创建，这里先放在这里（版本1.1.1）
-	//auto updatePiecePos = MoveTo::create(time, Vec2(newRealCoordinate->getX(), newRealCoordinate->getY()));
 }
 
 const string ChessPiece::getPieceName()
@@ -115,52 +60,6 @@ const Level ChessPiece::getPieceLevel()
 bool ChessPiece::ifDead()
 {
 	return _pieceCrtCondition.healthPoint > 0 ? false : true;
-}
-
-Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2 position,int type)
-{
-	auto texture = Director::getInstance()->getTextureCache();
-	auto config = ConfigController::getInstance();
-
-	CsvParser csv;
-	csv.parseWithFile("Data/PiecesData.csv");
-
-	auto piece = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
-	auto hpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/HpBar.png"));//生命条
-	auto mpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//蓝条
-	/*auto hpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//灰条
-	auto mpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//灰条
-
-	hpDecreaseBar->setColor(Color3B::BLACK);
-	mpDecreaseBar->setColor(Color3B::BLACK);
-
-	ProgressTimer* hp, mp;
-	hp = ProgressTimer::create(hpDecreaseBar);*/
-	Vec2 originSize1 = piece->getContentSize();
-	Vec2 originSize2 = hpBar->getContentSize();
-	Vec2 originSize3 = mpBar->getContentSize();
-	float scale1 = 4 * config->getPx()->x / originSize1.x;
-	float scale2 = 2;
-	float scale3 = 2;
-
-	piece->setScale(scale1);
-	hpBar->setScale(scale2);
-	mpBar->setScale(scale3);
-
-	hpBar->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-	mpBar->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-
-	hpBar->setScale(0.7, 2);
-	mpBar->setScale(0.7, 3);
-
-	piece->setPosition(position);
-	hpBar->setPosition(position.x + 300, position.y + 1700);
-	mpBar->setPosition(position.x + 300, position.y + 2000);
-	if (type == 1) {
-		piece->addChild(hpBar);
-		piece->addChild(mpBar);
-	}
-	return piece;
 }
 
 Sprite* ChessPiece::getChessPice()
@@ -234,7 +133,7 @@ int ChessPiece::myAttack()
 {
 	srand(time(NULL));
 	int rate = rand() % 100 + 1;
-	if (rate <= _pieceCrtCondition.criticalChance) {//暴击了
+	if (rate >= _pieceCrtCondition.criticalChance) {//暴击了
 		return 2 * _pieceCrtCondition.attack;
 	}
 	else {//没暴击
@@ -266,10 +165,10 @@ int ChessPiece::beenAttack(int attack)
 	return damage;
 }
 
-void ChessPiece::attackOne(ChessPiece* A)
+void ChessPiece::attackOne(ChessPiece& A)
 {
 	//回血&&给对象A打伤害
-	attackBack(A->beenAttack(myAttack()));
+	attackBack(A.beenAttack(myAttack()));
 }
 
 int PieceCoordinate::getX() const
@@ -290,6 +189,18 @@ void PieceCoordinate::setX(const int x)
 void PieceCoordinate::setY(const int y)
 {
 	_y = y;
+}
+
+bool PieceCoordinate::operator==(PieceCoordinate& coordinate)
+{
+	if (this->getX() == coordinate.getX() && this->getY() == coordinate.getY())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 int tank::oRankTank = 0;
@@ -1472,22 +1383,15 @@ stalker::stalker()
 	_pieceCrtCondition.criticalDamage = a.asDouble();
 }
 
-/*装备与整数对应表*/
-/* 1 yataghan 攻击力*/
-/*2 bow 攻击速度*/
-/*3 dagger  暴击几率*/
-/*4 ammoue 防御力*/
-/*5 gem 生命值*/
-/*给予装备后该函数会自动读取装备*/
-/*棋子即可获得对应装备属性*/
+/*装备与整数对应*/
 void ChessPiece::getOneEquip(int type)
 {
 	Equipment myequip;
 	myequip.init(type);
-	_pieceCrtCondition.equipAttack = myequip.getATK()+ _pieceCrtCondition.equipAttack;
-	_pieceCrtCondition.equipDefence = myequip.getDEF()+ _pieceCrtCondition.equipDefence;
-	_pieceCrtCondition.healthPointM = myequip.getHp()+ _pieceCrtCondition.healthPointM;
-	_pieceCrtCondition.criticalChance = myequip.getCrit()+ _pieceCrtCondition.criticalChance;
+	_pieceCrtCondition.equipAttack = myequip.getATK() + _pieceCrtCondition.equipAttack;
+	_pieceCrtCondition.equipDefence = myequip.getDEF() + _pieceCrtCondition.equipDefence;
+	_pieceCrtCondition.healthPointM = myequip.getHp() + _pieceCrtCondition.healthPointM;
+	_pieceCrtCondition.criticalChance = myequip.getCrit() + _pieceCrtCondition.criticalChance;
 	_pieceCrtCondition.criticalDamage = myequip.getCritDamage() + _pieceCrtCondition.criticalDamage;
 }
 

@@ -94,8 +94,11 @@ public:
 
 	// 获取当前棋子位置
 	PieceCoordinate getPrtCoordinate();
-
 	void setPrtCoordinate(PieceCoordinate* coordinate);
+
+	// 获取棋子战斗前原有位置
+	PieceCoordinate getOriginCoordin();
+	void setOriginCoordinate(int x, int y);
 
 	// 设置当前棋子星级
 	void setPieceLevel(const Level newLevel);
@@ -176,6 +179,8 @@ protected:
 	PieceInfo _buffEffect; // 当前装备(及羁绊？)效果加成
 
 	PieceCoordinate _logCoordinate; // 棋子的逻辑位置
+
+	PieceCoordinate _originCoordinate; // 棋子战斗前的原有位置
 
 	PieceCoordinate _realCoordinate; // 棋子的实际位置
 

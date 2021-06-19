@@ -26,6 +26,17 @@ PieceCoordinate ChessPiece::getPrtCoordinate()
 	return _logCoordinate;
 }
 
+PieceCoordinate ChessPiece::getOriginCoordin()
+{
+	return _originCoordinate;
+}
+
+void ChessPiece::setOriginCoordinate(int x, int y)
+{
+	_originCoordinate.setX(x);
+	_originCoordinate.setY(y);
+}
+
 void ChessPiece::setPrtCoordinate(PieceCoordinate* coordinate)
 {
 	_logCoordinate.setX(coordinate->getX());

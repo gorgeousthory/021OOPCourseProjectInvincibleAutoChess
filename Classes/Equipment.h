@@ -10,38 +10,67 @@
 
 #include <string>
 #include <cocos2d.h>
+#include"Csv.h"
 USING_NS_CC;
 
 
 
-class Equip {
-	int yataghan = 0;//长剑，每装备一把加固定攻击力
-	int bow = 0;//弓，每装备一把加攻击速度
-	int dagger = 0;//短剑，加暴击几率
-	int ammoue = 0;//甲，加防御力
-	int gem = 0;//宝石，加生命值
-	//在这里的变量既表示基础装备的数量，也可以用来表示一件装备的属性数值。
-
+class Equipment : public Ref
+{
 public:
-	void give_yataghan(int m1) ;
-	int get_yataghan() ;
+	void init(int type);
+	//获取装备数值
+	std::string getName();//装备名字
+	std::string getPath();//装备路径
+	int getCost();//装备价格
+	int getATK();//攻击力
+	int getAttackLevel();//攻击等级
+	int getDEF();//防御
+	int getDefenceLevel();//防御等级
+	int getHp();//生命值
+	int getHpLevel();//生命值等级
+	int getCrit();//暴击率
+	double getCritDamage();//暴击伤害
+	double getHasteScale();//急速or攻击速度
+	int getTag();//装备标识
 
-	void give_bow(int m1) ;
-	int get_bow() ;
+private:
+	//标志,用来识别是哪件装备
+	int tag;
 
-	void give_dagger(int m1) ;
-	int get_dagger() ;
+	//名称
+	std::string name;
 
-	void  give_ammoue(int m1) ;
-	int get_ammoue() ;
+	//图片路径
+	std::string path;
 
-	void  give_gem(int m1) ;
-	int get_gem() ;
+    //生命等级
+	int hpLevel;
 
-	//该类在使用中也只需要简单的接口函数即可
-};//give函数参数的意义均为给予数量(减少填负数即可)
-//装备被装备之后无法减少，所以这里的减少是指的未合成的基础装备数量减少
-//而人物装备的总装备数量不会改变,返回的数量也是总的基础装备数量
+	//生命值
+	int hp;
+
+	//价格
+	int cost;
+
+	//攻击等级
+	int attackLevel;
+	//攻击力
+	int attack;
+
+	//防御等级
+	int defenceLevel;
+	//防御
+	int defence;
+
+	//暴击率
+	int critical;
+	//暴击伤害
+	double criticalDamage;
+
+	//攻击速度
+	double hasteScale;
+};
 
 #endif // !_EQUIPMENT_
 

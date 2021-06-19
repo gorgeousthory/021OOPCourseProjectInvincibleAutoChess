@@ -10,7 +10,6 @@
 #pragma once
 #ifndef _CHESSPIECE_H_
 #define _CHESSPIECE_H_
-#include"Csv.h"
 #include "ConfigController.h"
 #include"Equipment.h"
 #include"Condition.h"
@@ -18,22 +17,22 @@
 struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 {
 	double healthPoint; // 实时生命
-	double healthPointM;//最大生命值(除装备之外无其他提升方式，所以装备和初始合并)
+	double healthPointM;//最大生命值
 	
 	double magicPoint; // 实时法力
 	double magicPointM; // 最大法力(同生命值)
 
 	double attack; // 实时攻击力
 	double bAttack;//人物基础攻击力
-	double equipAttack;//装备+初始
+	double equipAttack;//装备
 	
 	double defence; // 实时防御力
 	double bDefence;//人物基础防御力
-	double equpiDefence;//装备+初始
+	double equipDefence;//装备
 
 	double attackSpeed; // 实时攻击速度
 	double bAttackSpeed;//基础攻击速度
-	double equipAttackSpeed; //装备 + 初始
+	double equipAttackSpeed; //装备
 
 	double attackScope; // 攻击距离
 
@@ -139,7 +138,7 @@ public:
 	int beenAttack(int attack);
 
 	//上面攻击函数的package，攻击在这里调用，参数A即为被攻击的对象(定义为虚函数是因为这里牵扯到了棋子类，现在的棋子类是抽象类没办法当作参数)
-	void attackOne(ChessPiece &A);
+	void attackOne(ChessPiece *A);
 
 	//判断棋子是否死了,死了就为真
 	bool ifDead();
@@ -161,12 +160,14 @@ public:
 	int getPiecePerCost();
 
 	//棋子装备获得装备
+	//type可以直接写，也可以用接口函数获取一个Equipment的Tag
 	void getOneEquip(int type);
-
-	//棋子扫描自身装备获得对应属性
-	void readEquip();
+	
+	//刷新自身战斗属性
+	//每次战斗开始前前调用
+	//相当于每场战斗棋子数值的初始化
+	void setPieceInfo();
 protected:
-	Equip _pieceEquip;//装备
 
 	string _pieceName; // 名称
 	
@@ -218,6 +219,7 @@ public:
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
+	CREATE_FUNC(tank);
 };
 
 /*mage*/
@@ -243,6 +245,7 @@ public:
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
+	CREATE_FUNC(mage);
 };
 
 /*stalker*/
@@ -268,6 +271,7 @@ public:
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
+	CREATE_FUNC(stalker);
 };
 
 /*therapist*/
@@ -293,6 +297,7 @@ public:
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
     void promoteRank();
+	CREATE_FUNC(therapist);
 };
 
 /*shooter*/
@@ -318,5 +323,6 @@ public:
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
 	void promoteRank();
+	CREATE_FUNC(shooter);
 };
 #endif

@@ -196,7 +196,7 @@ void ChessPiece::readCondition()
 	_pieceCrtCondition.attack = _pieceCrtCondition.equipAttack * (1 + _pieceCrtCondition.myCondition.getInspireAttack());
 
 	//有防御加成
-	_pieceCrtCondition.defence = _pieceCrtCondition.equpiDefence * (1 + _pieceCrtCondition.myCondition.getInspireDefence());
+	_pieceCrtCondition.defence = _pieceCrtCondition.equipDefence * (1 + _pieceCrtCondition.myCondition.getInspireDefence());
 
 	//攻速加成
 	_pieceCrtCondition.attackSpeed = _pieceCrtCondition.equipAttackSpeed * (1 + _pieceCrtCondition.myCondition.getInspireSpeed());
@@ -266,10 +266,10 @@ int ChessPiece::beenAttack(int attack)
 	return damage;
 }
 
-void ChessPiece::attackOne(ChessPiece& A)
+void ChessPiece::attackOne(ChessPiece* A)
 {
 	//回血&&给对象A打伤害
-	attackBack(A.beenAttack(myAttack()));
+	attackBack(A->beenAttack(myAttack()));
 }
 
 int PieceCoordinate::getX() const
@@ -1482,31 +1482,18 @@ stalker::stalker()
 /*棋子即可获得对应装备属性*/
 void ChessPiece::getOneEquip(int type)
 {
-	switch (type)
-	{
-	case 1:
-		_pieceEquip.give_yataghan(1);
-		break;
-	case 2:
-		_pieceEquip.give_bow(1);
-		break;
-	case 3:
-		_pieceEquip.give_dagger(1);
-		break;
-	case 4:
-		_pieceEquip.give_ammoue(1);
-	case 5:
-		_pieceEquip.give_gem(1);
-	}
-	readEquip();
+	Equipment myequip;
+	myequip.init(type);
+	_pieceCrtCondition.equipAttack = myequip.getATK()+ _pieceCrtCondition.equipAttack;
+	_pieceCrtCondition.equipDefence = myequip.getDEF()+ _pieceCrtCondition.equipDefence;
+	_pieceCrtCondition.healthPointM = myequip.getHp()+ _pieceCrtCondition.healthPointM;
+	_pieceCrtCondition.criticalChance = myequip.getCrit()+ _pieceCrtCondition.criticalChance;
+	_pieceCrtCondition.criticalDamage = myequip.getCritDamage() + _pieceCrtCondition.criticalDamage;
 }
 
-void ChessPiece::readEquip()
+void ChessPiece::setPieceInfo()
 {
-	_pieceCrtCondition.equipAttack = _pieceEquip.get_yataghan()*10+ _pieceCrtCondition.bAttack;
-	_pieceCrtCondition.equipAttackSpeed = _pieceEquip.get_bow() * 0.08 + _pieceCrtCondition.bAttackSpeed;
-	_pieceCrtCondition.criticalChance = _pieceEquip.get_dagger() * 10;
-	_pieceCrtCondition.equpiDefence = _pieceEquip.get_ammoue() * 8 + _pieceCrtCondition.bDefence;
-	_pieceCrtCondition.healthPointM = _pieceEquip.get_gem() * 150 + _pieceCrtCondition.healthPointM;
+	_pieceCrtCondition.healthPoint = _pieceCrtCondition.healthPointM;
+	_pieceCrtCondition.attack = _pieceCrtCondition.bAttack + _pieceCrtCondition.equipAttack;
+	_pieceCrtCondition.defence = _pieceCrtCondition.bDefence + _pieceCrtCondition.equipDefence;
 }
-

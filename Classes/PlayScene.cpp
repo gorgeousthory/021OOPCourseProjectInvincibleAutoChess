@@ -54,7 +54,7 @@ bool PlayScene::init()
 	const float xButtons = 65 * ConfigController::getInstance()->getPx()->y, yButtons = -35 * ConfigController::getInstance()->getPx()->y,//退出按钮的摆放位置	the position of Exit button
 		dyButtons = 10 * ConfigController::getInstance()->getPx()->y,	//按钮的高度差	the height difference
 		sButtons = 8 * ConfigController::getInstance()->getPx()->x / originSize.x;//按钮的缩放比例	the scale of buttons
-// 添加退出按钮
+	//添加退出按钮
 	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	exitButton->setScale(sButtons);
 	exitButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 0));
@@ -73,7 +73,7 @@ bool PlayScene::init()
 	talkButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 2));
 	menu->addChild(talkButton);
 	//添加准备按钮
-	auto readyButton = LoginScene::createGameButton("", "/res/UI/PlayNormal.png", "/res/UI/PlaySelected.png", CC_CALLBACK_1(PlayScene::menuTalkCallBack, this));
+	auto readyButton = LoginScene::createGameButton("", "/res/UI/PlayNormal.png", "/res/UI/PlaySelected.png", CC_CALLBACK_1(PlayScene::menuReadyCallBack, this));
 	readyButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	readyButton->setScale(sButtons);
 	readyButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 3));
@@ -108,20 +108,30 @@ bool PlayScene::init()
 	playLayer->addChild(timeLabel);
 
 	// 创建玩家
-	playerA = Player::create();
-	playerA->retain();
-
-	// 创建商店
-	shopModel = Shop::create();
-	shopModel->retain();
-	createShop(Vec2(-55 * config->getPx()->x, -45 * config->getPx()->y));//商店摆放位置在下方偏左
-	for (int i = 0; i < 5; i++)
 	{
-		menu->addChild(shop.at(i));
+		playerA = Player::create();
+		playerA->retain();
+		auto spritePlayerA = Sprite::create("/res/UI/Player1.png");
+		spritePlayerA->setScale(0.12);
+		spritePlayerA->setPosition(Vec2(25 * config->getPx()->x, 38 * config->getPx()->y));
+		playLayer->addChild(spritePlayerA, 10);
 	}
-	playLayer->addChild(menu, 5);
-	
+
+	// 创建商店	
+	{
+		shopModel = Shop::create();
+		shopModel->retain();
+		createShop(Vec2(-55 * config->getPx()->x, -45 * config->getPx()->y));//商店摆放位置在下方偏左
+		for (int i = 0; i < 5; i++)
+		{
+			menu->addChild(shop.at(i));
+		}
+		playLayer->addChild(menu, 5);
+	}
+
 	this->scheduleUpdate();
+
+	//effectAnimation("effectAnimationMage", "/res/Effect/effectAnimationMage", 3, visibleSize / 2);
 
 	return true;
 }
@@ -218,12 +228,12 @@ void PlayScene::createShop(Vec2 position)
 	auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1)->getPieceName(), shopModel->getPieceList()->at(1)->getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
 	auto pieceCard3 = PlayScene::createPieceCard(shopModel->getPieceList()->at(2)->getPieceName(), shopModel->getPieceList()->at(2)->getPicPath(), Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
 	auto pieceCard4 = PlayScene::createPieceCard(shopModel->getPieceList()->at(3)->getPieceName(), shopModel->getPieceList()->at(3)->getPicPath(), Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
-	auto pieceCard5 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
+	auto shopCard5 = PlayScene::createEquipCard(3, Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuEquipCardCallBack, this));
 	shop.push_back(pieceCard1);
 	shop.push_back(pieceCard2);
 	shop.push_back(pieceCard3);
 	shop.push_back(pieceCard4);
-	shop.push_back(pieceCard5);
+	shop.push_back(shopCard5);
 }
 
 /*返回多个星星的图标,参数代表星星的个数，以向量中的第一个为父节点*/
@@ -232,7 +242,9 @@ Vector<Sprite*> levelStars(const string& value)
 	Vector<Sprite*> stars;	//the vector contains the stars;
 	int num = 0;
 	Vec2 tmp = {};
-	for (int i = 0; i < Value(value).asInt(); i++)
+	int ix = 0;
+	//先添加星星
+	for (; ix < Value(value).asInt(); ix++)
 	{
 		stars.pushBack(Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("/res/Icons/Star.png")));	//the star icon	
 		num = stars.size() - 1;
@@ -244,9 +256,20 @@ Vector<Sprite*> levelStars(const string& value)
 			stars.at(0)->addChild(stars.at(num));
 		}
 	}
+	for (; ix < D_MAX_LEVEL; ix++)
+	{
+		stars.pushBack(Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("/res/Icons/Star2.png")));	//the empty star icon	
+		num = stars.size() - 1;
+		stars.at(num)->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+		tmp.x += stars.at(0)->getContentSize().width;
+		if (0 != num)
+		{
+			stars.at(num)->setPosition(tmp);
+			stars.at(0)->addChild(stars.at(num));
+		}
+	}
 	return stars;
 }
-
 MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback)
 {
 	auto texture = Director::getInstance()->getTextureCache();
@@ -261,8 +284,84 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	//fetch the pic and the value stored in the data file "PiecesData.csv"
 	CsvParser csv;
 	csv.parseWithFile("Data/PiecesData.csv");
-	auto rowPosition = csv.findRowOfItem(pieceName);
+	const int rowPosition = csv.findRowOfItem(pieceName);
 	auto sprite = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
+	auto Goldicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Coin.png"));		//the gold coin icon（金币图标）
+	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png"));	//the Health icon（生命）
+	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png"));	//the Attack icon(攻击)
+	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png"));		//the Armor icon(防御)
+	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);		//the name of book 棋子名称
+
+
+	//adjust the comparing position of the icons and values 调整对应图标和数值在卡片中的相对位置
+	Vec2 originSize = item->getContentSize();
+	sprite->setScale(0.5);
+	sprite->setPosition(Vec2(450, 800));
+	item->addChild(sprite);
+
+	Name->setPosition(Vec2(450, 100));
+	Name->setColor(Color3B::BLACK);
+	item->addChild(Name);
+
+	const int
+		x1 = 1150, y1 = 50,		//the stars position compared to the feature icon	星星相对于属性图标的位置
+		x2 = 1200, y2 = 700, dy = 400;	//the middle fearture position compared to the card, the height difference 中间的属性条相对于卡片的位置，和属性条之间的高度差
+	const float s1 = 0.8, s2 = 0.4;	//the stars scale, the feature scale	星星缩放比例，属性条缩放比例
+	/*花费所需的金币数量*/
+	auto Cost = Label::createWithTTF(csv[rowPosition][D_COST].c_str(), "/fonts/Marker Felt.ttf", 45);
+	Cost->setColor(Color3B::BLACK);
+	Cost->setPosition(Vec2(70, 15));
+	Goldicon->addChild(Cost);
+	Goldicon->setScale(4);
+	Goldicon->setPosition(Vec2(x2 + 50, y2 + dy * 1 + 220));//金币花费的相对位置	comparing position of cost
+	item->addChild(Goldicon);
+	/*Health feature 生命属性*/
+	auto Healthvalue = levelStars(csv[rowPosition][D_HP_LEVEL]).at(0);
+	Healthvalue->setPosition(Vec2(x1, y1));
+	Healthvalue->setScale(s1);
+	Healthicon->addChild(Healthvalue);
+	Healthicon->setScale(s2);
+	Healthicon->setPosition(Vec2(x2, y2 + dy * 1));
+	item->addChild(Healthicon);
+	/*Attack feature 攻击属性*/
+	auto Attackvalue = levelStars(csv[rowPosition][D_ATK_LEVEL]).at(0);
+	Attackvalue->setPosition(Vec2(x1, y1));
+	Attackvalue->setScale(s1);
+	Attackicon->addChild(Attackvalue);
+	Attackicon->setScale(s2);
+	Attackicon->setPosition(Vec2(x2, y2 + dy * 0));
+	item->addChild(Attackicon);
+	/*Armor feature 防御属性*/
+	auto Armorvalue = levelStars(csv[rowPosition][D_DFC_LEVEL]).at(0);
+	Armorvalue->setPosition(Vec2(x1, y1));
+	Armorvalue->setScale(s1);
+	Armoricon->addChild(Armorvalue);
+	Armoricon->setScale(s2);
+	Armoricon->setPosition(Vec2(x2, y2 - dy * 1));
+	item->addChild(Armoricon);
+
+	item->setScale(22 * ConfigController::getInstance()->getPx()->x / originSize.x);//adjust the scale 调整大小
+	item->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+	item->setPosition(position);
+
+	return item;
+}
+MenuItemSprite* PlayScene::createEquipCard(int equipID, Vec2 position, const ccMenuCallback& callback)
+{
+	auto texture = Director::getInstance()->getTextureCache();
+	auto config = ConfigController::getInstance();
+
+	// 创建卡片精灵
+	auto cardBack = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/ShoppingCard.png"));
+
+	// 创建一个精灵菜单项
+	auto item = MenuItemSprite::create(cardBack, cardBack, callback);
+
+	//fetch the pic and the value stored in the data file "PiecesData.csv"
+	CsvParser csv;
+	csv.parseWithFile("Data/EquipmentData.csv");
+	const int rowPosition = equipID; 
+	auto sprite = Sprite::createWithTexture(texture->getTextureForKey(csv[rowPosition][D_PATH]));
 	auto Goldicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Coin.png"));		//the gold coin icon（金币图标）
 	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png"));	//the Health icon（生命）
 	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png"));	//the Attack icon(攻击)
@@ -424,7 +523,47 @@ void PlayScene::menuMusicCallBack(Ref* sender)
 
 void PlayScene::menuTalkCallBack(Ref* sender)
 {
+	AudioEngine::play2d("/res/Music/effectTalk" + Value(random() % 5 + 1).asString() + ".mp3");
 
+	//auto data = FileUtils::getInstance()->getValueMapFromFile("/Data/TalkBoxTips.plist");
+	//std::map<std::string, Value>config = {};
+	//for (auto valPair : data)
+	//{
+	//	config.insert(std::pair<std::string, Value>(valPair.first, valPair.second));
+	//}
+	//if (!config.empty())
+	//{
+	//	Vector<Button*> talkBoxButtons = {};
+	//	int num = 0;
+	//	Vec2 tmp = {};
+	//	for (int i = 0; i < 5; i++)
+	//	{
+	//		talkBoxButtons.pushBack(Button::create("/res/UI/TalkBoxButton.png", "/res/UI/TalkBoxButton.png", "/res/UI/TalkBoxButton.png"));
+	//		num = talkBoxButtons.size() - 1;
+	//		tmp.y += talkBoxButtons.at(0)->getContentSize().height;
+	//		if (0 != num)
+	//		{
+	//			talkBoxButtons.at(num)->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+	//			talkBoxButtons.at(num)->setPosition(tmp);
+	//			talkBoxButtons.at(0)->addChild(talkBoxButtons.at(talkBoxButtons.size() - 1));
+	//		}
+	//		string a = "0" + Value(num + 1).asString();
+	//		talkBoxButtons.at(num)->setTitleText(config.at(/*"0" + Value(num + 1).asString()*/"01").asString());
+	//		talkBoxButtons.at(num)->addTouchEventListener(
+	//			[&num](Ref* sender, Widget::TouchEventType type) {
+	//				if (type == Widget::TouchEventType::ENDED)
+	//				{
+	//					//string a = "/res/Music/effectTalk" + Value(num % 5 + 1).asString() + ".mp3";
+	//					AudioEngine::play2d("/res/Music/effectTalk" + Value(num % 5 + 1).asString() + ".mp3");
+	//				}
+	//			}
+	//		);
+	//	}
+	//	talkBoxButtons.at(0)->setScale(0.05);
+	//	talkBoxButtons.at(0)->setScaleX(0.1);
+	//	talkBoxButtons.at(0)->setPosition(Vec2(300, 300));
+	//	this->addChild(talkBoxButtons.at(0));
+	//}
 }
 
 void PlayScene::menuReadyCallBack(Ref* sender)
@@ -497,7 +636,7 @@ void PlayScene::menuPieceCardCallBack4(Ref* sender)
 }
 
 //装备栏 
-void PlayScene::menuPieceCardCallBack5(Ref* sender)
+void PlayScene::menuEquipCardCallBack(Ref* sender)
 {
 	//play effect music of button	播放按钮音效
 	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
@@ -560,7 +699,7 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 	auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1)->getPieceName(), shopModel->getPieceList()->at(1)->getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
 	auto pieceCard3 = PlayScene::createPieceCard(shopModel->getPieceList()->at(2)->getPieceName(), shopModel->getPieceList()->at(2)->getPicPath(), Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
 	auto pieceCard4 = PlayScene::createPieceCard(shopModel->getPieceList()->at(3)->getPieceName(), shopModel->getPieceList()->at(3)->getPicPath(), Vec2(position.x + 3 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack4, this));
-	auto pieceCard5 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack5, this));
+	auto pieceCard5 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), Vec2(position.x + 4 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuEquipCardCallBack, this));
 	shop.push_back(pieceCard1);
 	shop.push_back(pieceCard2);
 	shop.push_back(pieceCard3);
@@ -737,4 +876,35 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 void PlayScene::onMouseMove(Event* event)
 {
 	EventMouse* e = (EventMouse*)event;
+}
+
+/**********************************************
+* 关于动画特效包装函数的使用说明
+* 1、所有文件均使用TexturePacker创建（xxx.plist/xxx.png）
+* 2、所有读取的图像文件命名规范：
+*	xxx.plist和xxx.png文件命名必须一致，
+*	合成.png大图片的子图片（即每一帧动画的图片）需在整体一致的文件名后再加图片的序号即(xxx0.png、xxx1.png.....)
+* 3.关于参数：
+*	plistpath:	文件路径只需要文件名称，无需后缀
+*	numframe:	动画的帧数，在plist文件中可查看
+*	position:	动画显示的位置
+*	scale:		动画显示的缩放比例
+***********************************************/
+void PlayScene::effectAnimation(const string& plistname, const string& plistpath, const int& numFrame, const Vec2& position, const float& scale)
+{
+	auto cache = SpriteFrameCache::getInstance();
+	cache->addSpriteFramesWithFile(plistpath + ".plist", plistpath + ".png"); // 加载图集资源
+	auto sprite = Sprite::createWithSpriteFrameName(plistname + "0.png"); // 以第一帧创建动画精灵
+	sprite->setPosition(position);
+	sprite->setScale(scale);
+	Vector<SpriteFrame*> images = {};
+	for (int i = 0; i < numFrame; i++)
+	{
+		string a = plistname + Value(i).asString() + ".png";
+		images.pushBack(cache->getSpriteFrameByName(plistname + Value(i).asString() + ".png"));
+	}
+	auto animation = Animation::createWithSpriteFrames(images, 0.1f * images.size());//0.1为帧率，单位：秒，默认循环播放一遍
+	auto animate = Animate::create(animation);
+	sprite->runAction(animate); // 执行动作
+	playLayer->addChild(sprite,10);
 }

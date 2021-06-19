@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+    <dict>
+        <key>01</key>
+        <string>要不起</string>
+    </dict>
+    <dict>
+        <key>02</key>
+        <string>你的牌打的太好了</string>
+    </dict>
+    <dict>
+        <key>03</key>
+        <string>交个朋友吧</string>
+    </dict>
+    <dict>
+        <key>04</key>
+        <string>快点吧</string>
+    </dict>
+    <dict>
+        <key>05</key>
+        <string>专心打游戏</string>
+    </dict>
+</plist>

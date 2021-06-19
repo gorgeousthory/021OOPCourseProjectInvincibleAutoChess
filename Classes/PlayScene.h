@@ -57,6 +57,8 @@ public:
 
 	// 创建可视化棋子卡片
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
+	// 创建可视化装备卡片
+	MenuItemSprite* createEquipCard(int equipID, Vec2 position, const ccMenuCallback& callback);
 
 	//棋子的可视化
 	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position, int type = 1);
@@ -121,7 +123,7 @@ private:
 	void menuPieceCardCallBack2(Ref* sender);
 	void menuPieceCardCallBack3(Ref* sender);
 	void menuPieceCardCallBack4(Ref* sender);
-	void menuPieceCardCallBack5(Ref* sender);
+	void menuEquipCardCallBack(Ref* sender);
 	void buyCard(const unsigned int num, ChessPiece* piece);
 
 	// 刷新商店的点击事件
@@ -139,6 +141,8 @@ private:
 	// 移动回调
 	void onMouseMove(Event* event);
 
+	//动画特效播放
+	void effectAnimation(const string& plistname, const string& plistpath, const int& numFrame, const Vec2& position, const float& scale = 1.0f);
 };
 
 #endif

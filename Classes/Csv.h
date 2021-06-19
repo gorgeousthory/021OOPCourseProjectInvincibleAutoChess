@@ -26,6 +26,8 @@
 #define D_CRT_CHC			14
 #define D_CRT_DMG			15
 
+#define D_MAX_LEVEL			3	//属性星级的最大值
+
 class LineString
 {
 public:
@@ -57,7 +59,7 @@ public:
 
 	size_t getRowCount() const { return _dataInfo.size(); }	//获取行最大值
 	size_t getColumnCount() const { return _titles.size(); }	//获取列最大值
-	size_t findRowOfItem(const std::string& src) const;	//找到某个数据所在的行
+	size_t findRowOfItem(const std::string& src) const;	//找到某个数据所在的行(在所有列里从左到右从上到下寻找，注意重复的数据)
 
 	LineString& operator[](size_t index)
 	{

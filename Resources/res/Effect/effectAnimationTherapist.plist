@@ -4,48 +4,48 @@
     <dict>
         <key>frames</key>
         <dict>
-            <key>pic1.jpg</key>
+            <key>effectAnimationTherapist.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,0}</string>
+                <string>{72,-112}</string>
                 <key>spriteSize</key>
-                <string>{960,960}</string>
+                <string>{1778,1314}</string>
                 <key>spriteSourceSize</key>
-                <string>{960,960}</string>
+                <string>{2560,2560}</string>
                 <key>textureRect</key>
-                <string>{{1,1},{960,960}}</string>
+                <string>{{1,613},{1778,1314}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>pic2.jpg</key>
+            <key>effectAnimationTherapist0.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,0}</string>
+                <string>{-16,-656}</string>
                 <key>spriteSize</key>
-                <string>{960,960}</string>
+                <string>{1794,610}</string>
                 <key>spriteSourceSize</key>
-                <string>{960,960}</string>
+                <string>{2560,2560}</string>
                 <key>textureRect</key>
-                <string>{{1,963},{960,960}}</string>
+                <string>{{1,1},{1794,610}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>pic3.jpg</key>
+            <key>effectAnimationTherapist1.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,0}</string>
+                <string>{16,-352}</string>
                 <key>spriteSize</key>
-                <string>{960,960}</string>
+                <string>{1634,1090}</string>
                 <key>spriteSourceSize</key>
-                <string>{960,960}</string>
+                <string>{2560,2560}</string>
                 <key>textureRect</key>
-                <string>{{963,1},{960,960}}</string>
+                <string>{{1,1929},{1634,1090}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -59,13 +59,13 @@
             <key>premultiplyAlpha</key>
             <false/>
             <key>realTextureFileName</key>
-            <string>test.png</string>
+            <string>effectAnimationTherapist.png</string>
             <key>size</key>
-            <string>{1924,1924}</string>
+            <string>{1796,3020}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:876f7ff58210b592caea9b4f67a1328c:44aad17a2fb1123ef6870d1d63d32ed4:96fb3d46aab20ec9eb9704de1ab972b6$</string>
+            <string>$TexturePacker:SmartUpdate:573bd93d618377f944d1cdb0975220f6:164dd7be47c8bf131ba7782f032c8b5c:bc5f9341e0a108b2d8ff928b72d53dff$</string>
             <key>textureFileName</key>
-            <string>test.png</string>
+            <string>effectAnimationTherapist.png</string>
         </dict>
     </dict>
 </plist>

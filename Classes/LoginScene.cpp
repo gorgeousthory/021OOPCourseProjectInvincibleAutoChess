@@ -40,7 +40,7 @@ bool LoginScene::init()
 		str += ".png";
 		images.pushBack(cache->getSpriteFrameByName(str));
 	}
-	auto animation = Animation::createWithSpriteFrames(images, 1.0f / images.size());
+	auto animation = Animation::createWithSpriteFrames(images, 0.02f * images.size());
 	auto animate = Animate::create(animation);
 	sprite->runAction(RepeatForever::create(animate)); // 执行动作
 	
@@ -74,6 +74,7 @@ bool LoginScene::init()
 	dataPathList.push_back("res/Background/BoardPiece.png");
 	dataPathList.push_back("res/Icons/Armor.png");
 	dataPathList.push_back("res/UI/PlayNormal.png");
+	dataPathList.push_back("res/Equipment/Hammer.png");
 
 	// 进行加载
 	this->loadResources();
@@ -113,7 +114,6 @@ bool LoginScene::init()
 	loginLayer->addChild(menu, 5);
 
 	// ************可视化部分结束***************
-	
 
 	return true;
 }

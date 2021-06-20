@@ -59,7 +59,7 @@ public:
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
 
 	//棋子的可视化
-	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position, int type = 1);
+	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position, Level pieceLevel, int type = 1);
 
 	/*返回多个星星的图标,参数代表星星的个数，以向量中的第一个为父节点*/
 	Vector<Sprite*> levelStars(const string& value);

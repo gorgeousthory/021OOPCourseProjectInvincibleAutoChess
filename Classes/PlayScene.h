@@ -1,0 +1,148 @@
+/********************************************
+ * 功能：进入游戏界面
+ * 作者：Gorgeous, VenusHui
+ * 版本：1.1.0.beta
+ * 游戏引擎：Cocos2d-x 4.0
+ * ******************************************
+ * 说明：数据仍需调整
+ ********************************************/
+#pragma once
+#ifndef _PLAYSCENE_H_
+#define _PLAYSCENE_H_
+
+#include <cocos2d.h>
+USING_NS_CC;
+
+#include "ui/CocosGUI.h" 
+using namespace ui;
+#include "audio/include/AudioEngine.h"//声音引擎
+
+#include <vector>
+using std::vector;
+
+#include "LoginScene.h"
+#include "ConfigController.h"
+#include "ChessBoard.h"
+#include "ChessPiece.h"
+#include "Csv.h"
+#include "Shop.h"
+#include "Player.h"
+
+#define ROW_BOARD			10
+#define COL_BOARD			10
+
+// 鼠标事件相关宏
+#define NOT_IN_BOARD		100
+#define IN_WAR_ZONE			1
+#define IN_READY_ZONE		2
+#define READY_TO_WAR		3
+#define WAR_TO_WAR			4
+#define READY_TO_READY		5
+#define WAR_TO_READY		6
+#define NO_LIFT_CLICK_WAR	10
+#define NO_LIFT_CLICK_READY 11
+
+class PlayScene : public Scene
+{
+public:
+	static Scene* createScene();
+
+	virtual bool init();
+
+	// 创建可视化棋盘， position为(0, 0)位置欺骗图片左下角的锚点坐标
+	void createBoard(Vec2 position);
+
+	// 创建可视化商店，position为第一张卡片左下角的锚点坐标
+	void createShop(Vec2 position);
+
+	// 创建可视化棋子卡片
+	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
+	// 创建可视化装备卡片
+	MenuItemSprite* createEquipCard(int equipID, Vec2 position, const ccMenuCallback& callback);
+
+	//棋子的可视化
+	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position, int type = 1);
+
+	// 坐标转换函数
+	static PieceCoordinate coordingRevert(CoordinateType originType, Vec2 originPosition);
+
+	//更新函数
+	void update(float dt);
+
+	CREATE_FUNC(PlayScene);
+
+private:
+	// 场景层
+	Layer* playLayer;
+	Menu* menu;
+
+	// 当前鼠标状态
+	Sprite* mouseLiftPiece;
+
+	// 棋盘
+	ChessBoard* chessBoardModel;
+	vector<Sprite*> chessBoard[ROW_BOARD];
+	vector<Sprite*> pieceBoard[ROW_BOARD];
+
+	// 商店
+	Shop* shopModel;
+	vector<MenuItemSprite*> shop;
+
+	// 玩家
+	Player* playerA;
+
+	//计时器
+	float timeRemaining = 61.0f;
+	Label* timeLabel = Label::createWithSystemFont("Time:60", "Arial", 60);
+
+	//背景音乐编号
+	unsigned int _audioBgID;
+
+	//当前金币数量标签
+	Label* GoldLabel = Label::createWithTTF("00", "/fonts/Marker Felt.ttf", 45);
+	//当前经验按钮
+	Label* ExLabel = Label::createWithTTF("Lv.1(00%)", "/fonts/Marker Felt.ttf", 45);
+
+	// 资源加载进度条
+	ProgressTimer* loadingBar;
+
+	// 进度条行为
+	ProgressFromTo* barAction;
+
+	// 退出按钮的点击事件
+	void menuExitCallBack(Ref* sender);
+	//声音按钮的点击事件
+	void menuMusicCallBack(Ref* sender);
+	//交流按钮的点击事件
+	void menuTalkCallBack(Ref* sender);
+	//准备按钮的点击事件
+	void menuReadyCallBack(Ref* sender);
+
+	// 购买卡片的点击事件
+	void menuPieceCardCallBack1(Ref* sender);
+	void menuPieceCardCallBack2(Ref* sender);
+	void menuPieceCardCallBack3(Ref* sender);
+	void menuPieceCardCallBack4(Ref* sender);
+	void menuEquipCardCallBack(Ref* sender);
+	void buyCard(const unsigned int num, ChessPiece* piece);
+
+	// 刷新商店的点击事件
+	void menuFreshShopCallBack(Ref* sender);
+
+	// 购买经验的点击事件
+	void menuBuyExpCallBack(Ref* sender);
+
+	//按下回调
+	virtual int onTouchBegan(Touch* touch, Event* event);
+
+	//释放回调
+	virtual void onTouchEnded(Touch* touch, Event* event);
+
+	// 移动回调
+	void onMouseMove(Event* event);
+
+	//动画特效播放
+	void effectAnimation(const string& plistname, const string& plistpath, const int& numFrame, const Vec2& position, const float& scale = 1.0f);
+};
+Vector<Sprite*> levelAttribute(const string& value, const string& filepath1 = "/res/Icons/Star.png", const string& filepath2 = "/res/Icons/Star2.png");
+#endif

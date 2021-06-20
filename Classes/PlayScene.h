@@ -27,6 +27,7 @@ using std::vector;
 #include "Csv.h"
 #include "Shop.h"
 #include "Player.h"
+#include"Battle.h"
 
 #define ROW_BOARD			10
 #define COL_BOARD			10
@@ -61,6 +62,9 @@ public:
 	//棋子的可视化
 	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position, int type = 1);
 
+	/*返回多个星星的图标,参数代表星星的个数，以向量中的第一个为父节点*/
+	Vector<Sprite*> levelStars(const string& value);
+
 	// 坐标转换函数
 	static PieceCoordinate coordingRevert(CoordinateType originType, Vec2 originPosition);
 
@@ -70,6 +74,9 @@ public:
 	CREATE_FUNC(PlayScene);
 
 private:
+	//战斗
+	Battle* battle = nullptr;
+
 	// 场景层
 	Layer* playLayer;
 	Menu* menu;
@@ -88,18 +95,25 @@ private:
 
 	// 玩家
 	Player* playerA;
+	Player* playerB;
 
+	//回合
+	int turn = 1;
+	//turnmark用来看是否初始化
+	int turnMark = 0;
 	//计时器
-	float timeRemaining = 61.0f;
+	float turnInterval = 0;
+	float timeRemaining = 11.0f;
 	Label* timeLabel = Label::createWithSystemFont("Time:60", "Arial", 60);
 
 	//背景音乐编号
 	unsigned int _audioBgID;
 
 	//当前金币数量标签
-	Label* GoldLabel = Label::createWithTTF("00", "/fonts/Marker Felt.ttf", 45);
+	Label* GoldLabel;
+	
 	//当前经验按钮
-	Label* ExLabel = Label::createWithTTF("Lv.1(00%)", "/fonts/Marker Felt.ttf", 45);
+	Label* ExLabel;
 
 	// 资源加载进度条
 	ProgressTimer* loadingBar;
@@ -107,21 +121,32 @@ private:
 	// 进度条行为
 	ProgressFromTo* barAction;
 
+	// 玩家B的第一回合初始化
+	void playerBInitRound1();
+
 	// 退出按钮的点击事件
 	void menuExitCallBack(Ref* sender);
+
 	//声音按钮的点击事件
 	void menuMusicCallBack(Ref* sender);
+
 	//交流按钮的点击事件
 	void menuTalkCallBack(Ref* sender);
+
 	//准备按钮的点击事件
 	void menuReadyCallBack(Ref* sender);
 
 	// 购买卡片的点击事件
 	void menuPieceCardCallBack1(Ref* sender);
+
 	void menuPieceCardCallBack2(Ref* sender);
+
 	void menuPieceCardCallBack3(Ref* sender);
+
 	void menuPieceCardCallBack4(Ref* sender);
+	// 装备栏
 	void menuPieceCardCallBack5(Ref* sender);
+
 	void buyCard(const unsigned int num, ChessPiece* piece);
 
 	// 刷新商店的点击事件

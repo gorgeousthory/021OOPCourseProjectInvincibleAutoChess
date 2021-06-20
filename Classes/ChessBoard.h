@@ -27,6 +27,8 @@ public:
 	// 获取玩家A对战区棋子集合
 	vector<ChessPiece*>* getPlayerA_WarZone_Pieces();
 
+	void deleteFromWarZoneByID(int id);
+
 	// 获取玩家A备战区棋子集合
 	vector<ChessPiece*>* getPlayerA_PreZone_Pieces();
 

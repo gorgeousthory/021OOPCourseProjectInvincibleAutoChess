@@ -24,6 +24,14 @@ bool ChessBoard::init()
 	return true;
 }
 
+void ChessBoard::deleteFromWarZoneByID(int id)
+{
+	if (_prtPlayerA_WarZone_Pieces.size() >= id)
+	{
+		_prtPlayerA_WarZone_Pieces.erase(_prtPlayerA_WarZone_Pieces.begin() + id);
+	}
+}
+
 vector<ChessPiece*>* ChessBoard::getPlayerA_WarZone_Pieces()
 {
 	return &_prtPlayerA_WarZone_Pieces;

@@ -26,10 +26,21 @@ PieceCoordinate ChessPiece::getPrtCoordinate()
 	return _logCoordinate;
 }
 
-void ChessPiece::setPrtCoordinate(PieceCoordinate* coordinate)
+PieceCoordinate ChessPiece::getOriginCoordin()
 {
-	_logCoordinate.setX(coordinate->getX());
-	_logCoordinate.setY(coordinate->getY());
+	return _originCoordinate;
+}
+
+void ChessPiece::setOriginCoordinate(int x, int y)
+{
+	_originCoordinate.setX(x);
+	_originCoordinate.setY(y);
+}
+
+void ChessPiece::setPrtCoordinate(int x, int y)
+{
+	_logCoordinate.setX(x);
+	_logCoordinate.setY(y);
 }
 
 void ChessPiece::setPieceLevel(const Level newLevel)

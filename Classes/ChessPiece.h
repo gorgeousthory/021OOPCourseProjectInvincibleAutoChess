@@ -25,15 +25,15 @@ struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 
 	double attack; // 实时攻击力
 	double bAttack;//人物基础攻击力
-	double equipAttack;//装备+初始
+	double equipAttack=0;//装备+初始
 	
 	double defence; // 实时防御力
 	double bDefence; //人物基础防御力
-	double equpiDefence;//装备+初始
+	double equpiDefence=0;//装备+初始
 
 	double attackSpeed; // 实时攻击速度
 	double bAttackSpeed;//基础攻击速度
-	double equipAttackSpeed; //装备 + 初始
+	double equipAttackSpeed=0; //装备 + 初始
 
 	double attackScope; // 攻击距离
 
@@ -94,8 +94,11 @@ public:
 
 	// 获取当前棋子位置
 	PieceCoordinate getPrtCoordinate();
+	void setPrtCoordinate(int x, int y);
 
-	void setPrtCoordinate(PieceCoordinate* coordinate);
+	// 获取棋子战斗前原有位置
+	PieceCoordinate getOriginCoordin();
+	void setOriginCoordinate(int x, int y);
 
 	// 设置当前棋子星级
 	void setPieceLevel(const Level newLevel);
@@ -142,9 +145,6 @@ public:
 
 	int storageNum = 0;//上方棋子为负数，下方棋子为正数
 
-	//棋子的可视化
-	//Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position,int type=1);
-
 	//返回一个精灵指针，当精灵已经被当作战斗棋子可视化（即放上棋盘以后），这个精灵指针有一个指向对象，可以通过对指针操作完成动画效果
 	Sprite* getChessPice();
 
@@ -176,6 +176,8 @@ protected:
 	PieceInfo _buffEffect; // 当前装备(及羁绊？)效果加成
 
 	PieceCoordinate _logCoordinate; // 棋子的逻辑位置
+
+	PieceCoordinate _originCoordinate; // 棋子战斗前的原有位置
 
 	PieceCoordinate _realCoordinate; // 棋子的实际位置
 

@@ -416,10 +416,7 @@ void PlayScene::playerBInitRound1()
 	playerB->setExperience(1);
 	playerB->getPlayerPieceBattle()->pushBack(crtPiece);
 	chessBoardModel->getPlayerB_WarZone_Pieces()->push_back(crtPiece);
-	PieceCoordinate coordinate;
-	coordinate.setX(7);
-	coordinate.setY(7);
-	crtPiece->setPrtCoordinate(&coordinate);
+	crtPiece->setPrtCoordinate(7, 7);
 	crtPiece->setOriginCoordinate(7, 7);
 	chessBoardModel->getWarZonePieces(7)->at(7) = crtPiece;
 	
@@ -551,10 +548,7 @@ void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 	}
 	// 数据模型添加
 	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) = piece;
-	PieceCoordinate coordinate;
-	coordinate.setX(i + 1);
-	coordinate.setY(0);
-	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->setPrtCoordinate(&coordinate);
+	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->setPrtCoordinate(i + 1, 0);
 	// chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->IncreaseOne();
 	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->promoteRank();
 	// 给玩家信息更新
@@ -699,6 +693,7 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				// 数据模型移动
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) = chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1);
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->setOriginCoordinate(logPosition.getX() - 1, logPosition.getY() - 1);
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->setPrtCoordinate(logPosition.getX() - 1, logPosition.getY() - 1);
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1) = nullptr;
 				// 玩家信息更新
@@ -706,7 +701,7 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				{
 					if (playerA->getPlayerPieceBattle()->at(i)->getPrtCoordinate() == originPosition)
 					{
-						playerA->getPlayerPieceBattle()->at(i)->setPrtCoordinate(&logPosition);
+						playerA->getPlayerPieceBattle()->at(i)->setPrtCoordinate(logPosition.getX(), logPosition.getY());
 					}
 				}
 				// 可视化移动
@@ -777,7 +772,7 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 					originCoordinate.setY(originPosition.getY() - 1);
 					if (playerA->getPlayerPiecePossesion()->at(i)->getPrtCoordinate() == originCoordinate)
 					{
-						playerA->getPlayerPiecePossesion()->at(i)->setPrtCoordinate(&logPosition);
+						playerA->getPlayerPiecePossesion()->at(i)->setPrtCoordinate(logPosition.getX(), logPosition.getY());
 					}
 				}
 				// 可视化移动
@@ -798,6 +793,7 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				// 数据模型移动
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) = chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1);
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->setOriginCoordinate(logPosition.getX() - 1, logPosition.getY() - 1);
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->setPrtCoordinate(logPosition.getX() - 1, logPosition.getY() - 1);
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getPlayerA_WarZone_Pieces()->push_back(chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1));
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1) = nullptr;

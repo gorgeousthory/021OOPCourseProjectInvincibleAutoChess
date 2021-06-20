@@ -37,10 +37,10 @@ void ChessPiece::setOriginCoordinate(int x, int y)
 	_originCoordinate.setY(y);
 }
 
-void ChessPiece::setPrtCoordinate(PieceCoordinate* coordinate)
+void ChessPiece::setPrtCoordinate(int x, int y)
 {
-	_logCoordinate.setX(coordinate->getX());
-	_logCoordinate.setY(coordinate->getY());
+	_logCoordinate.setX(x);
+	_logCoordinate.setY(y);
 }
 
 void ChessPiece::setPieceLevel(const Level newLevel)

@@ -94,7 +94,7 @@ public:
 
 	// 获取当前棋子位置
 	PieceCoordinate getPrtCoordinate();
-	void setPrtCoordinate(PieceCoordinate* coordinate);
+	void setPrtCoordinate(int x, int y);
 
 	// 获取棋子战斗前原有位置
 	PieceCoordinate getOriginCoordin();

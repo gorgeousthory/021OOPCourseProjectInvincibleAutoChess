@@ -52,8 +52,8 @@ bool PlayScene::init()
 	menu = Menu::create(exitButton, nullptr);
 	originSize = exitButton->getContentSize();
 	const float xButtons = 65 * ConfigController::getInstance()->getPx()->y, yButtons = -35 * ConfigController::getInstance()->getPx()->y,//退出按钮的摆放位置	the position of Exit button
-		dyButtons = 10 * ConfigController::getInstance()->getPx()->y,	//按钮的高度差	the height difference
-		sButtons = 8 * ConfigController::getInstance()->getPx()->x / originSize.x;//按钮的缩放比例	the scale of buttons
+	dyButtons = 10 * ConfigController::getInstance()->getPx()->y,	//按钮的高度差	the height difference
+	sButtons = 8 * ConfigController::getInstance()->getPx()->x / originSize.x;//按钮的缩放比例	the scale of buttons
 
     // 添加退出按钮
 	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -540,6 +540,7 @@ void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 {
 	// 计算出应该放置在备战区的哪个位置
 	int i = 0;
+	vector<int> deletePosition{};
 	for (i; i < 8; i++)
 	{
 		if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) == nullptr)
@@ -550,16 +551,41 @@ void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 	// 数据模型添加
 	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) = piece;
 	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->setPrtCoordinate(i + 1, 0);
-	// chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->IncreaseOne();
-	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->promoteRank();
+	bool ifPromote = chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->promoteRank();
+	if (ifPromote)
+	{
+		for (int j = 0; j < chessBoardModel->getPlayerA_PreZone_Pieces()->size() && j != i; j++)
+		{
+			if (chessBoardModel->getPlayerA_PreZone_Pieces()->at(j) != nullptr && chessBoardModel->getPlayerA_PreZone_Pieces()->at(j)->getTag() == chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->getTag() && chessBoardModel->getPlayerA_PreZone_Pieces()->at(j)->getPieceLevel() == Level::level1)
+			{
+				chessBoardModel->getPlayerA_PreZone_Pieces()->at(j) = nullptr;
+				deletePosition.push_back(j);
+			}
+		}
+	}
 	// 给玩家信息更新
 	playerA->addToPiecePossesion(piece);
+	/*if (ifPromote)
+		for (int j = 0; j < 2; j++)
+	{
+		{
+			playerA->deleteFromPossesionByID(deletePosition.at(j));
+		}
+	}*/
 	playerA->setMoney(-1 * piece->getPiecePerCost());
 	playerA->retain();
 	// 可视化添加
 	auto visiblePiece = createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(i + 1, 0), shopModel->getPieceList()->at(num)->getPieceLevel(), 0);
 	pieceBoard[0][i + 1] = visiblePiece;
 	playLayer->addChild(pieceBoard[0][i + 1], 7);
+	if (ifPromote)
+	{
+		for (int j = 0; j < 2; j++)
+		{
+			pieceBoard[0][deletePosition.at(j) + 1]->removeFromParent();
+			pieceBoard[0][deletePosition.at(j) + 1] = nullptr;
+		}
+	}
 	GoldLabel->setString(Value(playerA->getMoney()).asString());
 }
 

@@ -74,7 +74,7 @@ private:
 
 // 由于只有三个星级，采用枚举控制
 enum class Level { level1, level2, level3 };
-
+// Level& operator + (Level& tp);
 
 class ChessPiece : public Ref
 {
@@ -112,8 +112,6 @@ public:
 	//获取棋子类型
 	virtual string getTag() = 0;
 
-	//CREATE_FUNC(ChessPiece);   这里ChessPiece是抽象类不能create
-
 	//技能函数，继承
 	virtual void skill() = 0;
 	
@@ -123,7 +121,8 @@ public:
 	//提升星级,参数为一个包括了玩家所有棋子的指针的vector
 	//函数的调用会返回一个消耗了对应棋子的vector。
 	virtual vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece) = 0;
-	//只单纯升级，不执行撤去棋子的操作
+	
+	//只单纯升级，不执行撤去棋子的操作，返回是否升级成功
 	virtual bool promoteRank() = 0;
 
 	//提供装备

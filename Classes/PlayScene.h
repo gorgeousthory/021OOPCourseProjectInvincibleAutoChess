@@ -71,6 +71,8 @@ public:
 	//更新函数
 	void update(float dt);
 
+	//记载战斗流程
+	void battleLoop();
 	CREATE_FUNC(PlayScene);
 
 private:

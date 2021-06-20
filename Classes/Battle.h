@@ -61,7 +61,7 @@ public:
 	int battleChoice(ChessPiece*,int type);
 
 	//可能做出的选择：移动,会返回移动的目的地点,会修改chesspiece的坐标
-	PieceCoordinate moveAction(ChessPiece*);
+	void moveAction(ChessPiece*);
 
 	//可能做出的选择：攻击
 	void attackAction(ChessPiece*);

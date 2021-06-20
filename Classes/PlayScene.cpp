@@ -414,86 +414,240 @@ void PlayScene::update(float dt)
 		if (turnInterval > 2) {
 			turnInterval -= 2;
 			//未初始化
-			if (turn - turnMark == 1){
-				turnMark+=1;
+			if (turn - turnMark == 1) {
+				turnMark += 1;
 				for (int i = 0; i < battle->getChessBoard()->getPlayerA_WarZone_Pieces()->size(); i++) {
 					//初始化信息
 				}
 				for (int i = 0; i < battle->getChessBoard()->getPlayerB_WarZone_Pieces()->size(); i++) {
 					//初始化信息
 				}
-				int endMark = -1;
-				endMark = battle->ifEnd();
-				//没有结束
-				if (!endMark) {
-					//为玩家A的棋子寻找战斗对象
-					for (int i = 0; i < battle->getChessBoard()->getPlayerA_WarZone_Pieces()->size(); i++) {
-						battle->findEnemy(battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i), 1);
-					}
-					//为玩家B的棋子寻找战斗对象
-					for (int i = 0; i < battle->getChessBoard()->getPlayerB_WarZone_Pieces()->size(); i++) {
-						battle->findEnemy(battle->getChessBoard()->getPlayerB_WarZone_Pieces()->at(i), 2);
-					}
-
-					//所有都已经找到了战斗对象
-					int actionType = -1;
-					//遍历A
-					for (int i = 0; i < battle->getChessBoard()->getPlayerA_WarZone_Pieces()->size(); i++) {
-						actionType = battle->battleChoice(battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i), 1);
-						//决定移动
-						if (actionType == 1) {
-							//要移动的棋子的指针
-							ChessPiece* entity = battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i);
-
-							//移动了
-							entity->retain();
-							battle->moveAction(entity);
-
-							//为了可视化移动的坐标
-							PieceCoordinate coordinate = entity->getOriginCoordin();
-
-							Sprite* entitySprite = pieceBoard[coordinate.getY()+1].at(coordinate.getX()+1);
-
-							PieceCoordinate realPosition = coordingRevert(CoordinateType::logical, Vec2(entity->getPrtCoordinate().getX()+1, entity->getPrtCoordinate().getY()+1));
-							auto move = MoveTo::create(1, Vec2(realPosition.getX(), realPosition.getY()));
-
-							entitySprite->runAction(move);
-						}
-						//决定攻击
-						else if(actionType==2){
-							battle->pieceBattle(battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i), battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i)->enemyPtr);
-							//做一些动画
-						}
-					}
-
-				}
-				//游戏已经结束，
-				else {
-					//这里可以做一些操作来做动画，一场战斗结束了
-					//重置时间
-					timeRemaining = 5;
-					//加一轮
-					turn += 1;
-					//平局，什么也不做
-					if (endMark == 1) {
-
-					}
-					//玩家A胜利
-					else if (endMark == 2) {
-						//扣除玩家血量那些操作
-						//初始化棋盘摆放
-					}
-					//玩家B胜利
-					else {
-						//扣除玩家血量那些操作
-						//初始化棋盘摆放
-					}
-				}
+				battleLoop();
 			}
-			//已经初始化过了
 			else {
-
+				battleLoop();
 			}
+			//	int endMark = -1;
+			//	endMark = battle->ifEnd();
+			//	//没有结束
+			//	if (!endMark) {
+			//		//为玩家A的棋子寻找战斗对象
+			//		for (int i = 0; i < battle->getChessBoard()->getPlayerA_WarZone_Pieces()->size(); i++) {
+			//			battle->findEnemy(battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i), 1);
+			//		}
+			//		//为玩家B的棋子寻找战斗对象
+			//		for (int i = 0; i < battle->getChessBoard()->getPlayerB_WarZone_Pieces()->size(); i++) {
+			//			battle->findEnemy(battle->getChessBoard()->getPlayerB_WarZone_Pieces()->at(i), 2);
+			//		}
+
+			//		//至此所有都已经找到了战斗对象
+
+			//		//给所有棋子找接下来要去的地点
+			//		battle->findDstPosition();
+
+			//		int actionType = -1;
+			//		//遍历A
+			//		for (int i = 0; i < battle->getChessBoard()->getPlayerA_WarZone_Pieces()->size(); i++) {
+			//			actionType = battle->battleChoice(battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i), 1);
+			//			//决定移动
+			//			if (actionType == 1) {
+			//				//要移动的棋子的指针
+			//				ChessPiece* entity = battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i);
+
+			//				//移动了
+			//				entity->retain();
+			//				battle->moveAction(entity);
+
+			//				//为了可视化移动的坐标
+			//				PieceCoordinate coordinate = entity->getOriginCoordin();
+
+			//				//即将移动到的坐标
+			//				PieceCoordinate nextCoordinate = entity->getNextCoordinate();
+
+			//				Sprite* entitySprite = pieceBoard[coordinate.getY()+1].at(coordinate.getX()+1);
+
+			//				PieceCoordinate realPosition = coordingRevert(CoordinateType::logical, Vec2(nextCoordinate.getX()+1, nextCoordinate.getY()+1));
+			//				auto move = MoveTo::create(1, Vec2(realPosition.getX(), realPosition.getY()));
+
+			//				entitySprite->runAction(move);
+
+			//				//把即将移动到的地址转换为现有的地址
+			//				entity->setPrtCoordinate(entity->getNextCoordinate().getX(), entity->getNextCoordinate().getY());
+			//			}
+			//			//决定攻击
+			//			else if(actionType==2){
+			//				battle->pieceBattle(battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i), battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i)->enemyPtr);
+			//				//做一些动画
+			//			}
+			//		}
+
+			//		//遍历B
+			//		for (int i = 0; i < battle->getChessBoard()->getPlayerB_WarZone_Pieces()->size(); i++) {
+			//			actionType = battle->battleChoice(battle->getChessBoard()->getPlayerB_WarZone_Pieces()->at(i), 2);
+
+			//			//移动
+			//			if (actionType == 1) {
+			//				//要移动的棋子的指针
+			//				ChessPiece* entity = battle->getChessBoard()->getPlayerB_WarZone_Pieces()->at(i);
+
+			//				//移动了
+			//				entity->retain();
+			//				battle->moveAction(entity);
+
+			//				//为了可视化移动的坐标
+			//				PieceCoordinate coordinate = entity->getOriginCoordin();
+
+			//				//即将移动到的坐标
+			//				PieceCoordinate nextCoordinate = entity->getNextCoordinate();
+
+			//				Sprite* entitySprite = pieceBoard[coordinate.getY() + 1].at(coordinate.getX() + 1);
+
+			//				PieceCoordinate realPosition = coordingRevert(CoordinateType::logical, Vec2(nextCoordinate.getX() + 1, nextCoordinate.getY() + 1));
+			//				auto move = MoveTo::create(1, Vec2(realPosition.getX(), realPosition.getY()));
+
+			//				entitySprite->runAction(move);
+
+			//				//把即将移动到的地址转换为现有的地址
+			//				entity->setPrtCoordinate(entity->getNextCoordinate().getX(), entity->getNextCoordinate().getY());
+			//			}
+			//		}
+
+			//	}
+			//	//游戏已经结束，
+			//	else {
+			//		//这里可以做一些操作来做动画，一场战斗结束了
+			//		//重置时间
+			//		timeRemaining = 5;
+			//		//加一轮
+			//		turn += 1;
+			//		//平局，什么也不做
+			//		if (endMark == 1) {
+
+			//		}
+			//		//玩家A胜利
+			//		else if (endMark == 2) {
+			//			//扣除玩家血量那些操作
+			//			//初始化棋盘摆放
+			//		}
+			//		//玩家B胜利
+			//		else {
+			//			//扣除玩家血量那些操作
+			//			//初始化棋盘摆放
+			//		}
+			//	}
+			//}
+			//已经初始化过了
+		}
+	}
+}
+
+void PlayScene::battleLoop()
+{
+	int endMark = -1;
+	endMark = battle->ifEnd();
+	//没有结束
+	if (!endMark) {
+		//为玩家A的棋子寻找战斗对象
+		for (int i = 0; i < battle->getChessBoard()->getPlayerA_WarZone_Pieces()->size(); i++) {
+			battle->findEnemy(battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i), 1);
+		}
+		//为玩家B的棋子寻找战斗对象
+		for (int i = 0; i < battle->getChessBoard()->getPlayerB_WarZone_Pieces()->size(); i++) {
+			battle->findEnemy(battle->getChessBoard()->getPlayerB_WarZone_Pieces()->at(i), 2);
+		}
+
+		//至此所有都已经找到了战斗对象
+
+		//给所有棋子找接下来要去的地点
+		battle->findDstPosition();
+
+		int actionType = -1;
+		//遍历A
+		for (int i = 0; i < battle->getChessBoard()->getPlayerA_WarZone_Pieces()->size(); i++) {
+			actionType = battle->battleChoice(battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i), 1);
+			//决定移动
+			if (actionType == 1) {
+				//要移动的棋子的指针
+				ChessPiece* entity = battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i);
+
+				//移动了
+				entity->retain();
+				battle->moveAction(entity);
+
+				//为了可视化移动的坐标
+				PieceCoordinate coordinate = entity->getOriginCoordin();
+
+				//即将移动到的坐标
+				PieceCoordinate nextCoordinate = entity->getNextCoordinate();
+
+				Sprite* entitySprite = pieceBoard[coordinate.getY() + 1].at(coordinate.getX() + 1);
+
+				PieceCoordinate realPosition = coordingRevert(CoordinateType::logical, Vec2(nextCoordinate.getX() + 1, nextCoordinate.getY() + 1));
+				auto move = MoveTo::create(1, Vec2(realPosition.getX(), realPosition.getY()));
+
+				entitySprite->runAction(move);
+
+				//把即将移动到的地址转换为现有的地址
+				entity->setPrtCoordinate(entity->getNextCoordinate().getX(), entity->getNextCoordinate().getY());
+			}
+			//决定攻击
+			else if (actionType == 2) {
+				battle->pieceBattle(battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i), battle->getChessBoard()->getPlayerA_WarZone_Pieces()->at(i)->enemyPtr);
+				//做一些动画
+			}
+		}
+
+		//遍历B
+		for (int i = 0; i < battle->getChessBoard()->getPlayerB_WarZone_Pieces()->size(); i++) {
+			actionType = battle->battleChoice(battle->getChessBoard()->getPlayerB_WarZone_Pieces()->at(i), 2);
+
+			//移动
+			if (actionType == 1) {
+				//要移动的棋子的指针
+				ChessPiece* entity = battle->getChessBoard()->getPlayerB_WarZone_Pieces()->at(i);
+
+				//移动了
+				entity->retain();
+				battle->moveAction(entity);
+
+				//为了可视化移动的坐标
+				PieceCoordinate coordinate = entity->getOriginCoordin();
+
+				//即将移动到的坐标
+				PieceCoordinate nextCoordinate = entity->getNextCoordinate();
+
+				Sprite* entitySprite = pieceBoard[coordinate.getY() + 1].at(coordinate.getX() + 1);
+
+				PieceCoordinate realPosition = coordingRevert(CoordinateType::logical, Vec2(nextCoordinate.getX() + 1, nextCoordinate.getY() + 1));
+				auto move = MoveTo::create(1, Vec2(realPosition.getX(), realPosition.getY()));
+
+				entitySprite->runAction(move);
+
+				//把即将移动到的地址转换为现有的地址
+				entity->setPrtCoordinate(entity->getNextCoordinate().getX(), entity->getNextCoordinate().getY());
+			}
+		}
+	}
+	//游戏已经结束，
+	else {
+		//这里可以做一些操作来做动画，一场战斗结束了
+		//重置时间
+		timeRemaining = 5;
+		//加一轮
+		turn += 1;
+		//平局，什么也不做
+		if (endMark == 1) {
+
+		}
+		//玩家A胜利
+		else if (endMark == 2) {
+			//扣除玩家血量那些操作
+			//初始化棋盘摆放
+		}
+		//玩家B胜利
+		else {
+			//扣除玩家血量那些操作
+			//初始化棋盘摆放
 		}
 	}
 }

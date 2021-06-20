@@ -72,6 +72,7 @@ void Battle::findEnemy(ChessPiece* damageMaker,int type)
 		}
 	}
 	damageMaker->enemyPtr = enemyPiece;
+	
 }
 
 void Battle::arrangeEnemy()
@@ -148,8 +149,20 @@ void Battle::calculatePosi(ChessPiece* a,ChessPiece* b)
 	int xSum = 0, ySum = 0;
 	int ax = 0, ay = 0, bx = 0, by = 0;
 	bool unFinish = true;
-	PieceCoordinate* aCoordinate = &(a->getPrtCoordinate());
-	PieceCoordinate* bCoordinate = &(b->getPrtCoordinate());
+	PieceCoordinate* aCoordinate = nullptr;
+	PieceCoordinate* bCoordinate = nullptr;
+	if (a->findEnemy) {
+		aCoordinate = &(a->getNextCoordinate());
+	}
+	else {
+		aCoordinate = &(a->getPrtCoordinate());
+	}
+	if (b->findEnemy) {
+		bCoordinate = &(b->getNextCoordinate());
+	}
+	else {
+		bCoordinate = &(b->getPrtCoordinate());
+	}
 	if (!a->findEnemy && !b->findEnemy) {//两人都还没找到战斗对象
 		xSum = aCoordinate->getX() + bCoordinate->getX();
 		ySum = aCoordinate->getY() + bCoordinate->getY();
@@ -249,65 +262,81 @@ void Battle::calculatePosi(ChessPiece* a,ChessPiece* b)
 	else if (a->findEnemy&&!b->findEnemy) {//a已经找到了对象,b没有，为b确定位置
 		if (aCoordinate->getX() > bCoordinate->getX()) {//a在b的右边
 			bx = aCoordinate->getX() - 1;
+			ax = aCoordinate->getX();
 		}
 		else if (aCoordinate->getX() == bCoordinate->getX()) {//a和b的x一致
 			if (aCoordinate->getX() == 0) {
 				bx = 1;
+				ax = aCoordinate->getX();
 			}
 			else {
 				bx = aCoordinate->getX() - 1;
+				ax = aCoordinate->getX();
 			}
 		}
 		else {//a在b的左边
 			bx = aCoordinate->getX() + 1;
+			ax = aCoordinate->getX();
 		}
 
 		//Y
 		if (aCoordinate->getY() > bCoordinate->getY()) {//a在b的上边
 			by = aCoordinate->getY() - 1;
+			ay = aCoordinate->getY();
 		}
 		else if (aCoordinate->getY() == bCoordinate->getY()) {//a和b的Y一致
 			if (aCoordinate->getY() == 0) {
 				by = 1;
+				ay = aCoordinate->getY();
 			}
 			else {
 				by = aCoordinate->getY() - 1;
+				ay = aCoordinate->getY();
 			}
 		}
 		else {//a在b的下边
 			by = aCoordinate->getY() + 1;
+			ay = aCoordinate->getY();
 		}
 	}
 	else if(!a->findEnemy&&b->findEnemy){//b找到了对象,a没有,为a确定位置
 		if (bCoordinate->getX() > aCoordinate->getX()) {//b在a的右边
 			ax = bCoordinate->getX() - 1;
+			bx = bCoordinate->getX();
 		}
 		else if (bCoordinate->getX() == aCoordinate->getX()) {//b和a的x一致
 			if (bCoordinate->getX() == 0) {
 				ax = 1;
+				bx = bCoordinate->getX();
 			}
 			else {
 				ax = bCoordinate->getX() - 1;
+				bx = bCoordinate->getX();
 			}
 		}
 		else {//b在a的左边
 			ax = bCoordinate->getX() + 1;
+			bx = bCoordinate->getX();
 		}
 
 		//Y
 		if (bCoordinate->getY() > aCoordinate->getY()) {//b在a的上边
 			ay = bCoordinate->getY() - 1;
+			by = bCoordinate->getY();
 		}
 		else if (bCoordinate->getY() == aCoordinate->getY()) {//b和a的Y一致
 			if (bCoordinate->getY() == 0) {
 				ay = 1;
+				by = bCoordinate->getY();
 			}
 			else {
 				ay = bCoordinate->getY() - 1;
+				by = bCoordinate->getY();
 			}
 		}
 		else {//b在a的下边
 			ay = bCoordinate->getY() + 1;
+			by = bCoordinate->getY();
 		}
 	}
 
@@ -316,43 +345,66 @@ void Battle::calculatePosi(ChessPiece* a,ChessPiece* b)
 	//棋子a可以放
 	if (battleBoard->getWarZonePieces(ay)->at(ax) == nullptr&&unFinish) {
 		//目标地点放a的指针，原地址给换成空指针
-		a->retain();
-		changeWarZonePtr(ax, ay, a);
+		if (!a->findEnemy) {
+			a->retain();
+			changeWarZonePtr(ax, ay, a);
+		}
 		//棋子b恰好也可以放
 		if (battleBoard->getWarZonePieces(by)->at(bx) == nullptr) {
-			b->retain();
-			changeWarZonePtr(bx, by, b);
+			if (!b->findEnemy) {
+				b->retain();
+				changeWarZonePtr(bx, by, b);
+			}
 		}
 		//棋子b不能放了，需要遍历a旁边的一圈
 		else {
-			b->retain();
-			enumerate(ax, ay, b);
+			if (!b->findEnemy) {
+				b->retain();
+				enumerate(ax, ay, b);
+			}
 		}
 		unFinish = false;
 	}
 	//如果棋子b可以放棋子a不能放(不写else的原因是排版有问题)
 	if (battleBoard->getWarZonePieces(by)->at(bx) == nullptr && battleBoard->getWarZonePieces(ay)->at(ax) != nullptr&&unFinish) {
-		b->retain();
-		changeWarZonePtr(bx, by, b);
+		if (!b->findEnemy) {
+			b->retain();
+			changeWarZonePtr(bx, by, b);
+		}
 		//现在需要绕着b遍历
-		a->retain();
-		enumerate(bx, by, a);
+		if (!a->findEnemy) {
+			a->retain();
+			enumerate(bx, by, a);
+		}
 		unFinish = false;
 	}
 	//两个棋子都不可以放
 	if (battleBoard->getWarZonePieces(by)->at(bx) != nullptr && battleBoard->getWarZonePieces(ay)->at(ax) != nullptr&&unFinish) {
 		//先遍历a周围区域放a
-		
-		a->retain();
-		//enumerate 里是包含changeWarZonePtr的
-		enumerate(ax, ay, a);
+		if (!a->findEnemy) {
+			//b是确定的
+			if (b->findEnemy) {
+				a->retain();
+				//enumerate 里是包含changeWarZonePtr的
+				enumerate(bx, by, a);
+			}
+			else {
+				a->retain();
+				//enumerate 里是包含changeWarZonePtr的
+				enumerate(ax, ay, a);
+			}
+			
+		}
 		//a就被放好了
-		ax = a->getPrtCoordinate().getX();
-		ay = a->getPrtCoordinate().getY();
-		b->retain();
-		enumerate(ax, ay, b);
+		ax = a->getNextCoordinate().getX();
+		ay = a->getNextCoordinate().getY();
+		if (!b->findEnemy) {
+			b->retain();
+			enumerate(ax, ay, b);
+		}
 		unFinish = false;
 	}
+
 }
 
 
@@ -363,7 +415,7 @@ void Battle::changeWarZonePtr(int x, int y, ChessPiece* a)
 	battleBoard->getWarZonePieces(y)->at(x) = a;
 	battleBoard->getWarZonePieces(aCoordinate->getY())->at(aCoordinate->getX()) = nullptr;
 	//修改了a的逻辑坐标，但是真实坐标目前没有修改
-	a->setPrtCoordinate(x,y);
+	a->setNextCoordinate(x,y);
 }
 
 void Battle::enumerate(int x, int y, ChessPiece* a)
@@ -556,7 +608,7 @@ int Battle::battleChoice(ChessPiece* A,int type)
 	}
 }
 
-PieceCoordinate Battle::moveAction(ChessPiece* A)
+void Battle::moveAction(ChessPiece* A)
 {
 	PieceCoordinate aCoordinate = A->getPrtCoordinate();
 
@@ -567,21 +619,23 @@ PieceCoordinate Battle::moveAction(ChessPiece* A)
 		CCLOG("moveAction error ");
 	}
 	
-	A->retain();
-	findPerDstPosition(A);
 
 	//至此，A的目的地已经有了，现在移动它
-	aCoordinate = A->getPrtCoordinate();
+	aCoordinate = A->getNextCoordinate();
 	//改数据,这里之前找目的地时已经确定不会选到有指针的地方，所以ok不考虑这个问题
 	battleBoard->getWarZonePieces(aCoordinate.getY())->at(aCoordinate.getX()) = A;
-	return aCoordinate;
+
+	//改数据，原来的地方改成nullptr
+	aCoordinate = A->getPrtCoordinate();
+	battleBoard->getWarZonePieces(aCoordinate.getY())->at(aCoordinate.getX()) = nullptr;
+
 }
 
 void Battle::attackAction(ChessPiece* A)
 {
 	A->retain();
 	pieceBattle(A, A->enemyPtr);
-	log("ATTACK %d",A->getCrtPieceCondition()->healthPoint);
+	CCLOG("attack");
 }
 
 int Battle::ifEnd()

@@ -25,15 +25,15 @@ struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 
 	double attack; // 实时攻击力
 	double bAttack;//人物基础攻击力
-	double equipAttack=0;//装备+初始
+	double equipAttack;//装备+初始
 	
 	double defence; // 实时防御力
 	double bDefence; //人物基础防御力
-	double equpiDefence=0;//装备+初始
+	double equpiDefence;//装备+初始
 
 	double attackSpeed; // 实时攻击速度
 	double bAttackSpeed;//基础攻击速度
-	double equipAttackSpeed=0; //装备 + 初始
+	double equipAttackSpeed; //装备 + 初始
 
 	double attackScope; // 攻击距离
 
@@ -45,6 +45,7 @@ struct PieceInfo // 棋子数据类，这里存放的是会随战斗进行而改变的数据
 };
 
 enum class CoordinateType{ real, logical }; // 坐标类型
+
 
 class PieceCoordinate // 棋子坐标
 {
@@ -74,6 +75,7 @@ private:
 // 由于只有三个星级，采用枚举控制
 enum class Level { level1, level2, level3 };
 
+
 class ChessPiece : public Ref
 {
 public:
@@ -100,6 +102,10 @@ public:
 	PieceCoordinate getOriginCoordin();
 	void setOriginCoordinate(int x, int y);
 
+	// 获取棋子下一步移动的位置
+	PieceCoordinate getNextCoordinate();
+	void setNextCoordinate(int x, int y);
+
 	// 设置当前棋子星级
 	void setPieceLevel(const Level newLevel);
 
@@ -118,7 +124,7 @@ public:
 	//函数的调用会返回一个消耗了对应棋子的vector。
 	virtual vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece) = 0;
 	//只单纯升级，不执行撤去棋子的操作
-	virtual void promoteRank() = 0;
+	virtual bool promoteRank() = 0;
 
 	//提供装备
 	//virtual void giveEquip(int equipNum, int equipType);
@@ -179,7 +185,7 @@ protected:
 
 	PieceCoordinate _originCoordinate; // 棋子战斗前的原有位置
 
-	PieceCoordinate _realCoordinate; // 棋子的实际位置
+	PieceCoordinate _nextCoordinate; // 棋子的实际位置
 
 	Sprite* imagePiece;//指向可视化
 };
@@ -212,7 +218,7 @@ public:
 	//void familyBuff();
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
-	void promoteRank();
+	virtual bool promoteRank();
 	CREATE_FUNC(tank);
 };
 
@@ -238,7 +244,7 @@ public:
 	//void familyBuff();
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
-	void promoteRank();
+	virtual bool promoteRank();
 	CREATE_FUNC(mage);
 };
 
@@ -264,7 +270,7 @@ public:
 	void familyBuff();
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
-	void promoteRank();
+	virtual bool promoteRank();
 	CREATE_FUNC(stalker);
 };
 
@@ -290,7 +296,7 @@ public:
 	//void familyBuff();
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
-    void promoteRank();
+	virtual bool promoteRank();
 	CREATE_FUNC(therapist);
 };
 
@@ -316,7 +322,7 @@ public:
 	//void familyBuff();
 	//升级函数
 	vector<ChessPiece*> promoteRank(vector<ChessPiece*> piece);
-	void promoteRank();
+	virtual bool promoteRank();
 	CREATE_FUNC(shooter);
 };
 #endif

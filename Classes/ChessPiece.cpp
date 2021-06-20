@@ -37,6 +37,17 @@ void ChessPiece::setOriginCoordinate(int x, int y)
 	_originCoordinate.setY(y);
 }
 
+PieceCoordinate ChessPiece::getNextCoordinate()
+{
+	return _nextCoordinate;
+}
+
+void ChessPiece::setNextCoordinate(int x, int y)
+{
+	_nextCoordinate.setX(x);
+	_nextCoordinate.setY(y);
+}
+
 void ChessPiece::setPrtCoordinate(int x, int y)
 {
 	_logCoordinate.setX(x);
@@ -81,15 +92,15 @@ Sprite* ChessPiece::getChessPice()
 
 void ChessPiece::setVec2(Vec2 position)
 {
-	_realCoordinate.setX(position.x);
-	_realCoordinate.setY(position.y);
+	_nextCoordinate.setX(position.x);
+	_nextCoordinate.setY(position.y);
 }
 
 Vec2 ChessPiece::getVec2()
 {
 	Vec2 position;
-	position.x = _realCoordinate.getX();
-	position.y = _realCoordinate.getY();
+	position.x = _nextCoordinate.getX();
+	position.y = _nextCoordinate.getY();
 	return position;
 }
 
@@ -145,10 +156,10 @@ int ChessPiece::myAttack()
 	srand(time(NULL));
 	int rate = rand() % 100 + 1;
 	if (rate >= _pieceCrtCondition.criticalChance) {//暴击了
-		return 2 * _pieceCrtCondition.attack;
+		return 2 * _pieceCrtCondition.bAttack;
 	}
 	else {//没暴击
-		return _pieceCrtCondition.attack;
+		return _pieceCrtCondition.bAttack;
 	}
 }
 
@@ -358,8 +369,9 @@ string shooter::getTag() { return tag; };
 string therapist::getTag() { return tag; };
 string stalker::getTag() { return tag; };
 
-void tank::promoteRank()
+bool tank::promoteRank()
 {
+	oRankTank++;
 	if (Level::level1 == getPieceLevel())
 	{
 		if (oRankTank >= 3)
@@ -390,9 +402,10 @@ void tank::promoteRank()
 				_pieceCrtCondition.criticalChance = a.asDouble();
 			a = Value(csv[C_ + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
-
 			a = Value(csv[C_ + 1][pathL].c_str());
 			_piecePicPath = a.asString();
+
+			return true;
 		}
 	}
 	else if (Level::level2 == getPieceLevel())
@@ -432,8 +445,9 @@ void tank::promoteRank()
 	}
 }
 
-vector<ChessPiece*>  tank::promoteRank(vector<ChessPiece*> piece)
+vector<ChessPiece*> tank::promoteRank(vector<ChessPiece*> piece)
 {
+	oRankTank++;
 	vector<ChessPiece*> result;
 	if (Level::level1 == getPieceLevel())
 	{
@@ -525,8 +539,9 @@ vector<ChessPiece*>  tank::promoteRank(vector<ChessPiece*> piece)
 	return result;
 }
 
-void mage::promoteRank()
+bool mage::promoteRank()
 {
+	oRankMage++;
 	if (Level::level1 == getPieceLevel())
 	{
 		if (oRankMage >= 3)
@@ -554,12 +569,13 @@ void mage::promoteRank()
 			a = Value(csv[History + 1][attackscopeL].c_str());
 			_pieceCrtCondition.attackScope = a.asDouble();
 			a = Value(csv[History + 1][criticalchanceL].c_str());
-				_pieceCrtCondition.criticalChance = a.asDouble();
+			_pieceCrtCondition.criticalChance = a.asDouble();
 			a = Value(csv[History + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
-
 			a = Value(csv[History+1][pathL].c_str());
 			_piecePicPath = a.asString();
+
+			return true;
 		}
 	}
 	else if (Level::level2 == getPieceLevel())
@@ -601,6 +617,7 @@ void mage::promoteRank()
 
 vector<ChessPiece*>  mage::promoteRank(vector<ChessPiece*> piece)
 {
+	oRankMage++;
 	vector<ChessPiece*> result;
 	if (Level::level1 == getPieceLevel())
 	{
@@ -691,8 +708,9 @@ vector<ChessPiece*>  mage::promoteRank(vector<ChessPiece*> piece)
 	return result;
 }
 
-void stalker::promoteRank()
+bool stalker::promoteRank()
 {
+	oRankStalker++;
 	if (Level::level1 == getPieceLevel())
 	{
 		if (oRankStalker >= 3)
@@ -723,9 +741,10 @@ void stalker::promoteRank()
 			_pieceCrtCondition.criticalChance = a.asDouble();
 			a = Value(csv[Physics + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
-
 			a = Value(csv[Physics + 1][pathL].c_str());
 			_piecePicPath = a.asString();
+
+			return true;
 		}
 	}
 	else if (Level::level2 == getPieceLevel())
@@ -767,6 +786,7 @@ void stalker::promoteRank()
 
 vector<ChessPiece*>  stalker::promoteRank(vector<ChessPiece*> piece)
 {
+	oRankStalker++;
 	vector<ChessPiece*> result;
 	if (Level::level1 == getPieceLevel())
 	{
@@ -856,8 +876,9 @@ vector<ChessPiece*>  stalker::promoteRank(vector<ChessPiece*> piece)
 	return result;
 }
 
-void therapist::promoteRank()
+bool therapist::promoteRank()
 {
+	oRankTherapist++;
 	if (Level::level1 == getPieceLevel())
 	{
 		if (oRankTherapist >= 3)
@@ -888,9 +909,10 @@ void therapist::promoteRank()
 			_pieceCrtCondition.criticalChance = a.asDouble();
 			a = Value(csv[Linear + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
-
 			a = Value(csv[Linear + 1][pathL].c_str());
 			_piecePicPath = a.asString();
+
+			return true;
 		}
 	}
 	else if (Level::level2 == getPieceLevel())
@@ -930,8 +952,9 @@ void therapist::promoteRank()
 	}
 }
 
-vector<ChessPiece*>  therapist::promoteRank(vector<ChessPiece*> piece)
+vector<ChessPiece*> therapist::promoteRank(vector<ChessPiece*> piece)
 {
+	oRankTherapist++;
 	vector<ChessPiece*> result;
 	if (Level::level1 == getPieceLevel())
 	{
@@ -1022,8 +1045,9 @@ vector<ChessPiece*>  therapist::promoteRank(vector<ChessPiece*> piece)
 	return result;
 }
 
-void shooter::promoteRank()
+bool shooter::promoteRank()
 {
+	oRankShooter++;
 	if (Level::level1 == getPieceLevel())
 	{
 		if (oRankShooter >= 3)
@@ -1054,9 +1078,10 @@ void shooter::promoteRank()
 			_pieceCrtCondition.criticalChance = a.asDouble();
 			a = Value(csv[AdvancedM + 1][criticaldamageL].c_str());
 			_pieceCrtCondition.criticalDamage = a.asDouble();
-
 			a = Value(csv[AdvancedM + 1][pathL].c_str());
 			_piecePicPath = a.asString();
+
+			return true;
 		}
 	}
 	else if (Level::level2 == getPieceLevel())
@@ -1098,6 +1123,7 @@ void shooter::promoteRank()
 
 vector<ChessPiece*>  shooter::promoteRank(vector<ChessPiece*> piece)
 {
+	oRankShooter++;
 	vector<ChessPiece*> result;
 	if (Level::level1 == getPieceLevel())
 	{
@@ -1200,7 +1226,7 @@ bool tank::init()
 	a = Value(csv[C_][costL].c_str());
 	_piecePerCost = a.asInt();
 	_logCoordinate.setX(0); _logCoordinate.setY(0);
-	_realCoordinate.setX(0); _realCoordinate.setY(0);
+	_nextCoordinate.setX(0); _nextCoordinate.setY(0);
 	//以下是棋子数值初始化
 	a = Value(csv[C_][hpL].c_str());
 	_pieceCrtCondition.healthPoint = a.asDouble();
@@ -1236,7 +1262,7 @@ tank::tank()
 	a = Value(csv[C_][costL].c_str());
 	_piecePerCost = a.asInt();
 	_logCoordinate.setX(0); _logCoordinate.setY(0);
-	_realCoordinate.setX(0); _realCoordinate.setY(0);
+	_nextCoordinate.setX(0); _nextCoordinate.setY(0);
 	//以下是棋子数值初始化
 	a = Value(csv[C_][hpL].c_str());
 	_pieceCrtCondition.healthPoint = a.asDouble();
@@ -1270,7 +1296,7 @@ mage::mage()
 	a = Value(csv[History][costL].c_str());
 	_piecePerCost = a.asInt();
 	_logCoordinate.setX(0); _logCoordinate.setY(0);
-	_realCoordinate.setX(0); _realCoordinate.setY(0);
+	_nextCoordinate.setX(0); _nextCoordinate.setY(0);
 	//以下是棋子数值初始化
 	a = Value(csv[History][hpL].c_str());
 	_pieceCrtCondition.healthPoint = a.asDouble();
@@ -1304,7 +1330,7 @@ shooter::shooter()
 	a = Value(csv[AdvancedM][costL].c_str());
 	_piecePerCost = a.asInt();
 	_logCoordinate.setX(0); _logCoordinate.setY(0);
-	_realCoordinate.setX(0); _realCoordinate.setY(0);
+	_nextCoordinate.setX(0); _nextCoordinate.setY(0);
 	//以下是棋子数值初始化
 	a = Value(csv[AdvancedM][hpL].c_str());
 	_pieceCrtCondition.healthPoint = a.asDouble();
@@ -1338,7 +1364,7 @@ therapist::therapist()
 	a = Value(csv[Linear][costL].c_str());
 	_piecePerCost = a.asInt();
 	_logCoordinate.setX(0); _logCoordinate.setY(0);
-	_realCoordinate.setX(0); _realCoordinate.setY(0);
+	_nextCoordinate.setX(0); _nextCoordinate.setY(0);
 	//以下是棋子数值初始化
 	a = Value(csv[Linear][hpL].c_str());
 	_pieceCrtCondition.healthPoint = a.asDouble();
@@ -1372,7 +1398,7 @@ stalker::stalker()
 	a = Value(csv[Physics][costL].c_str());
 	_piecePerCost = a.asInt();
 	_logCoordinate.setX(0); _logCoordinate.setY(0);
-	_realCoordinate.setX(0); _realCoordinate.setY(0);
+	_nextCoordinate.setX(0); _nextCoordinate.setY(0);
 	//以下是棋子数值初始化
 	a = Value(csv[Physics][hpL].c_str());
 	_pieceCrtCondition.healthPoint = a.asDouble();

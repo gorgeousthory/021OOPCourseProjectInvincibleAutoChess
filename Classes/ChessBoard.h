@@ -12,7 +12,8 @@
 #ifndef _CHESSBOARD_H_
 #define _CHESSBOARD_H_
 
-#define BOARD_SIZE 8//定义棋盘大小
+#define TYPE_NUM   5 // 棋子种类个数
+#define BOARD_SIZE 8 // 定义棋盘大小
 
 #include"ChessPiece.h"
 
@@ -26,6 +27,7 @@ public:
 
 	// 获取玩家A对战区棋子集合
 	vector<ChessPiece*>* getPlayerA_WarZone_Pieces();
+	void deleteFromWarZoneByID(int id);
 
 	// 获取玩家A备战区棋子集合
 	vector<ChessPiece*>* getPlayerA_PreZone_Pieces();

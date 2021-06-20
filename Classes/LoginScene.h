@@ -49,6 +49,7 @@ public:
 	// 创建一个通用按钮
 	static MenuItemSprite* createGameButton(string name, string normalPicPath, string pressedPicPath, const ccMenuCallback& callback);
 
+	// Node* _cursor;
 private:
 	ProgressTimer* loadingBar; // 资源加载进度条
 

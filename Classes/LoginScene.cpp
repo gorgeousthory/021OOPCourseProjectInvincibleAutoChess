@@ -14,6 +14,31 @@ bool LoginScene::init()
 
 	// ************可视化部分开始***************
 
+	////鼠标指针
+	//auto cursor = Sprite::create("res/Icons/Mouse.png");
+	//this->_cursor = Node::create();
+	//this->_cursor->addChild(cursor);
+	//this->addChild(this->_cursor, 10000);
+
+	//auto listenerMouse = EventListenerMouse::create();
+	//listenerMouse->onMouseMove = [&](cocos2d::EventMouse* event) {
+	//	Point mouse = event->getLocation();
+	//	mouse.y = 1024 - mouse.y;
+
+	//	this->_cursor->setPosition(Point(mouse.x + 20, mouse.y - 30));
+	//};
+	//listenerMouse->onMouseDown = [&](cocos2d::EventMouse* event) {
+	//	this->_cursor->removeAllChildren();
+	//	auto cursor = Sprite::create("res/Icons/Mouse.png");
+	//	this->_cursor->addChild(cursor);
+	//};
+	//listenerMouse->onMouseUp = [&](cocos2d::EventMouse* event) {
+	//	this->_cursor->removeAllChildren();
+	//	auto cursor = Sprite::create("res/Icons/Mouse.png");
+	//	this->_cursor->addChild(cursor);
+	//};
+	//this->_eventDispatcher->addEventListenerWithFixedPriority(listenerMouse, 1);
+
 	// 获取屏幕上的各项参数
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
@@ -22,7 +47,7 @@ bool LoginScene::init()
 	auto loginLayer = Layer::create();
 	loginLayer->setPosition(origin);
 	loginLayer->setContentSize(visibleSize);
-	this->addChild(loginLayer);
+	this->addChild(loginLayer, 1);
 
 	// 创建背景帧动画
 	auto cache = SpriteFrameCache::getInstance();

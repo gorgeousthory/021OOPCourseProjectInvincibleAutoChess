@@ -12,8 +12,6 @@
 #include <cocos2d.h>
 USING_NS_CC;
 
-
-
 class Equipment : public Ref
 {
 public:
@@ -22,13 +20,12 @@ public:
 	void changeData(int ATK, int DEF, int crit, int hasteScale);
 
 	//获取装备数值
-	int getATK();//攻击力
-	int getDEF();//防御
-	int getCrit();//暴击率
-	int getHasteScale();//急速or攻击速度
+	int getATK(); //攻击力
+	int getDEF(); //防御
+	int getCrit(); //暴击率
+	int getHasteScale(); //急速or攻击速度
 
 private:
-
 	//攻击力
 	int attack;
 

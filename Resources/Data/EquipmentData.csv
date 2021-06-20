@@ -1,6 +1,0 @@
-ID/装备编号,NameByEng/英文名,NameByChi/中文名,path/路径,cost/花费,hpLevel/生命等级,hp/生命值,mp/法力值,atkLevel/攻击等级,atk/攻击力,dfcLevel/防御等级,dfc/防御力,atkspd/攻速,atkscp/攻击范围,crtchc/暴击率,crtdmg/暴击伤害
-0,Hammer,Hammer,/res/Equipment/Hammer.png,1,1,521,0,1,50,0,0,0,0,0,0
-1,Handgun,Handgun,/res/Equipment/Handgun.png,3,0,0,0,3,207,0,0,0.2,0,0,0
-2,Shield,Shield,/res/Equipment/Shield.png,4,2,837,0,0,0,3,80,0,0,0,0
-3,Staff,Staff,/res/Equipment/Staff.png,6,2,784,0,3,193,2,40,0.1,0,30,0.4
-4,Talisman,Talisman,/res/Equipment/Talisman.png,2,3,1232,0,0,0,0,0,0,0,0,0

@@ -78,6 +78,7 @@ bool PlayScene::init()
 	readyButton->setScale(sButtons);
 	readyButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 3));
 	menu->addChild(readyButton);
+	readyButton->setName("readyButton");
 	/****按钮群创建结束		end creating the buttons on the right****/
 
 	// 创建棋盘
@@ -111,10 +112,19 @@ bool PlayScene::init()
 	{
 		playerA = Player::create();
 		playerA->retain();
+		const float scaleratio = visibleSize.width / 1440;
+		auto livesPlayerA = levelAttribute("3", "/res/Icons/Health.png", "/res/Icons/Health2.png").at(0);
+		livesPlayerA->setScale(0.1 * scaleratio);
+		livesPlayerA->setPosition(Vec2(20 * config->getPx()->x, 55 * config->getPx()->y));
+		playLayer->addChild(livesPlayerA, 10);
 		auto spritePlayerA = Sprite::create("/res/UI/Player1.png");
-		spritePlayerA->setScale(0.12);
+		spritePlayerA->setScale(0.12 * scaleratio);
 		spritePlayerA->setPosition(Vec2(25 * config->getPx()->x, 38 * config->getPx()->y));
 		playLayer->addChild(spritePlayerA, 10);
+		auto spritePlayerB = Sprite::create("/res/UI/Player2.png");
+		spritePlayerB->setScale(0.12 * scaleratio);
+		spritePlayerB->setPosition(Vec2(135 * config->getPx()->x, 70 * config->getPx()->y));
+		playLayer->addChild(spritePlayerB, 10);
 	}
 
 	// 创建商店	
@@ -237,7 +247,7 @@ void PlayScene::createShop(Vec2 position)
 }
 
 /*返回多个星星的图标,参数代表星星的个数，以向量中的第一个为父节点*/
-Vector<Sprite*> levelStars(const string& value)
+Vector<Sprite*> levelAttribute(const string& value, const string& filepath1, const string& filepath2)
 {
 	Vector<Sprite*> stars;	//the vector contains the stars;
 	int num = 0;
@@ -246,7 +256,7 @@ Vector<Sprite*> levelStars(const string& value)
 	//先添加星星
 	for (; ix < Value(value).asInt(); ix++)
 	{
-		stars.pushBack(Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("/res/Icons/Star.png")));	//the star icon	
+		stars.pushBack(Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey(filepath1)));	//the star icon	
 		num = stars.size() - 1;
 		stars.at(num)->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
 		tmp.x += stars.at(0)->getContentSize().width;
@@ -258,7 +268,7 @@ Vector<Sprite*> levelStars(const string& value)
 	}
 	for (; ix < D_MAX_LEVEL; ix++)
 	{
-		stars.pushBack(Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("/res/Icons/Star2.png")));	//the empty star icon	
+		stars.pushBack(Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey(filepath2)));	//the empty star icon	
 		num = stars.size() - 1;
 		stars.at(num)->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
 		tmp.x += stars.at(0)->getContentSize().width;
@@ -316,7 +326,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	Goldicon->setPosition(Vec2(x2 + 50, y2 + dy * 1 + 220));//金币花费的相对位置	comparing position of cost
 	item->addChild(Goldicon);
 	/*Health feature 生命属性*/
-	auto Healthvalue = levelStars(csv[rowPosition][D_HP_LEVEL]).at(0);
+	auto Healthvalue = levelAttribute(csv[rowPosition][D_HP_LEVEL]).at(0);
 	Healthvalue->setPosition(Vec2(x1, y1));
 	Healthvalue->setScale(s1);
 	Healthicon->addChild(Healthvalue);
@@ -324,7 +334,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	Healthicon->setPosition(Vec2(x2, y2 + dy * 1));
 	item->addChild(Healthicon);
 	/*Attack feature 攻击属性*/
-	auto Attackvalue = levelStars(csv[rowPosition][D_ATK_LEVEL]).at(0);
+	auto Attackvalue = levelAttribute(csv[rowPosition][D_ATK_LEVEL]).at(0);
 	Attackvalue->setPosition(Vec2(x1, y1));
 	Attackvalue->setScale(s1);
 	Attackicon->addChild(Attackvalue);
@@ -332,7 +342,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	Attackicon->setPosition(Vec2(x2, y2 + dy * 0));
 	item->addChild(Attackicon);
 	/*Armor feature 防御属性*/
-	auto Armorvalue = levelStars(csv[rowPosition][D_DFC_LEVEL]).at(0);
+	auto Armorvalue = levelAttribute(csv[rowPosition][D_DFC_LEVEL]).at(0);
 	Armorvalue->setPosition(Vec2(x1, y1));
 	Armorvalue->setScale(s1);
 	Armoricon->addChild(Armorvalue);
@@ -392,7 +402,7 @@ MenuItemSprite* PlayScene::createEquipCard(int equipID, Vec2 position, const ccM
 	Goldicon->setPosition(Vec2(x2 + 50, y2 + dy * 1 + 220));//金币花费的相对位置	comparing position of cost
 	item->addChild(Goldicon);
 	/*Health feature 生命属性*/
-	auto Healthvalue = levelStars(csv[rowPosition][D_HP_LEVEL]).at(0);
+	auto Healthvalue = levelAttribute(csv[rowPosition][D_HP_LEVEL]).at(0);
 	Healthvalue->setPosition(Vec2(x1, y1));
 	Healthvalue->setScale(s1);
 	Healthicon->addChild(Healthvalue);
@@ -400,7 +410,7 @@ MenuItemSprite* PlayScene::createEquipCard(int equipID, Vec2 position, const ccM
 	Healthicon->setPosition(Vec2(x2, y2 + dy * 1));
 	item->addChild(Healthicon);
 	/*Attack feature 攻击属性*/
-	auto Attackvalue = levelStars(csv[rowPosition][D_ATK_LEVEL]).at(0);
+	auto Attackvalue = levelAttribute(csv[rowPosition][D_ATK_LEVEL]).at(0);
 	Attackvalue->setPosition(Vec2(x1, y1));
 	Attackvalue->setScale(s1);
 	Attackicon->addChild(Attackvalue);
@@ -408,7 +418,7 @@ MenuItemSprite* PlayScene::createEquipCard(int equipID, Vec2 position, const ccM
 	Attackicon->setPosition(Vec2(x2, y2 + dy * 0));
 	item->addChild(Attackicon);
 	/*Armor feature 防御属性*/
-	auto Armorvalue = levelStars(csv[rowPosition][D_DFC_LEVEL]).at(0);
+	auto Armorvalue = levelAttribute(csv[rowPosition][D_DFC_LEVEL]).at(0);
 	Armorvalue->setPosition(Vec2(x1, y1));
 	Armorvalue->setScale(s1);
 	Armoricon->addChild(Armorvalue);
@@ -568,6 +578,8 @@ void PlayScene::menuTalkCallBack(Ref* sender)
 
 void PlayScene::menuReadyCallBack(Ref* sender)
 {
+	this->timeRemaining = 0.6;	//点击之后直接开始战斗	click to start battle
+	menu->getChildByName("readyButton")->setVisible(false);		//点击之后使其消失	set the button unvisible
 }
 
 void PlayScene::menuPieceCardCallBack1(Ref* sender)

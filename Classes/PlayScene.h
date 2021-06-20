@@ -144,5 +144,5 @@ private:
 	//动画特效播放
 	void effectAnimation(const string& plistname, const string& plistpath, const int& numFrame, const Vec2& position, const float& scale = 1.0f);
 };
-
+Vector<Sprite*> levelAttribute(const string& value, const string& filepath1 = "/res/Icons/Star.png", const string& filepath2 = "/res/Icons/Star2.png");
 #endif

@@ -7,111 +7,113 @@ Scene* PlayScene::createScene()
 
 bool PlayScene::init()
 {
-	if (!Scene::init()) // ¶Ô¸¸Ààinit·½·¨µÄÅÐ¶Ï
+	if (!Scene::init()) // ï¿½Ô¸ï¿½ï¿½ï¿½initï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
 		return false;
 
 	mouseLiftPiece = nullptr;
 
-	// ÐèÒªÓÃµ½µÄµ¥Àý¹¤¾ß
+	// ï¿½ï¿½Òªï¿½Ãµï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
 
-	// »ñÈ¡ÆÁÄ»ÉÏµÄÌØÊâµãÎ»
+	// ï¿½ï¿½È¡ï¿½ï¿½Ä»ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	auto buttonPositiony = visibleSize.height / 3;	//	The y position of two buttons
 
-	// Ìí¼Ó±³¾°²ã
+	// ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½ï¿½ï¿½
 	playLayer = Layer::create();
 	playLayer->setPosition(origin);
 	playLayer->setContentSize(visibleSize);
 	this->addChild(playLayer);
 
-	// ´´½¨µ¥µãÊÂ¼þ¼àÌýÆ÷
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	auto clickListener = EventListenerTouchOneByOne::create();
 	clickListener->setSwallowTouches(true);
 	clickListener->onTouchBegan = CC_CALLBACK_2(PlayScene::onTouchBegan, this);
 	clickListener->onTouchEnded = CC_CALLBACK_2(PlayScene::onTouchEnded, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(clickListener, this);
 
-	// ´´½¨ÒÆ¶¯ÊÂ¼þ¼àÌýÆ÷
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	auto moveListener = EventListenerMouse::create();
 	moveListener->onMouseMove = CC_CALLBACK_1(PlayScene::onMouseMove, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(moveListener, this);
 
-	// Ìí¼Ó±³¾°Í¼Æ¬
+	// ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½Í¼Æ¬
 	auto backGround = Sprite::createWithTexture(texture->getTextureForKey("/res/Background/PlaySceneBackground.png"));
 	backGround->setPosition(visibleSize / 2);
 	Vec2 originSize = backGround->getContentSize();
 	backGround->setScale(visibleSize.height / originSize.y);
 	playLayer->addChild(backGround, 1);
 
-	/****ÒÔÏÂÎªÓÒ²àÍæ¼Òµã»÷µÄ°´Å¥²Ëµ¥µÄ´´½¨		create the buttons on the right****/
-	/*ÒÔÍË³ö°´Å¥Îª»ù×¼£¬ËùÓÐ°´Å¥uiµÄÍ¼Æ¬´óÐ¡¶¼Ó¦ÏàÍ¬	based on the exitButton,all the pics of Buttons should be the same*/
+	/****ï¿½ï¿½ï¿½ï¿½Îªï¿½Ò²ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½Ä°ï¿½Å¥ï¿½Ëµï¿½ï¿½Ä´ï¿½ï¿½ï¿½		create the buttons on the right****/
+	/*ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½Å¥Îªï¿½ï¿½×¼ï¿½ï¿½ï¿½ï¿½ï¿½Ð°ï¿½Å¥uiï¿½ï¿½Í¼Æ¬ï¿½ï¿½Ð¡ï¿½ï¿½Ó¦ï¿½ï¿½Í¬	based on the exitButton,all the pics of Buttons should be the same*/
 	auto exitButton = LoginScene::createGameButton("", "/res/UI/ExitNormal.png", "/res/UI/ExitSelected.png", CC_CALLBACK_1(PlayScene::menuExitCallBack, this));
 	menu = Menu::create(exitButton, nullptr);
 	originSize = exitButton->getContentSize();
-	const float xButtons = 65 * ConfigController::getInstance()->getPx()->y, yButtons = -35 * ConfigController::getInstance()->getPx()->y,//ÍË³ö°´Å¥µÄ°Ú·ÅÎ»ÖÃ	the position of Exit button
-		dyButtons = 10 * ConfigController::getInstance()->getPx()->y,	//°´Å¥µÄ¸ß¶È²î	the height difference
-		sButtons = 8 * ConfigController::getInstance()->getPx()->x / originSize.x;//°´Å¥µÄËõ·Å±ÈÀý	the scale of buttons
-	//Ìí¼ÓÍË³ö°´Å¥
+	const float xButtons = 65 * ConfigController::getInstance()->getPx()->y, yButtons = -35 * ConfigController::getInstance()->getPx()->y,//ï¿½Ë³ï¿½ï¿½ï¿½Å¥ï¿½Ä°Ú·ï¿½Î»ï¿½ï¿½	the position of Exit button
+		dyButtons = 10 * ConfigController::getInstance()->getPx()->y,	//ï¿½ï¿½Å¥ï¿½Ä¸ß¶È²ï¿½	the height difference
+		sButtons = 8 * ConfigController::getInstance()->getPx()->x / originSize.x;//ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½	the scale of buttons
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½Å¥
 	exitButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	exitButton->setScale(sButtons);
 	exitButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 0));
-	//²¥·ÅÒôÀÖ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	_audioBgID = AudioEngine::play2d("/res/Music/musicBgm.mp3", true);
-	//Ìí¼ÓÒôÀÖ°´Å¥
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö°ï¿½Å¥
 	auto musicButton = LoginScene::createGameButton("", "/res/UI/MusicNormal.png", "/res/UI/MusicSelected.png", CC_CALLBACK_1(PlayScene::menuMusicCallBack, this));
 	musicButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	musicButton->setScale(sButtons);
 	musicButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 1));
 	menu->addChild(musicButton);
-	//Ìí¼ÓÁÄÌì°´Å¥
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì°´Å¥
 	auto talkButton = LoginScene::createGameButton("", "/res/UI/TalkNormal.png", "/res/UI/TalkSelected.png", CC_CALLBACK_1(PlayScene::menuTalkCallBack, this));
 	talkButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	talkButton->setScale(sButtons);
 	talkButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 2));
 	menu->addChild(talkButton);
-	//Ìí¼Ó×¼±¸°´Å¥
+	//ï¿½ï¿½ï¿½ï¿½×¼ï¿½ï¿½ï¿½ï¿½Å¥
 	auto readyButton = LoginScene::createGameButton("", "/res/UI/PlayNormal.png", "/res/UI/PlaySelected.png", CC_CALLBACK_1(PlayScene::menuReadyCallBack, this));
 	readyButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	readyButton->setScale(sButtons);
 	readyButton->setPosition(Vec2(xButtons, yButtons + dyButtons * 3));
 	menu->addChild(readyButton);
 	readyButton->setName("readyButton");
-	/****°´Å¥Èº´´½¨½áÊø		end creating the buttons on the right****/
+	/****ï¿½ï¿½Å¥Èºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½		end creating the buttons on the right****/
 
-	// ´´½¨ÆåÅÌ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	chessBoardModel = ChessBoard::create();
 	chessBoardModel->retain();
 	createBoard(Vec2(config->getPx()->x * 47.5, config->getPx()->y * 16));
 
-	// Ìí¼Ó¼ÆÊ±Æ÷
-	auto loadingBarBack = Sprite::create("res/UI/TimeBar1.png"); // ½ø¶ÈÌõµÄ±³¾°
-	auto loadingBarFront = Sprite::create("res/UI/TimeBar2.png"); // ½ø¶ÈÌõµÄÇ°¾°
+	// ï¿½ï¿½ï¿½Ó¼ï¿½Ê±ï¿½ï¿½
+	auto loadingBarBack = Sprite::create("res/UI/TimeBar1.png"); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
+	auto loadingBarFront = Sprite::create("res/UI/TimeBar2.png"); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½
 	originSize = loadingBarBack->getContentSize();
-	const float xTimeBar = visibleSize.width / 2, yTimeBar = visibleSize.height,	//Ê±¼ä½ø¶ÈÌõµÄÎ»ÖÃ£¬ÆÁÄ»ÖÐ¼ä×îÉÏ·½	the position of timeBar
-		sTimeBar = 50 * ConfigController::getInstance()->getPx()->x / originSize.x;	//Ê±¼ä½ø¶ÈÌõµÄËõ·Å±ÈÀý
+	const float xTimeBar = visibleSize.width / 2, yTimeBar = visibleSize.height,	//Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã£ï¿½ï¿½ï¿½Ä»ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½Ï·ï¿½	the position of timeBar
+		sTimeBar = 50 * ConfigController::getInstance()->getPx()->x / originSize.x;	//Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½
 	loadingBar = ProgressTimer::create(loadingBarFront);
 	loadingBar->setBarChangeRate(Vec2(1, 0));
-	loadingBar->setType(ProgressTimer::Type::BAR);	// ÉèÖÃ½ø¶ÈÌõÀàÐÍ
-	loadingBar->setMidpoint(Vec2(0, 1));	//ÉèÖÃÔË¶¯·½Ïò
-	loadingBar->setPercentage(0);	//ÉèÖÃ³õÊ¼ÖµÎª0
+	loadingBar->setType(ProgressTimer::Type::BAR);	// ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	loadingBar->setMidpoint(Vec2(0, 1));	//ï¿½ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½
+	loadingBar->setPercentage(0);	//ï¿½ï¿½ï¿½Ã³ï¿½Ê¼ÖµÎª0
 	loadingBarBack->setAnchorPoint(Vec2(0.5, 1));
 	loadingBar->setAnchorPoint(Vec2(0.5, 1));
 	loadingBarBack->setScale(sTimeBar);
 	loadingBar->setScale(sTimeBar);
-	//loadingBarBack->setPosition(200, 600); loadingBar->setPosition(200, 600);//½ø¶ÈÌõµÄÎ»ÖÃ
-	loadingBarBack->setPosition(Size(xTimeBar, yTimeBar));	//½ø¶ÈÌõ±³¾°µÄÎ»ÖÃ	
-	loadingBar->setPosition(Size(xTimeBar, yTimeBar));		//½ø¶ÈÌõµÄÎ»ÖÃ
+	//loadingBarBack->setPosition(200, 600); loadingBar->setPosition(200, 600);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+	loadingBarBack->setPosition(Size(xTimeBar, yTimeBar));	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½	
+	loadingBar->setPosition(Size(xTimeBar, yTimeBar));		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 	playLayer->addChild(loadingBarBack, 3);
 	playLayer->addChild(loadingBar, 3);
 	playLayer->addChild(timeLabel);
 
-	// ´´½¨Íæ¼Ò
-	{
-		playerA = Player::create();
-		playerA->retain();
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	playerA = Player::create();
+	playerB = Player::create();
+	playerA->retain();
+	playerB->retain();
+
 		const float scaleratio = visibleSize.width / 1440;
 		auto livesPlayerA = levelAttribute("3", "/res/Icons/Health.png", "/res/Icons/Health2.png").at(0);
 		livesPlayerA->setScale(0.1 * scaleratio);
@@ -125,23 +127,23 @@ bool PlayScene::init()
 		spritePlayerB->setScale(0.12 * scaleratio);
 		spritePlayerB->setPosition(Vec2(135 * config->getPx()->x, 70 * config->getPx()->y));
 		playLayer->addChild(spritePlayerB, 10);
-	}
 
-	// ´´½¨ÉÌµê	
-	{
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½	
+	
 		shopModel = Shop::create();
 		shopModel->retain();
-		createShop(Vec2(-55 * config->getPx()->x, -45 * config->getPx()->y));//ÉÌµê°Ú·ÅÎ»ÖÃÔÚÏÂ·½Æ«×ó
+		createShop(Vec2(-55 * config->getPx()->x, -45 * config->getPx()->y));//ï¿½Ìµï¿½Ú·ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½Æ«ï¿½ï¿½
 		for (int i = 0; i < 5; i++)
 		{
 			menu->addChild(shop.at(i));
 		}
 		playLayer->addChild(menu, 5);
-	}
+	
 
 	this->scheduleUpdate();
 
 	//effectAnimation("effectAnimationMage", "/res/Effect/effectAnimationMage", 3, visibleSize / 2);
+
 
 	return true;
 }
@@ -184,56 +186,56 @@ void PlayScene::createBoard(Vec2 position)
 
 void PlayScene::createShop(Vec2 position)
 {
-	// µ¥Àý¹¤¾ß
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	auto config = ConfigController::getInstance();
 	auto texture = Director::getInstance()->getTextureCache();
 
-	//preparations	¼ÓÔØ²Ù×÷UIÇ°µÄÏà¹Ø×¼±¸
+	//preparations	ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½UIÇ°ï¿½ï¿½ï¿½ï¿½ï¿½×¼ï¿½ï¿½
 	auto shopMore = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/ShoppingMore.png"));
 	const Vec2 originSize = shopMore->getContentSize();
-	const float scale = 16.9 * config->getPx()->x / originSize.x;	//»ñÈ¡ÀíÂÛËõ·Å±ÈÀý	obtain the reasonable sacle	
-	const Vec2 tmpVec2 = Vec2(position.x + 80 * config->getPx()->x, position.y + 45 * config->getPx()->y);	//»ñÈ¡ÀíÂÛÎ»ÖÃ obtain the reasonable positon
+	const float scale = 16.9 * config->getPx()->x / originSize.x;	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½	obtain the reasonable sacle	
+	const Vec2 tmpVec2 = Vec2(position.x + 80 * config->getPx()->x, position.y + 45 * config->getPx()->y);	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ obtain the reasonable positon
 	const float singleX = shopMore->getContentSize().width * 0.01 * scale,
-		singleY = shopMore->getContentSize().height * 0.01 * scale;	//»ñÈ¡ÀíÂÛµ¥Î»³¤¶È£¬ºáÖáÓë×ÝÖá	obtain reasonable lenth
-	const float x1 = -5.560 * singleX, y1 = 4.561 * singleY, //x1£¬y1¶ÔÓ¦°´Å¥Ïà¶Ô±³¾°¿¨µÄÎ»ÖÃ£¬ÔÚÄ¬ÈÏ´°¿Ú´óÐ¡Ê±£¬Êµ¼ÊÖµÓ¦½Ó½ü-8£¬8	x1,y1 refer to the position compared to the bgcard	
-		dy = 38.773 * singleY;						//dy¶ÔÓ¦Á½ÕÅ¿¨Æ¬µÄ¸ß¶È²î£¬ÔÚÄ¬ÈÏ´°¿Ú´óÐ¡Ê±£¬Êµ¼ÊÖµÓ¦½Ó½ü68	dy refers to the height difference between two buttons	
+		singleY = shopMore->getContentSize().height * 0.01 * scale;	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ûµï¿½Î»ï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	obtain reasonable lenth
+	const float x1 = -5.560 * singleX, y1 = 4.561 * singleY, //x1ï¿½ï¿½y1ï¿½ï¿½Ó¦ï¿½ï¿½Å¥ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã£ï¿½ï¿½ï¿½Ä¬ï¿½Ï´ï¿½ï¿½Ú´ï¿½Ð¡Ê±ï¿½ï¿½Êµï¿½ï¿½ÖµÓ¦ï¿½Ó½ï¿½-8ï¿½ï¿½8	x1,y1 refer to the position compared to the bgcard	
+		dy = 38.773 * singleY;						//dyï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Å¿ï¿½Æ¬ï¿½Ä¸ß¶È²î£¬ï¿½ï¿½Ä¬ï¿½Ï´ï¿½ï¿½Ú´ï¿½Ð¡Ê±ï¿½ï¿½Êµï¿½ï¿½ÖµÓ¦ï¿½Ó½ï¿½68	dy refers to the height difference between two buttons	
 
-//´´½¨Éý¼¶ºÍË¢ÐÂ°´Å¥	create the buttons upgrade and fresh
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¢ï¿½Â°ï¿½Å¥	create the buttons upgrade and fresh
 	auto buyExp = LoginScene::createGameButton("", "/res/UI/UpgradeNormal.png", "/res/UI/UpgradeSelected.png", CC_CALLBACK_1(PlayScene::menuBuyExpCallBack, this));
 	auto freshShop = LoginScene::createGameButton("", "/res/UI/RefreshNormal.png", "/res/UI/RefreshSelected.png", CC_CALLBACK_1(PlayScene::menuFreshShopCallBack, this));
-	//µ÷Õû±³¾°Í¼Æ¬Á½¸ö²Ëµ¥Ïî£¨Éý¼¶ºÍË¢ÐÂ£©³ýÁËÏà¶ÔÎ»ÖÃÖ®ÍâÆäÓà½ÔÍ¬²½	adjust the bgcard the two buttons(upgrade and fresh)//adjust the scale	µ÷Õû´óÐ¡
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½î£¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¢ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½	adjust the bgcard the two buttons(upgrade and fresh)//adjust the scale	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡
 	shopMore->setScale(scale);
 	buyExp->setScale(scale);
 	freshShop->setScale(scale);
-	//adjust the AnchorPoint	µ÷ÕûÃªµã
+	//adjust the AnchorPoint	ï¿½ï¿½ï¿½ï¿½Ãªï¿½ï¿½
 	shopMore->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
 	buyExp->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
 	freshShop->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-	//adjust the Position	µ÷ÕûÏà¶Ô´óÐ¡
+	//adjust the Position	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Ð¡
 	shopMore->setPosition(tmpVec2);
 	buyExp->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 1) + Vec2(-80 * config->getPx()->x, -45 * config->getPx()->y));
 	freshShop->setPosition(tmpVec2 + Vec2(x1, y1 + dy * 0) + Vec2(-80 * config->getPx()->x, -45 * config->getPx()->y));
-	//add the parent node	Ìí¼Ó¸¸½Úµã
+	//add the parent node	ï¿½ï¿½ï¿½Ó¸ï¿½ï¿½Úµï¿½
 	playLayer->addChild(shopMore, 5);
 	menu->addChild(buyExp);
 	menu->addChild(freshShop);
 
-	const float x2 = 130, y2 = 1600;	//½ð±ÒÍ¼Æ¬ËùÔÚµÄÎ»ÖÃ£¨Ïà¶ÔÓÚµ×²ã¿¨Æ¬£©	the position of Gold coin icon
-	//Ìí¼Óµ±Ç°½ÇÉ«ËùÓµÓÐµÄ½ð±ÒÊýÁ¿
-	auto Goldicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Coin.png"));		//the gold coin icon£¨½ð±ÒÍ¼±ê£©
-	//auto GoldLabel = Label::createWithTTF("00", "/fonts/Marker Felt.ttf", 45);	//the label of the count of gold coins£¨½ð±ÒÊýÁ¿±êÇ©£©
-	//auto ExLabel = Label::createWithTTF("Lv.01(00%)", "/fonts/Marker Felt.ttf", 45);	//the label of Experience£¨¾­Ñé±êÇ©£¬°Ù·Ö±È±íÊ¾µ±Ç°¾­ÑéÖµ£¬Âú99Éý¼¶£©
-	GoldLabel->setColor(Color3B::BLACK);	//ÉèÖÃ×ÖÌåÑÕÉ«
+	const float x2 = 130, y2 = 1600;	//ï¿½ï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½Úµï¿½Î»ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½Úµ×²ã¿¨Æ¬ï¿½ï¿½	the position of Gold coin icon
+	//ï¿½ï¿½ï¿½Óµï¿½Ç°ï¿½ï¿½É«ï¿½ï¿½Óµï¿½ÐµÄ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	auto Goldicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Coin.png"));		//the gold coin iconï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ê£©
+	//auto GoldLabel = Label::createWithTTF("00", "/fonts/Marker Felt.ttf", 45);	//the label of the count of gold coinsï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç©ï¿½ï¿½
+	//auto ExLabel = Label::createWithTTF("Lv.01(00%)", "/fonts/Marker Felt.ttf", 45);	//the label of Experienceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç©ï¿½ï¿½ï¿½Ù·Ö±È±ï¿½Ê¾ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½99ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	GoldLabel->setColor(Color3B::BLACK);	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«
 	ExLabel->setColor(Color3B::BLACK);		//`
-	GoldLabel->setPosition(Vec2(70, 15));	//½ð±Ò±êÇ©Ïà¶ÔÓÚ½ð±ÒÍ¼±êµÄÎ»ÖÃ	the position of GoldLabel comparing to the gold coin icon
-	ExLabel->setPosition(Vec2(210, 15));	//`¾­Ñé±êÇ©Ïà¶ÔÓÚ½ð±ÒÍ¼±êµÄÎ»ÖÃ	the position of Exlabel as same above
-	Goldicon->addChild(GoldLabel);	//±êÇ©Ìí¼ÓÖÁÍ¼±êµÄ×Ö½Úµã
+	GoldLabel->setPosition(Vec2(70, 15));	//ï¿½ï¿½Ò±ï¿½Ç©ï¿½ï¿½ï¿½ï¿½Ú½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Î»ï¿½ï¿½	the position of GoldLabel comparing to the gold coin icon
+	ExLabel->setPosition(Vec2(210, 15));	//`ï¿½ï¿½ï¿½ï¿½ï¿½Ç©ï¿½ï¿½ï¿½ï¿½Ú½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Î»ï¿½ï¿½	the position of Exlabel as same above
+	Goldicon->addChild(GoldLabel);	//ï¿½ï¿½Ç©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½Ö½Úµï¿½
 	Goldicon->addChild(ExLabel);	//`
-	Goldicon->setScale(4);		//½ð±ÒÍ¼±êµÄËõ·Å±ÈÀý£¬½ð±Ò±êÇ©ºÍ¾­Ñé±êÇ©ÓëÖ®Í¬²½
-	Goldicon->setPosition(x2, y2);	//½ð±ÒÍ¼±êÏà¶ÔÓÚµ×²ã¿¨Æ¬µÄÎ»ÖÃ£¬¾ßÌå²ÎÊý¼û´úÂë±íÍ·
-	shopMore->addChild(Goldicon);	//Ìí¼ÓÖÁ¿¨Æ¬
+	Goldicon->setScale(4);		//ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ï¿½Ç©ï¿½Í¾ï¿½ï¿½ï¿½ï¿½Ç©ï¿½ï¿½Ö®Í¬ï¿½ï¿½
+	Goldicon->setPosition(x2, y2);	//ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµ×²ã¿¨Æ¬ï¿½ï¿½Î»ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·
+	shopMore->addChild(Goldicon);	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¬
 
-	// Æå×Ó¼°×°±¸¿¨Æ¬
+	// ï¿½ï¿½ï¿½Ó¼ï¿½×°ï¿½ï¿½ï¿½ï¿½Æ¬
 	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
 	auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1)->getPieceName(), shopModel->getPieceList()->at(1)->getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
 	auto pieceCard3 = PlayScene::createPieceCard(shopModel->getPieceList()->at(2)->getPieceName(), shopModel->getPieceList()->at(2)->getPicPath(), Vec2(position.x + 2 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack3, this));
@@ -246,14 +248,14 @@ void PlayScene::createShop(Vec2 position)
 	shop.push_back(shopCard5);
 }
 
-/*·µ»Ø¶à¸öÐÇÐÇµÄÍ¼±ê,²ÎÊý´ú±íÐÇÐÇµÄ¸öÊý£¬ÒÔÏòÁ¿ÖÐµÄµÚÒ»¸öÎª¸¸½Úµã*/
+/*ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½Í¼ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÇµÄ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄµï¿½Ò»ï¿½ï¿½Îªï¿½ï¿½ï¿½Úµï¿½*/
 Vector<Sprite*> levelAttribute(const string& value, const string& filepath1, const string& filepath2)
 {
 	Vector<Sprite*> stars;	//the vector contains the stars;
 	int num = 0;
 	Vec2 tmp = {};
 	int ix = 0;
-	//ÏÈÌí¼ÓÐÇÐÇ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	for (; ix < Value(value).asInt(); ix++)
 	{
 		stars.pushBack(Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey(filepath1)));	//the star icon	
@@ -285,10 +287,10 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
 
-	// ´´½¨¿¨Æ¬¾«Áé
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¬ï¿½ï¿½ï¿½ï¿½
 	auto cardBack = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/ShoppingCard.png"));
 
-	// ´´½¨Ò»¸ö¾«Áé²Ëµ¥Ïî
+	// ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½
 	auto item = MenuItemSprite::create(cardBack, cardBack, callback);
 
 	//fetch the pic and the value stored in the data file "PiecesData.csv"
@@ -296,14 +298,14 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	csv.parseWithFile("Data/PiecesData.csv");
 	const int rowPosition = csv.findRowOfItem(pieceName);
 	auto sprite = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
-	auto Goldicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Coin.png"));		//the gold coin icon£¨½ð±ÒÍ¼±ê£©
-	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png"));	//the Health icon£¨ÉúÃü£©
-	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png"));	//the Attack icon(¹¥»÷)
-	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png"));		//the Armor icon(·ÀÓù)
-	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);		//the name of book Æå×ÓÃû³Æ
+	auto Goldicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Coin.png"));		//the gold coin iconï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ê£©
+	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png"));	//the Health iconï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png"));	//the Attack icon(ï¿½ï¿½ï¿½ï¿½)
+	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png"));		//the Armor icon(ï¿½ï¿½ï¿½ï¿½)
+	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);		//the name of book ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
-	//adjust the comparing position of the icons and values µ÷Õû¶ÔÓ¦Í¼±êºÍÊýÖµÔÚ¿¨Æ¬ÖÐµÄÏà¶ÔÎ»ÖÃ
+	//adjust the comparing position of the icons and values ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦Í¼ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½Ú¿ï¿½Æ¬ï¿½Ðµï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 	Vec2 originSize = item->getContentSize();
 	sprite->setScale(0.5);
 	sprite->setPosition(Vec2(450, 800));
@@ -314,18 +316,18 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	item->addChild(Name);
 
 	const int
-		x1 = 1150, y1 = 50,		//the stars position compared to the feature icon	ÐÇÐÇÏà¶ÔÓÚÊôÐÔÍ¼±êµÄÎ»ÖÃ
-		x2 = 1200, y2 = 700, dy = 400;	//the middle fearture position compared to the card, the height difference ÖÐ¼äµÄÊôÐÔÌõÏà¶ÔÓÚ¿¨Æ¬µÄÎ»ÖÃ£¬ºÍÊôÐÔÌõÖ®¼äµÄ¸ß¶È²î
-	const float s1 = 0.8, s2 = 0.4;	//the stars scale, the feature scale	ÐÇÐÇËõ·Å±ÈÀý£¬ÊôÐÔÌõËõ·Å±ÈÀý
-	/*»¨·ÑËùÐèµÄ½ð±ÒÊýÁ¿*/
+		x1 = 1150, y1 = 50,		//the stars position compared to the feature icon	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+		x2 = 1200, y2 = 700, dy = 400;	//the middle fearture position compared to the card, the height difference ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½Æ¬ï¿½ï¿½Î»ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½Ä¸ß¶È²ï¿½
+	const float s1 = 0.8, s2 = 0.4;	//the stars scale, the feature scale	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	auto Cost = Label::createWithTTF(csv[rowPosition][D_COST].c_str(), "/fonts/Marker Felt.ttf", 45);
 	Cost->setColor(Color3B::BLACK);
 	Cost->setPosition(Vec2(70, 15));
 	Goldicon->addChild(Cost);
 	Goldicon->setScale(4);
-	Goldicon->setPosition(Vec2(x2 + 50, y2 + dy * 1 + 220));//½ð±Ò»¨·ÑµÄÏà¶ÔÎ»ÖÃ	comparing position of cost
+	Goldicon->setPosition(Vec2(x2 + 50, y2 + dy * 1 + 220));//ï¿½ï¿½Ò»ï¿½ï¿½Ñµï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½	comparing position of cost
 	item->addChild(Goldicon);
-	/*Health feature ÉúÃüÊôÐÔ*/
+	/*Health feature ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	auto Healthvalue = levelAttribute(csv[rowPosition][D_HP_LEVEL]).at(0);
 	Healthvalue->setPosition(Vec2(x1, y1));
 	Healthvalue->setScale(s1);
@@ -333,7 +335,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	Healthicon->setScale(s2);
 	Healthicon->setPosition(Vec2(x2, y2 + dy * 1));
 	item->addChild(Healthicon);
-	/*Attack feature ¹¥»÷ÊôÐÔ*/
+	/*Attack feature ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	auto Attackvalue = levelAttribute(csv[rowPosition][D_ATK_LEVEL]).at(0);
 	Attackvalue->setPosition(Vec2(x1, y1));
 	Attackvalue->setScale(s1);
@@ -341,7 +343,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	Attackicon->setScale(s2);
 	Attackicon->setPosition(Vec2(x2, y2 + dy * 0));
 	item->addChild(Attackicon);
-	/*Armor feature ·ÀÓùÊôÐÔ*/
+	/*Armor feature ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	auto Armorvalue = levelAttribute(csv[rowPosition][D_DFC_LEVEL]).at(0);
 	Armorvalue->setPosition(Vec2(x1, y1));
 	Armorvalue->setScale(s1);
@@ -350,7 +352,7 @@ MenuItemSprite* PlayScene::createPieceCard(string pieceName, string piecePicPath
 	Armoricon->setPosition(Vec2(x2, y2 - dy * 1));
 	item->addChild(Armoricon);
 
-	item->setScale(22 * ConfigController::getInstance()->getPx()->x / originSize.x);//adjust the scale µ÷Õû´óÐ¡
+	item->setScale(22 * ConfigController::getInstance()->getPx()->x / originSize.x);//adjust the scale ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡
 	item->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 	item->setPosition(position);
 
@@ -361,10 +363,10 @@ MenuItemSprite* PlayScene::createEquipCard(int equipID, Vec2 position, const ccM
 	auto texture = Director::getInstance()->getTextureCache();
 	auto config = ConfigController::getInstance();
 
-	// ´´½¨¿¨Æ¬¾«Áé
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¬ï¿½ï¿½ï¿½ï¿½
 	auto cardBack = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/ShoppingCard.png"));
 
-	// ´´½¨Ò»¸ö¾«Áé²Ëµ¥Ïî
+	// ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½
 	auto item = MenuItemSprite::create(cardBack, cardBack, callback);
 
 	//fetch the pic and the value stored in the data file "PiecesData.csv"
@@ -372,14 +374,14 @@ MenuItemSprite* PlayScene::createEquipCard(int equipID, Vec2 position, const ccM
 	csv.parseWithFile("Data/EquipmentData.csv");
 	const int rowPosition = equipID; 
 	auto sprite = Sprite::createWithTexture(texture->getTextureForKey(csv[rowPosition][D_PATH]));
-	auto Goldicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Coin.png"));		//the gold coin icon£¨½ð±ÒÍ¼±ê£©
-	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png"));	//the Health icon£¨ÉúÃü£©
-	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png"));	//the Attack icon(¹¥»÷)
-	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png"));		//the Armor icon(·ÀÓù)
-	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);		//the name of book Æå×ÓÃû³Æ
+	auto Goldicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Coin.png"));		//the gold coin iconï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ê£©
+	auto Healthicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Health.png"));	//the Health iconï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	auto Attackicon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Attack.png"));	//the Attack icon(ï¿½ï¿½ï¿½ï¿½)
+	auto Armoricon = Sprite::createWithTexture(texture->getTextureForKey("/res/Icons/Armor.png"));		//the Armor icon(ï¿½ï¿½ï¿½ï¿½)
+	auto Name = Label::createWithTTF(csv[rowPosition][D_CH_NAME], "/fonts/Marker Felt.ttf", 150);		//the name of book ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
-	//adjust the comparing position of the icons and values µ÷Õû¶ÔÓ¦Í¼±êºÍÊýÖµÔÚ¿¨Æ¬ÖÐµÄÏà¶ÔÎ»ÖÃ
+	//adjust the comparing position of the icons and values ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦Í¼ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½Ú¿ï¿½Æ¬ï¿½Ðµï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 	Vec2 originSize = item->getContentSize();
 	sprite->setScale(0.5);
 	sprite->setPosition(Vec2(450, 800));
@@ -390,18 +392,18 @@ MenuItemSprite* PlayScene::createEquipCard(int equipID, Vec2 position, const ccM
 	item->addChild(Name);
 
 	const int
-		x1 = 1150, y1 = 50,		//the stars position compared to the feature icon	ÐÇÐÇÏà¶ÔÓÚÊôÐÔÍ¼±êµÄÎ»ÖÃ
-		x2 = 1200, y2 = 700, dy = 400;	//the middle fearture position compared to the card, the height difference ÖÐ¼äµÄÊôÐÔÌõÏà¶ÔÓÚ¿¨Æ¬µÄÎ»ÖÃ£¬ºÍÊôÐÔÌõÖ®¼äµÄ¸ß¶È²î
-	const float s1 = 0.8, s2 = 0.4;	//the stars scale, the feature scale	ÐÇÐÇËõ·Å±ÈÀý£¬ÊôÐÔÌõËõ·Å±ÈÀý
-	/*»¨·ÑËùÐèµÄ½ð±ÒÊýÁ¿*/
+		x1 = 1150, y1 = 50,		//the stars position compared to the feature icon	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+		x2 = 1200, y2 = 700, dy = 400;	//the middle fearture position compared to the card, the height difference ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½Æ¬ï¿½ï¿½Î»ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½Ä¸ß¶È²ï¿½
+	const float s1 = 0.8, s2 = 0.4;	//the stars scale, the feature scale	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	auto Cost = Label::createWithTTF(csv[rowPosition][D_COST].c_str(), "/fonts/Marker Felt.ttf", 45);
 	Cost->setColor(Color3B::BLACK);
 	Cost->setPosition(Vec2(70, 15));
 	Goldicon->addChild(Cost);
 	Goldicon->setScale(4);
-	Goldicon->setPosition(Vec2(x2 + 50, y2 + dy * 1 + 220));//½ð±Ò»¨·ÑµÄÏà¶ÔÎ»ÖÃ	comparing position of cost
+	Goldicon->setPosition(Vec2(x2 + 50, y2 + dy * 1 + 220));//ï¿½ï¿½Ò»ï¿½ï¿½Ñµï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½	comparing position of cost
 	item->addChild(Goldicon);
-	/*Health feature ÉúÃüÊôÐÔ*/
+	/*Health feature ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	auto Healthvalue = levelAttribute(csv[rowPosition][D_HP_LEVEL]).at(0);
 	Healthvalue->setPosition(Vec2(x1, y1));
 	Healthvalue->setScale(s1);
@@ -409,7 +411,7 @@ MenuItemSprite* PlayScene::createEquipCard(int equipID, Vec2 position, const ccM
 	Healthicon->setScale(s2);
 	Healthicon->setPosition(Vec2(x2, y2 + dy * 1));
 	item->addChild(Healthicon);
-	/*Attack feature ¹¥»÷ÊôÐÔ*/
+	/*Attack feature ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	auto Attackvalue = levelAttribute(csv[rowPosition][D_ATK_LEVEL]).at(0);
 	Attackvalue->setPosition(Vec2(x1, y1));
 	Attackvalue->setScale(s1);
@@ -417,7 +419,7 @@ MenuItemSprite* PlayScene::createEquipCard(int equipID, Vec2 position, const ccM
 	Attackicon->setScale(s2);
 	Attackicon->setPosition(Vec2(x2, y2 + dy * 0));
 	item->addChild(Attackicon);
-	/*Armor feature ·ÀÓùÊôÐÔ*/
+	/*Armor feature ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	auto Armorvalue = levelAttribute(csv[rowPosition][D_DFC_LEVEL]).at(0);
 	Armorvalue->setPosition(Vec2(x1, y1));
 	Armorvalue->setScale(s1);
@@ -426,7 +428,7 @@ MenuItemSprite* PlayScene::createEquipCard(int equipID, Vec2 position, const ccM
 	Armoricon->setPosition(Vec2(x2, y2 - dy * 1));
 	item->addChild(Armoricon);
 
-	item->setScale(22 * ConfigController::getInstance()->getPx()->x / originSize.x);//adjust the scale µ÷Õû´óÐ¡
+	item->setScale(22 * ConfigController::getInstance()->getPx()->x / originSize.x);//adjust the scale ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡
 	item->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 	item->setPosition(position);
 
@@ -442,10 +444,10 @@ Sprite* PlayScene::createChessPiece(string pieceName, string piecePicPath, Vec2 
 	csv.parseWithFile("Data/PiecesData.csv");
 
 	auto piece = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
-	auto hpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/HpBar.png"));//ÉúÃüÌõ
-	auto mpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//À¶Ìõ
-	/*auto hpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//»ÒÌõ
-	auto mpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//»ÒÌõ
+	auto hpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/HpBar.png"));//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	auto mpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//ï¿½ï¿½ï¿½ï¿½
+	/*auto hpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//ï¿½ï¿½ï¿½ï¿½
+	auto mpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//ï¿½ï¿½ï¿½ï¿½
 
 	hpDecreaseBar->setColor(Color3B::BLACK);
 	mpDecreaseBar->setColor(Color3B::BLACK);
@@ -463,7 +465,8 @@ Sprite* PlayScene::createChessPiece(string pieceName, string piecePicPath, Vec2 
 	if (type == 1) {
 		piece->addChild(hpBar);
 		piece->addChild(mpBar);
-	}
+	}	
+	piece->retain();
 	return piece;
 }
 
@@ -506,14 +509,30 @@ void PlayScene::update(float dt)
 		timeLabel->setString(temp);
 		loadingBar->setPercentage((damage / 61.0) * 100);
 	}
-	//else {//Ê±¼äµ½ÁË
+	//else {//Ê±ï¿½äµ½ï¿½ï¿½
 
 	//}
 }
 
+void PlayScene::playerBInitRound1()
+{
+	// ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
+	ChessPiece* crtPiece = shopModel->getPieceList()->at(1);
+	playerB->setExperience(1);
+	playerB->getPlayerPieceBattle()->pushBack(crtPiece);
+	chessBoardModel->getPlayerB_WarZone_Pieces()->push_back(crtPiece);
+	crtPiece->setPrtCoordinate(7, 7);
+	crtPiece->setOriginCoordinate(7, 7);
+	chessBoardModel->getWarZonePieces(7)->at(7) = crtPiece;
+	
+	// ï¿½ï¿½ï¿½Ó»ï¿½
+	pieceBoard[8][8] = createChessPiece(crtPiece->getPieceName(), crtPiece->getPicPath(), Vec2(8, 8), crtPiece->getPieceLevel(), 1);
+	playLayer->addChild(pieceBoard[8][8], 7);
+}
+
 void PlayScene::menuExitCallBack(Ref* sender)
 {
-	AudioEngine::stop(_audioBgID);//½áÊø²¥·Å±³¾°ÒôÀÖ
+	AudioEngine::stop(_audioBgID);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	Director::getInstance()->getTextureCache()->removeAllTextures();
 	Director::getInstance()->end();
@@ -578,20 +597,20 @@ void PlayScene::menuTalkCallBack(Ref* sender)
 
 void PlayScene::menuReadyCallBack(Ref* sender)
 {
-	this->timeRemaining = 0.6;	//µã»÷Ö®ºóÖ±½Ó¿ªÊ¼Õ½¶·	click to start battle
-	menu->getChildByName("readyButton")->setVisible(false);		//µã»÷Ö®ºóÊ¹ÆäÏûÊ§	set the button unvisible
+	this->timeRemaining = 0.6;	//ï¿½ï¿½ï¿½Ö®ï¿½ï¿½Ö±ï¿½Ó¿ï¿½Ê¼Õ½ï¿½ï¿½	click to start battle
+	menu->getChildByName("readyButton")->setVisible(false);		//ï¿½ï¿½ï¿½Ö®ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½Ê§	set the button unvisible
 }
 
 void PlayScene::menuPieceCardCallBack1(Ref* sender)
 {
-	//play effect music of button	²¥·Å°´Å¥ÒôÐ§
+	//play effect music of button	ï¿½ï¿½ï¿½Å°ï¿½Å¥ï¿½ï¿½Ð§
 	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
 
-	// »ñÈ¡µ½µ±Ç°Ëùµã»÷µÄÆå×Ó¿¨Æ¬
+	// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½Æ¬
 	const int NUMBER = 0;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
-	//ÄÜÂò
-	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	//ï¿½ï¿½ï¿½ï¿½
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getPlayerPiecePossesion()->size(), piece->getPiecePerCost()))
 	{
 		buyCard(NUMBER, piece);
 		shop.at(NUMBER)->setVisible(false);
@@ -601,13 +620,13 @@ void PlayScene::menuPieceCardCallBack1(Ref* sender)
 
 void PlayScene::menuPieceCardCallBack2(Ref* sender)
 {
-	//play effect music of button	²¥·Å°´Å¥ÒôÐ§
+	//play effect music of button	ï¿½ï¿½ï¿½Å°ï¿½Å¥ï¿½ï¿½Ð§
 	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
 
 	const unsigned int NUMBER = 1;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
-	//ÄÜÂò
-	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	//ï¿½ï¿½ï¿½ï¿½
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getPlayerPiecePossesion()->size(), piece->getPiecePerCost()))
 	{
 		buyCard(NUMBER, piece);
 		shop.at(NUMBER)->setVisible(false);
@@ -617,13 +636,13 @@ void PlayScene::menuPieceCardCallBack2(Ref* sender)
 
 void PlayScene::menuPieceCardCallBack3(Ref* sender)
 {
-	//play effect music of button	²¥·Å°´Å¥ÒôÐ§
+	//play effect music of button	ï¿½ï¿½ï¿½Å°ï¿½Å¥ï¿½ï¿½Ð§
 	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
 
 	const unsigned int NUMBER = 2;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
-	//ÄÜÂò
-	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	//ï¿½ï¿½ï¿½ï¿½
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getPlayerPiecePossesion()->size(), piece->getPiecePerCost()))
 	{
 		buyCard(NUMBER, piece);
 		shop.at(NUMBER)->setVisible(false);
@@ -633,30 +652,30 @@ void PlayScene::menuPieceCardCallBack3(Ref* sender)
 
 void PlayScene::menuPieceCardCallBack4(Ref* sender)
 {
-	//play effect music of button	²¥·Å°´Å¥ÒôÐ§
+	//play effect music of button	ï¿½ï¿½ï¿½Å°ï¿½Å¥ï¿½ï¿½Ð§
 	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
 
 	const unsigned int NUMBER = 3;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
-	//ÄÜÂò
-	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	//ï¿½ï¿½ï¿½ï¿½
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getPlayerPiecePossesion()->size(), piece->getPiecePerCost()))
 	{
 		buyCard(NUMBER, piece);
 		shop.at(NUMBER)->setVisible(false);
 		shop.at(NUMBER)->setEnabled(false);
 	}
 }
-
-//×°±¸À¸ 
+ 
+//×°ï¿½ï¿½ï¿½ï¿½ 
 void PlayScene::menuEquipCardCallBack(Ref* sender)
 {
-	//play effect music of button	²¥·Å°´Å¥ÒôÐ§
+	//play effect music of button	ï¿½ï¿½ï¿½Å°ï¿½Å¥ï¿½ï¿½Ð§
 	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
 
 	const unsigned int NUMBER = 4;
 	ChessPiece* piece = shopModel->getPieceList()->at(NUMBER);
-	//ÄÜÂò
-	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getOwnPieceNum(), piece->getPiecePerCost()))
+	//ï¿½ï¿½ï¿½ï¿½
+	if (shopModel->qualification(playerA->getMoney(), playerA->getMaxPieceStorage(), playerA->getPlayerPiecePossesion()->size(), piece->getPiecePerCost()))
 	{
 		buyCard(NUMBER, piece);
 		shop.at(NUMBER)->setVisible(false);
@@ -666,10 +685,10 @@ void PlayScene::menuEquipCardCallBack(Ref* sender)
 
 void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 {
-	// ÄÜÂò
+	// ï¿½ï¿½ï¿½ï¿½
 	playerA->piecePossesion[playerA->getOwnPieceNum()] = piece;
 	playerA->retain();
-	// ¼ÆËã³öÓ¦¸Ã·ÅÖÃÔÚ±¸Õ½ÇøµÄÄÄ¸öÎ»ÖÃ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ã·ï¿½ï¿½ï¿½ï¿½Ú±ï¿½Õ½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½Î»ï¿½ï¿½
 	int i = 0;
 	for (i; i < 8; i++)
 	{
@@ -678,34 +697,49 @@ void PlayScene::buyCard(const unsigned int num, ChessPiece* piece)
 			break;
 		}
 	}
-	// ¿ÉÊÓ»¯Ìí¼Ó
-	auto visiblePiece = createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(i + 1, 0), 0);
+	// ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) = piece;
+	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->setPrtCoordinate(i + 1, 0);
+	// chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->IncreaseOne();
+	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i)->promoteRank();
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½
+	playerA->addToPiecePossesion(piece);
+	playerA->setMoney(-1 * piece->getPiecePerCost());
+	playerA->retain();
+	// ï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½
+	auto visiblePiece = createChessPiece(shopModel->getPieceList()->at(num)->getPieceName(), shopModel->getPieceList()->at(num)->getPicPath(), Vec2(i + 1, 0), shopModel->getPieceList()->at(num)->getPieceLevel(), 0);
 	pieceBoard[0][i + 1] = visiblePiece;
 	playLayer->addChild(pieceBoard[0][i + 1], 7);
-	// Êý¾ÝÄ£ÐÍÌí¼Ó
-	chessBoardModel->getPlayerA_PreZone_Pieces()->at(i) = piece;
+	GoldLabel->setString(Value(playerA->getMoney()).asString());
 }
 
 void PlayScene::menuFreshShopCallBack(Ref* sender)
 {
-	//play effect music of button	²¥·Å°´Å¥ÒôÐ§
+	//play effect music of button	ï¿½ï¿½ï¿½Å°ï¿½Å¥ï¿½ï¿½Ð§
 	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
 
 	auto config = ConfigController::getInstance();
 
-	shopModel->refresh();
-	Vec2 position = Vec2(-config->getPx()->x * 55, -config->getPx()->y * 45);
-	unsigned int i = 0;
-	for (vector<MenuItemSprite*>::iterator it=shop.begin(); it != shop.end() && i < shop.size();)
+	if (playerA->getMoney() >= 2) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¢ï¿½ï¿½
 	{
-		//shop.at(i)->removeFromParent();
-		(*it)->removeFromParent();
-		it=shop.erase(it);
-		
-	}
-	for (auto chessPtr : shop) {
+		// ï¿½ï¿½ï¿½ï¿½Ä£ï¿½Í¸ï¿½ï¿½ï¿½
+		playerA->setMoney(-2);
+	shopModel->refresh();
 
-	}
+		// ï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½
+		GoldLabel->setString(Value(playerA->getMoney()).asString());
+		Vec2 position = Vec2(-config->getPx()->x * 55, -config->getPx()->y * 45);
+	unsigned int i = 0;
+	for (vector<MenuItemSprite*>::iterator it = shop.begin(); it != shop.end() && i < shop.size();)
+		{
+			//shop.at(i)->removeFromParent();
+			(*it)->removeFromParent();
+			it = shop.erase(it);
+
+		}
+		for (auto chessPtr : shop) {
+
+		}
 	shop.clear();
 	auto pieceCard1 = PlayScene::createPieceCard(shopModel->getPieceList()->at(0)->getPieceName(), shopModel->getPieceList()->at(0)->getPicPath(), position, CC_CALLBACK_1(PlayScene::menuPieceCardCallBack1, this));
 	auto pieceCard2 = PlayScene::createPieceCard(shopModel->getPieceList()->at(1)->getPieceName(), shopModel->getPieceList()->at(1)->getPicPath(), Vec2(position.x + 1 * 22 * config->getPx()->x, position.y), CC_CALLBACK_1(PlayScene::menuPieceCardCallBack2, this));
@@ -721,30 +755,40 @@ void PlayScene::menuFreshShopCallBack(Ref* sender)
 	{
 		menu->addChild(shop.at(i));
 	}
+
 }
 
 void PlayScene::menuBuyExpCallBack(Ref* sender)
 {
-	//play effect music of button	²¥·Å°´Å¥ÒôÐ§
+	//play effect music of button	ï¿½ï¿½ï¿½Å°ï¿½Å¥ï¿½ï¿½Ð§
 	auto _audioID = AudioEngine::play2d("/res/Music/buttonEffect2.mp3", false);
 
+	if (playerA->getMoney() >= 4)
+	{
+		// ï¿½ï¿½ï¿½ï¿½Ä£ï¿½Í¸ï¿½ï¿½ï¿½
+		playerA->promote();
+		// ï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½
+		string str = "Lv." + Value(playerA->getExperience()).asString();
+		ExLabel->setString(str);
+		GoldLabel->setString(Value(playerA->getMoney()).asString());
+	}
 }
 
 int PlayScene::onTouchBegan(Touch* touch, Event* event)
 {
 	Vec2 position = touch->getLocation();
 	if (position.x > chessBoard[1][1]->getPositionX() && position.x < chessBoard[1][9]->getPositionX() &&
-		position.y > chessBoard[1][1]->getPositionY() && position.y < chessBoard[5][1]->getPositionY()) // Êó±êÔÚÆåÅÌÕ½¶·Çø
+		position.y > chessBoard[1][1]->getPositionY() && position.y < chessBoard[5][1]->getPositionY()) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ½ï¿½ï¿½ï¿½ï¿½
 	{
-		if (mouseLiftPiece != nullptr && mouseLiftPiece->getTag() % 10 == 0) // ÒÑ¾­ÌáÆðµÄÊÇ±¸Õ½ÇøÆå×Ó
+		if (mouseLiftPiece != nullptr && mouseLiftPiece->getTag() % 10 == 0) // ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç±ï¿½Õ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			return READY_TO_WAR;
 		}
-		else if (mouseLiftPiece != nullptr && mouseLiftPiece->getTag() % 10 != 0) // ÒÑ¾­ÌáÆðµÄÊÇÕ½¶·ÇøÆå×Ó
+		else if (mouseLiftPiece != nullptr && mouseLiftPiece->getTag() % 10 != 0) // ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			return WAR_TO_WAR;
 		}
-		else // Î´ÌáÆðÆå×Ó
+		else // Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			return NO_LIFT_CLICK_WAR;
 		}
@@ -753,15 +797,15 @@ int PlayScene::onTouchBegan(Touch* touch, Event* event)
 	else if (position.x > chessBoard[0][1]->getPosition().x && position.x < chessBoard[0][9]->getPosition().x &&
 			 position.y > chessBoard[0][1]->getPosition().y && position.y < chessBoard[1][1]->getPosition().y)
 	{
-		if (mouseLiftPiece != nullptr && mouseLiftPiece->getTag() % 10 == 0) // ÒÑ¾­ÌáÆðµÄÊÇ±¸Õ½ÇøÆå×Ó
+		if (mouseLiftPiece != nullptr && mouseLiftPiece->getTag() % 10 == 0) // ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç±ï¿½Õ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			return READY_TO_READY;
 		}
-		else if (mouseLiftPiece != nullptr && mouseLiftPiece->getTag() % 10 != 0) // ÒÑ¾­ÌáÆðµÄÊÇÕ½¶·ÇøÆå×Ó
+		else if (mouseLiftPiece != nullptr && mouseLiftPiece->getTag() % 10 != 0) // ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			return WAR_TO_READY;
 		}
-		else // Î´ÌáÆðÆå×Ó
+		else // Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			return NO_LIFT_CLICK_READY;
 		}
@@ -803,14 +847,24 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				PieceCoordinate originPosition;
 				originPosition.setX((mouseLiftPiece->getTag() - 100) / 10);
 				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
-				// Êý¾ÝÄ£ÐÍÒÆ¶¯
+				// ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Æ¶ï¿½
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) = chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1);
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->setOriginCoordinate(logPosition.getX() - 1, logPosition.getY() - 1);
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->setPrtCoordinate(logPosition.getX() - 1, logPosition.getY() - 1);
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1) = nullptr;
-				// ¿ÉÊÓ»¯ÒÆ¶¯
+				// ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½
+				for (int i = 0; i < playerA->getPlayerPieceBattle()->size(); i++)
+				{
+					if (playerA->getPlayerPieceBattle()->at(i)->getPrtCoordinate() == originPosition)
+					{
+						playerA->getPlayerPieceBattle()->at(i)->setPrtCoordinate(logPosition.getX(), logPosition.getY());
+					}
+				}
+				// ï¿½ï¿½ï¿½Ó»ï¿½ï¿½Æ¶ï¿½
 				ChessPiece* visiblePiece = chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1);
 				pieceBoard[originPosition.getY()][originPosition.getX()]->removeFromParent();
-				pieceBoard[logPosition.getY()][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), 1);
+				pieceBoard[logPosition.getY()][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), visiblePiece->getPieceLevel(), 1);
 				playLayer->addChild(pieceBoard[logPosition.getY()][logPosition.getX()], 7);
 				mouseLiftPiece = nullptr;
 				pieceBoard[originPosition.getY()][originPosition.getX()] = nullptr;
@@ -822,14 +876,36 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				PieceCoordinate originPosition;
 				originPosition.setX((mouseLiftPiece->getTag() - 100) / 10);
 				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
-				// Êý¾ÝÄ£ÐÍÒÆ¶¯
+				// ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Æ¶ï¿½
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) = chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1);
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1)->retain();
+				for (int i = 0; i < chessBoardModel->getPlayerA_WarZone_Pieces()->size(); i++)
+				{
+					PieceCoordinate originCoordinate;
+					originCoordinate.setX(originPosition.getX() - 1);
+					originCoordinate.setY(originPosition.getY() - 1);
+					if (chessBoardModel->getPlayerA_WarZone_Pieces()->at(i)->getOriginCoordin() == originCoordinate)
+					{
+						chessBoardModel->deleteFromWarZoneByID(i);
+					}
+				}
 				chessBoardModel->getWarZonePieces(originPosition.getY() - 1)->at(originPosition.getX() - 1) = nullptr;
-				// ¿ÉÊÓ»¯ÒÆ¶¯
+				// ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½
+				playerA->addToPiecePossesion(chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1));
+				for (int i = 0; i < playerA->getPlayerPieceBattle()->size(); i++)
+				{
+					PieceCoordinate originCoordinate;
+					originCoordinate.setX(originPosition.getX() - 1);
+					originCoordinate.setY(originPosition.getY() - 1);
+					if (playerA->getPlayerPieceBattle()->at(i)->getPrtCoordinate() == originCoordinate)
+					{
+						playerA->deleteFromBattleByID(i);
+					}
+				}
+				// ï¿½ï¿½ï¿½Ó»ï¿½ï¿½Æ¶ï¿½
 				ChessPiece* visiblePiece = chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1);
 				pieceBoard[originPosition.getY()][originPosition.getX()]->removeFromParent();
-				pieceBoard[0][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), 0);
+				pieceBoard[0][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), visiblePiece->getPieceLevel(), 0);
 				playLayer->addChild(pieceBoard[0][logPosition.getX()], 7);
 				mouseLiftPiece = nullptr;
 				pieceBoard[originPosition.getY()][originPosition.getX()] = nullptr;
@@ -841,33 +917,59 @@ void PlayScene::onTouchEnded(Touch* touch, Event* event)
 				PieceCoordinate originPosition;
 				originPosition.setX((mouseLiftPiece->getTag() - 100) / 10);
 				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
-				// Êý¾ÝÄ£ÐÍÒÆ¶¯
+				// ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Æ¶ï¿½
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1) = chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1);
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1)->retain();
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1) = nullptr;
-				// ¿ÉÊÓ»¯ÒÆ¶¯
+				// ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½
+				for (int i = 0; i < playerA->getPlayerPiecePossesion()->size(); i++)
+				{
+					PieceCoordinate originCoordinate;
+					originCoordinate.setX(originPosition.getX() - 1);
+					originCoordinate.setY(originPosition.getY() - 1);
+					if (playerA->getPlayerPiecePossesion()->at(i)->getPrtCoordinate() == originCoordinate)
+					{
+						playerA->getPlayerPiecePossesion()->at(i)->setPrtCoordinate(logPosition.getX(), logPosition.getY());
+					}
+				}
+				// ï¿½ï¿½ï¿½Ó»ï¿½ï¿½Æ¶ï¿½
 				ChessPiece* visiblePiece = chessBoardModel->getPlayerA_PreZone_Pieces()->at(logPosition.getX() - 1);
 				pieceBoard[0][originPosition.getX()]->removeFromParent();
-				pieceBoard[0][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), 0);
+				pieceBoard[0][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), visiblePiece->getPieceLevel(), 0);
 				playLayer->addChild(pieceBoard[0][logPosition.getX()], 7);
 				mouseLiftPiece = nullptr;
 				pieceBoard[0][originPosition.getX()] = nullptr;
 			}
 			break;
 		case READY_TO_WAR:
-			if (chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) == nullptr && mouseLiftPiece != nullptr)
+			if (chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) == nullptr && mouseLiftPiece != nullptr && playerA->getPlayerPieceBattle()->size() < playerA->getMaxPieceBattle())
 			{
 				PieceCoordinate originPosition;
 				originPosition.setX((mouseLiftPiece->getTag() - 100) / 10);
 				originPosition.setY((mouseLiftPiece->getTag() - 100) % 10);
-				// Êý¾ÝÄ£ÐÍÒÆ¶¯
+				// ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Æ¶ï¿½
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1) = chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1);
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->setOriginCoordinate(logPosition.getX() - 1, logPosition.getY() - 1);
+				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->setPrtCoordinate(logPosition.getX() - 1, logPosition.getY() - 1);
 				chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1)->retain();
+				chessBoardModel->getPlayerA_WarZone_Pieces()->push_back(chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1));
 				chessBoardModel->getPlayerA_PreZone_Pieces()->at(originPosition.getX() - 1) = nullptr;
-				// ¿ÉÊÓ»¯ÒÆ¶¯
+				// ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½
+				playerA->addToPieceBattle(chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1));
+				for (int i = 0; i < playerA->getPlayerPiecePossesion()->size(); i++)
+				{
+					PieceCoordinate originCoordinate;
+					originCoordinate.setX(originPosition.getX() - 1);
+					originCoordinate.setY(originPosition.getY() - 1);
+					if (playerA->getPlayerPiecePossesion()->at(i)->getPrtCoordinate() == originCoordinate)
+					{
+						playerA->deleteFromPossesionByID(i);
+					}
+				}
+				// ï¿½ï¿½ï¿½Ó»ï¿½ï¿½Æ¶ï¿½
 				ChessPiece* visiblePiece = chessBoardModel->getWarZonePieces(logPosition.getY() - 1)->at(logPosition.getX() - 1);
 				pieceBoard[originPosition.getY()][originPosition.getX()]->removeFromParent();
-				pieceBoard[logPosition.getY()][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), 1);
+				pieceBoard[logPosition.getY()][logPosition.getX()] = createChessPiece(visiblePiece->getPieceName(), visiblePiece->getPicPath(), Vec2(logPosition.getX(), logPosition.getY()), visiblePiece->getPieceLevel(), 1);
 				playLayer->addChild(pieceBoard[logPosition.getY()][logPosition.getX()], 7);
 				mouseLiftPiece = nullptr;
 				pieceBoard[originPosition.getY()][originPosition.getX()] = nullptr;
@@ -891,22 +993,22 @@ void PlayScene::onMouseMove(Event* event)
 }
 
 /**********************************************
-* ¹ØÓÚ¶¯»­ÌØÐ§°ü×°º¯ÊýµÄÊ¹ÓÃËµÃ÷
-* 1¡¢ËùÓÐÎÄ¼þ¾ùÊ¹ÓÃTexturePacker´´½¨£¨xxx.plist/xxx.png£©
-* 2¡¢ËùÓÐ¶ÁÈ¡µÄÍ¼ÏñÎÄ¼þÃüÃû¹æ·¶£º
-*	xxx.plistºÍxxx.pngÎÄ¼þÃüÃû±ØÐëÒ»ÖÂ£¬
-*	ºÏ³É.png´óÍ¼Æ¬µÄ×ÓÍ¼Æ¬£¨¼´Ã¿Ò»Ö¡¶¯»­µÄÍ¼Æ¬£©ÐèÔÚÕûÌåÒ»ÖÂµÄÎÄ¼þÃûºóÔÙ¼ÓÍ¼Æ¬µÄÐòºÅ¼´(xxx0.png¡¢xxx1.png.....)
-* 3.¹ØÓÚ²ÎÊý£º
-*	plistpath:	ÎÄ¼þÂ·¾¶Ö»ÐèÒªÎÄ¼þÃû³Æ£¬ÎÞÐèºó×º
-*	numframe:	¶¯»­µÄÖ¡Êý£¬ÔÚplistÎÄ¼þÖÐ¿É²é¿´
-*	position:	¶¯»­ÏÔÊ¾µÄÎ»ÖÃ
-*	scale:		¶¯»­ÏÔÊ¾µÄËõ·Å±ÈÀý
+* ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½Ëµï¿½ï¿½
+* 1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½TexturePackerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½xxx.plist/xxx.pngï¿½ï¿½
+* 2ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½È¡ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ·¶ï¿½ï¿½
+*	xxx.plistï¿½ï¿½xxx.pngï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Â£ï¿½
+*	ï¿½Ï³ï¿½.pngï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½ï¿½Ã¿Ò»Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Âµï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¼ï¿½Í¼Æ¬ï¿½ï¿½ï¿½ï¿½Å¼ï¿½(xxx0.pngï¿½ï¿½xxx1.png.....)
+* 3.ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½
+*	plistpath:	ï¿½Ä¼ï¿½Â·ï¿½ï¿½Ö»ï¿½ï¿½Òªï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×º
+*	numframe:	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½plistï¿½Ä¼ï¿½ï¿½Ð¿É²é¿´
+*	position:	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Î»ï¿½ï¿½
+*	scale:		ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½
 ***********************************************/
 void PlayScene::effectAnimation(const string& plistname, const string& plistpath, const int& numFrame, const Vec2& position, const float& scale)
 {
 	auto cache = SpriteFrameCache::getInstance();
-	cache->addSpriteFramesWithFile(plistpath + ".plist", plistpath + ".png"); // ¼ÓÔØÍ¼¼¯×ÊÔ´
-	auto sprite = Sprite::createWithSpriteFrameName(plistname + "0.png"); // ÒÔµÚÒ»Ö¡´´½¨¶¯»­¾«Áé
+	cache->addSpriteFramesWithFile(plistpath + ".plist", plistpath + ".png"); // ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½Ô´
+	auto sprite = Sprite::createWithSpriteFrameName(plistname + "0.png"); // ï¿½Ôµï¿½Ò»Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	sprite->setPosition(position);
 	sprite->setScale(scale);
 	Vector<SpriteFrame*> images = {};
@@ -915,8 +1017,8 @@ void PlayScene::effectAnimation(const string& plistname, const string& plistpath
 		string a = plistname + Value(i).asString() + ".png";
 		images.pushBack(cache->getSpriteFrameByName(plistname + Value(i).asString() + ".png"));
 	}
-	auto animation = Animation::createWithSpriteFrames(images, 0.1f * images.size());//0.1ÎªÖ¡ÂÊ£¬µ¥Î»£ºÃë£¬Ä¬ÈÏÑ­»·²¥·ÅÒ»±é
+	auto animation = Animation::createWithSpriteFrames(images, 0.1f * images.size());//0.1ÎªÖ¡ï¿½Ê£ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ë£¬Ä¬ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 	auto animate = Animate::create(animation);
-	sprite->runAction(animate); // Ö´ÐÐ¶¯×÷
+	sprite->runAction(animate); // Ö´ï¿½Ð¶ï¿½ï¿½ï¿½
 	playLayer->addChild(sprite,10);
 }

@@ -1,95 +1,51 @@
 #include "ChessPiece.h"
-#define AdvancedM 0//一级高数对应行，射手
-#define Linear 3//一级线代对应行，辅助
-#define Physics 6//一级大物对应行，刺客
-#define History 9 //一级近纲对应行，法师
-#define C_ 12//一级c++对应行，坦克
-#define nameL 2//中文名字对应列
-#define pathL 3//图片路径对应列
-#define costL 4//花销对应列
-#define hpL 6//生命值对应列
-#define mpL 7//魔法值对应列
-#define attackL 9//攻击力对应列
-#define defenceL 11//防御力对应列
-#define attackspeedL 12//攻速对应列
-#define attackscopeL 13//攻击距离对应列
+#define AdvancedM		0//一级高数对应行，射手
+#define Linear			3//一级线代对应行，辅助
+#define Physics			6//一级大物对应行，刺客
+#define History			9 //一级近纲对应行，法师
+#define C_				12//一级c++对应行，坦克
+#define nameL			2//中文名字对应列
+#define pathL			3//图片路径对应列
+#define costL			4//花销对应列
+#define hpL				6//生命值对应列
+#define mpL				7//魔法值对应列
+#define attackL			9//攻击力对应列
+#define defenceL		11//防御力对应列
+#define attackspeedL	12//攻速对应列
+#define attackscopeL	13//攻击距离对应列
 #define criticalchanceL 14//暴击几率对应列
-#define criticaldamageL 15//暴击伤害对应列
-
-bool ChessPiece::init(int id)
-{
-
-	// 初始化各项数据
-	//_pieceName = ConfigController::getDataByID(id).asString();
-	_piecePicPath = "Resources/Books/";
-	_piecePicPath += _pieceName;
-
-	// 后续数据的初始化待文件结构完善后再行添加，预计在1.4.0版本之前完成
-
-
-	return true;
-}
+#define criticaldamageL	15//暴击伤害对应列
 
 bool ChessPiece::init()
 {
 	return true;
 }
 
-void ChessPiece::initPieceIfo(int id)
+PieceCoordinate ChessPiece::getPrtCoordinate()
 {
-	//// 初始化各项数据
-	//_pieceName = ConfigController::getDataByID(id).asString();
-	//_piecePicPath = "Resources/Sprite/";
-	//_piecePicPath += _pieceName;
-
-	// 后续数据的初始化待文件结构完善后再行添加，预计在1.4.0版本之前完成
+	return _logCoordinate;
 }
 
-PieceCoordinate* ChessPiece::getPrtCoordinateByType(CoordinateType type)
+PieceCoordinate ChessPiece::getOriginCoordin()
 {
-	if (type == CoordinateType::logical)
-	{
-		return &_logCoordinate;
-	}
-	else
-	{
-		return &_realCoordinate;
-	}
+	return _originCoordinate;
+}
+
+void ChessPiece::setOriginCoordinate(int x, int y)
+{
+	_originCoordinate.setX(x);
+	_originCoordinate.setY(y);
+}
+
+void ChessPiece::setPrtCoordinate(int x, int y)
+{
+	_logCoordinate.setX(x);
+	_logCoordinate.setY(y);
 }
 
 void ChessPiece::setPieceLevel(const Level newLevel)
 {
 	_pieceLevel = newLevel;
-}
-
-
-
-
-
-
-bool ChessPiece::updatePieceInfo(const double damage, PieceCoordinate* newRealCoordinate)
-{
-	/***********************************************
-	* 更新棋子当前数值时需要考虑当前装备效果的时机有
-	* 1.每场对局首次创建该棋子时（在初始化时考虑）
-	* 2.为该棋子添加装备后（我认为这部分放在装备那块考虑？）
-	* 注意：每次收到伤害后更新信息不考虑装备效果
-	************************************************/
-
-	// 更新生命值
-	_pieceCrtCondition.healthPoint -= (damage - _pieceCrtCondition.defence);
-	if (_pieceCrtCondition.healthPoint < 0)
-	{
-		return false; // 更新失败，棋子阵亡直接退出
-	}
-
-	// 更新棋子位置
-	const int MOVESPEED = 3; // 移动速度，单位：秒每单位像素
-	//auto distance = ChessBoard::getDistance(&_realCoordinate, newRealCoordinate);
-	//auto time = static_cast<float>(distance / MOVESPEED);
-
-	// 动画应该在PlayScene中创建，这里先放在这里（版本1.1.1）
-	//auto updatePiecePos = MoveTo::create(time, Vec2(newRealCoordinate->getX(), newRealCoordinate->getY()));
 }
 
 const string ChessPiece::getPieceName()
@@ -116,36 +72,6 @@ bool ChessPiece::ifDead()
 {
 	return _pieceCrtCondition.healthPoint > 0 ? false : true;
 }
-
-/*Sprite* ChessPiece::createChessPiece(string pieceName, string piecePicPath, Vec2 position,int type)
-{
-	auto texture = Director::getInstance()->getTextureCache();
-	auto config = ConfigController::getInstance();
-
-	CsvParser csv;
-	csv.parseWithFile("Data/PiecesData.csv");
-
-	auto piece = Sprite::createWithTexture(texture->getTextureForKey(piecePicPath));
-	auto hpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/HpBar.png"));//生命条
-	auto mpBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//蓝条
-	/*auto hpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//灰条
-	auto mpDecreaseBar = Sprite::createWithTexture(texture->getTextureForKey("/res/UI/MpBar.png"));//灰条
-
-	hpDecreaseBar->setColor(Color3B::BLACK);
-	mpDecreaseBar->setColor(Color3B::BLACK);
-
-	ProgressTimer* hp, mp;
-	hp = ProgressTimer::create(hpDecreaseBar);*/
-	/*piece->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-	Vec2 originSize = piece->getContentSize();
-	float scale = 50 * config->getPx()->x / originSize.x;
-	piece->setScale(scale);
-	if (type == 1) {
-		piece->addChild(hpBar);
-		piece->addChild(mpBar);
-	}
-	return piece;
-}*/
 
 Sprite* ChessPiece::getChessPice()
 {
@@ -274,6 +200,18 @@ void PieceCoordinate::setX(const int x)
 void PieceCoordinate::setY(const int y)
 {
 	_y = y;
+}
+
+bool PieceCoordinate::operator==(PieceCoordinate& coordinate)
+{
+	if (this->getX() == coordinate.getX() && this->getY() == coordinate.getY())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 int tank::oRankTank = 0;

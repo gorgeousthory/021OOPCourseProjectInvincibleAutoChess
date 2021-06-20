@@ -36,7 +36,7 @@ void AppDelegate::initGLContextAttrs()
     GLView::setGLContextAttrs(glContextAttrs);
 }
 
-// if you want to use the package manager to install more packages,  
+// if you want to use the package manager to install more packages, 
 // don't modify or remove this function
 static int register_all_packages()
 {
@@ -49,8 +49,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        //glview = GLViewImpl::createWithFullScreen("InvincibleAutoChess");
+        // glview = GLViewImpl::createWithFullScreen("InvincibleAutoChess");
         glview = GLViewImpl::createWithRect("InvincibleAutoChess", cocos2d::Rect(0, 0, mediumResolutionSize.width, mediumResolutionSize.height));
+        // glview->setCursorVisible(false);
 #else
         glview = GLViewImpl::create("InvincibleAutoChess");
 #endif

@@ -1,10 +1,10 @@
 /********************************************
- * ¹¦ÄÜ£º½øÈëÓÎÏ·½çÃæ
- * ×÷Õß£ºGorgeous, VenusHui
- * °æ±¾£º1.1.0.beta
- * ÓÎÏ·ÒýÇæ£ºCocos2d-x 4.0
+ * ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½
+ * ï¿½ï¿½ï¿½ß£ï¿½Gorgeous, VenusHui
+ * ï¿½æ±¾ï¿½ï¿½1.1.0.beta
+ * ï¿½ï¿½Ï·ï¿½ï¿½ï¿½æ£ºCocos2d-x 4.0
  * ******************************************
- * ËµÃ÷£ºÊý¾ÝÈÔÐèµ÷Õû
+ * Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  ********************************************/
 #pragma once
 #ifndef _PLAYSCENE_H_
@@ -15,7 +15,7 @@ USING_NS_CC;
 
 #include "ui/CocosGUI.h" 
 using namespace ui;
-#include "audio/include/AudioEngine.h"//ÉùÒôÒýÇæ
+#include "audio/include/AudioEngine.h"//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 #include <vector>
 using std::vector;
@@ -31,7 +31,7 @@ using std::vector;
 #define ROW_BOARD			10
 #define COL_BOARD			10
 
-// Êó±êÊÂ¼þÏà¹Øºê
+// ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Øºï¿½
 #define NOT_IN_BOARD		100
 #define IN_WAR_ZONE			1
 #define IN_READY_ZONE		2
@@ -49,76 +49,87 @@ public:
 
 	virtual bool init();
 
-	// ´´½¨¿ÉÊÓ»¯ÆåÅÌ£¬ positionÎª(0, 0)Î»ÖÃÆÛÆ­Í¼Æ¬×óÏÂ½ÇµÄÃªµã×ø±ê
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½Ì£ï¿½ positionÎª(0, 0)Î»ï¿½ï¿½ï¿½ï¿½Æ­Í¼Æ¬ï¿½ï¿½ï¿½Â½Çµï¿½Ãªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void createBoard(Vec2 position);
 
-	// ´´½¨¿ÉÊÓ»¯ÉÌµê£¬positionÎªµÚÒ»ÕÅ¿¨Æ¬×óÏÂ½ÇµÄÃªµã×ø±ê
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½Ìµê£¬positionÎªï¿½ï¿½Ò»ï¿½Å¿ï¿½Æ¬ï¿½ï¿½ï¿½Â½Çµï¿½Ãªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void createShop(Vec2 position);
 
-	// ´´½¨¿ÉÊÓ»¯Æå×Ó¿¨Æ¬
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½Æ¬
 	MenuItemSprite* createPieceCard(string pieceName, string piecePicPath, Vec2 position, const ccMenuCallback& callback);
-	// ´´½¨¿ÉÊÓ»¯×°±¸¿¨Æ¬
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½×°ï¿½ï¿½ï¿½ï¿½Æ¬
 	MenuItemSprite* createEquipCard(int equipID, Vec2 position, const ccMenuCallback& callback);
 
-	//Æå×ÓµÄ¿ÉÊÓ»¯
+	//ï¿½ï¿½ï¿½ÓµÄ¿ï¿½ï¿½Ó»ï¿½
 	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position, int type = 1);
 
-	// ×ø±ê×ª»»º¯Êý
+	//ï¿½ï¿½ï¿½ÓµÄ¿ï¿½ï¿½Ó»ï¿½
+	Sprite* createChessPiece(string pieceName, string piecePicPath, Vec2 position, Level pieceLevel, int type = 1);
+
+	// ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	static PieceCoordinate coordingRevert(CoordinateType originType, Vec2 originPosition);
 
-	//¸üÐÂº¯Êý
+	//ï¿½ï¿½ï¿½Âºï¿½ï¿½ï¿½
 	void update(float dt);
 
 	CREATE_FUNC(PlayScene);
 
 private:
-	// ³¡¾°²ã
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	Layer* playLayer;
 	Menu* menu;
 
-	// µ±Ç°Êó±ê×´Ì¬
+	// ï¿½ï¿½Ç°ï¿½ï¿½ï¿½×´Ì¬
 	Sprite* mouseLiftPiece;
 
-	// ÆåÅÌ
+	// ï¿½ï¿½ï¿½ï¿½
 	ChessBoard* chessBoardModel;
 	vector<Sprite*> chessBoard[ROW_BOARD];
 	vector<Sprite*> pieceBoard[ROW_BOARD];
 
-	// ÉÌµê
+	// ï¿½Ìµï¿½
 	Shop* shopModel;
 	vector<MenuItemSprite*> shop;
 
-	// Íæ¼Ò
+	// ï¿½ï¿½ï¿½
 	Player* playerA;
+	Player* playerB;
 
-	//¼ÆÊ±Æ÷
+	//ï¿½ï¿½Ê±ï¿½ï¿½
 	float timeRemaining = 61.0f;
 	Label* timeLabel = Label::createWithSystemFont("Time:60", "Arial", 60);
 
-	//±³¾°ÒôÀÖ±àºÅ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½
 	unsigned int _audioBgID;
 
-	//µ±Ç°½ð±ÒÊýÁ¿±êÇ©
-	Label* GoldLabel = Label::createWithTTF("00", "/fonts/Marker Felt.ttf", 45);
-	//µ±Ç°¾­Ñé°´Å¥
-	Label* ExLabel = Label::createWithTTF("Lv.1(00%)", "/fonts/Marker Felt.ttf", 45);
+	//ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç©
+	Label* GoldLabel;
+	
+	//ï¿½ï¿½Ç°ï¿½ï¿½ï¿½é°´Å¥
+	Label* ExLabel;
 
-	// ×ÊÔ´¼ÓÔØ½ø¶ÈÌõ
+	// ï¿½ï¿½Ô´ï¿½ï¿½ï¿½Ø½ï¿½ï¿½ï¿½ï¿½ï¿½
 	ProgressTimer* loadingBar;
 
-	// ½ø¶ÈÌõÐÐÎª
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª
 	ProgressFromTo* barAction;
 
-	// ÍË³ö°´Å¥µÄµã»÷ÊÂ¼þ
+	// ï¿½ï¿½ï¿½Bï¿½Äµï¿½Ò»ï¿½ØºÏ³ï¿½Ê¼ï¿½ï¿½
+	void playerBInitRound1();
+
+	// ï¿½Ë³ï¿½ï¿½ï¿½Å¥ï¿½Äµï¿½ï¿½ï¿½Â¼ï¿½
 	void menuExitCallBack(Ref* sender);
-	//ÉùÒô°´Å¥µÄµã»÷ÊÂ¼þ
+
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½Äµï¿½ï¿½ï¿½Â¼ï¿½
 	void menuMusicCallBack(Ref* sender);
-	//½»Á÷°´Å¥µÄµã»÷ÊÂ¼þ
+
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½Äµï¿½ï¿½ï¿½Â¼ï¿½
 	void menuTalkCallBack(Ref* sender);
-	//×¼±¸°´Å¥µÄµã»÷ÊÂ¼þ
+
+	//×¼ï¿½ï¿½ï¿½ï¿½Å¥ï¿½Äµï¿½ï¿½ï¿½Â¼ï¿½
 	void menuReadyCallBack(Ref* sender);
 
-	// ¹ºÂò¿¨Æ¬µÄµã»÷ÊÂ¼þ
+	// ï¿½ï¿½ï¿½ï¿½Æ¬ï¿½Äµï¿½ï¿½ï¿½Â¼ï¿½
 	void menuPieceCardCallBack1(Ref* sender);
 	void menuPieceCardCallBack2(Ref* sender);
 	void menuPieceCardCallBack3(Ref* sender);
@@ -126,22 +137,22 @@ private:
 	void menuEquipCardCallBack(Ref* sender);
 	void buyCard(const unsigned int num, ChessPiece* piece);
 
-	// Ë¢ÐÂÉÌµêµÄµã»÷ÊÂ¼þ
+	// Ë¢ï¿½ï¿½ï¿½Ìµï¿½Äµï¿½ï¿½ï¿½Â¼ï¿½
 	void menuFreshShopCallBack(Ref* sender);
 
-	// ¹ºÂò¾­ÑéµÄµã»÷ÊÂ¼þ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½Â¼ï¿½
 	void menuBuyExpCallBack(Ref* sender);
 
-	//°´ÏÂ»Øµ÷
+	//ï¿½ï¿½ï¿½Â»Øµï¿½
 	virtual int onTouchBegan(Touch* touch, Event* event);
 
-	//ÊÍ·Å»Øµ÷
+	//ï¿½Í·Å»Øµï¿½
 	virtual void onTouchEnded(Touch* touch, Event* event);
 
-	// ÒÆ¶¯»Øµ÷
+	// ï¿½Æ¶ï¿½ï¿½Øµï¿½
 	void onMouseMove(Event* event);
 
-	//¶¯»­ÌØÐ§²¥·Å
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½
 	void effectAnimation(const string& plistname, const string& plistpath, const int& numFrame, const Vec2& position, const float& scale = 1.0f);
 };
 Vector<Sprite*> levelAttribute(const string& value, const string& filepath1 = "/res/Icons/Star.png", const string& filepath2 = "/res/Icons/Star2.png");

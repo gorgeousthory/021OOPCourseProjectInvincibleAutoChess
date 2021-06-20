@@ -30,13 +30,7 @@ public:
 	//获得hp
 	int getHp();
 
-	ChessPiece** getPieceBattle();//返回指针数组的指针，即地址
-
-	//人物所拥有棋子(每人最多同时持有8枚棋子),初始最大值为5
-	ChessPiece* piecePossesion[8]{};
-
-	//当前上场战斗棋子(每人满级后最多上场7个棋子)，初始最大值为3
-	ChessPiece* pieceBattle[7]{};
+	// ChessPiece** getPieceBattle();//返回指针数组的指针，即地址
 
 	//获取、设定privated的数据
 	int getExperience();
@@ -56,6 +50,17 @@ public:
 
 	int getOwnPieceNum();
 
+	Vector<ChessPiece*>* getPlayerPiecePossesion() { return &piecePossesion; }
+
+	void addToPiecePossesion(ChessPiece* piece);
+
+	void deleteFromPossesionByID(int id);
+
+	Vector<ChessPiece*>* getPlayerPieceBattle() { return & pieceBattle; }
+
+	void addToPieceBattle(ChessPiece* piece);
+
+	void deleteFromBattleByID(int id);
 private:
 	//人物经验等级（最高为10）
 	int experience = 1;
@@ -74,6 +79,12 @@ private:
 
 	//人物血量
 	int healthPoint;
+
+	//人物所拥有棋子(每人最多同时持有8枚棋子),初始最大值为5
+	Vector<ChessPiece*> piecePossesion{};
+
+	//当前上场战斗棋子(每人满级后最多上场7个棋子)，初始最大值为3
+	Vector<ChessPiece*> pieceBattle{};
 };
 
 #endif // !_PLAYER_H
